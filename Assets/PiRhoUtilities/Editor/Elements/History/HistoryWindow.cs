@@ -128,7 +128,11 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			_back.SetEnabled(CanMoveBack());
 			_forward.SetEnabled(CanMoveForward());
+#if UNITY_2021_1_OR_NEWER
+			_listView.Rebuild();
+#else
 			_listView.Refresh();
+#endif
 		}
 
 		private VisualElement MakeItem()

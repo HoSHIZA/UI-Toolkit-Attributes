@@ -35,7 +35,12 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			var configureFieldMethod = typeof(PropertyField).GetMethod(CONFIGURE_FIELD_NAME, BindingFlags.Instance | BindingFlags.NonPublic);
 
-			if (configureFieldMethod != null && configureFieldMethod.HasSignature(typeof(VisualElement), 
+			if (configureFieldMethod != null && configureFieldMethod.HasSignature(
+#if UNITY_2021_1_OR_NEWER
+                    null,
+#else
+                    typeof(VisualElement), 
+#endif
 #if UNITY_2021_1_OR_NEWER
                     null, typeof(SerializedProperty), null))
 #else
