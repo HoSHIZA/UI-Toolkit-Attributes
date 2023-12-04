@@ -1,6 +1,10 @@
 # PiRhoUtilities
 A suite of [UIElements](https://docs.unity3d.com/Manual/UIElements.html) based attributes, drawers, controls, and other helpers to expedite the creation of inspectors without the need of additional custom editors.
 
+## Notice
+
+Since this repository has been abandoned by the original authors for a long time, I have taken over its maintenance and development.
+
 ## Installation
 
 - In your Unity project open the Package Manager ('Window -> Package Manager')
