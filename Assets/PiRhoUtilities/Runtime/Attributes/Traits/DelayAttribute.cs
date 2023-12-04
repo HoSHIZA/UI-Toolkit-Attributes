@@ -2,7 +2,7 @@
 {
 	public class DelayAttribute : PropertyTraitAttribute
 	{
-		public DelayAttribute() : base(FieldPhase, 0)
+		public DelayAttribute() : base(FIELD_PHASE, 0)
 		{
 		}
 	}

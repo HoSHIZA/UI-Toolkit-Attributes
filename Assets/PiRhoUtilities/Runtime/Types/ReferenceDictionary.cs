@@ -5,14 +5,14 @@ using UnityEngine;
 namespace PiRhoSoft.Utilities
 {
 	[Serializable]
-	public class ReferenceDictionary<KeyType, ValueType> : Dictionary<KeyType, ValueType>, ISerializationCallbackReceiver
+	public class ReferenceDictionary<TKeyType, TValueType> : Dictionary<TKeyType, TValueType>, ISerializationCallbackReceiver
 	{
-		public const string KeyProperty = nameof(_keys);
-		public const string ValueProperty = nameof(_values);
+		public const string KEY_PROPERTY = nameof(_keys);
+		public const string VALUE_PROPERTY = nameof(_values);
 
 		// These are protected so they can be found by the editor.
-		[SerializeField] protected List<KeyType> _keys = new List<KeyType>();
-		[SerializeReference] protected List<ValueType> _values = new List<ValueType>();
+		[SerializeField] protected List<TKeyType> _keys = new List<TKeyType>();
+		[SerializeReference] protected List<TValueType> _values = new List<TValueType>();
 
 		void ISerializationCallbackReceiver.OnBeforeSerialize()
 		{
@@ -43,7 +43,9 @@ namespace PiRhoSoft.Utilities
 			var count = Math.Min(_keys.Count, _values.Count);
 
 			for (var i = 0; i < count; i++)
-				Add(_keys[i], _values[i]);
-		}
+            {
+                Add(_keys[i], _values[i]);
+            }
+        }
 	}
 }

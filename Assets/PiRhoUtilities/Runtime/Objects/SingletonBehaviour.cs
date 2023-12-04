@@ -4,7 +4,7 @@ namespace PiRhoSoft.Utilities
 {
 	public abstract class SingletonBehaviour<T> : MonoBehaviour where T : SingletonBehaviour<T>
 	{
-		private const string _secondInstanceWarning = "(USBSI) A second instance of SingletonBehaviour type {0} was created";
+		private const string SECOND_INSTANCE_WARNING = "(USBSI) A second instance of SingletonBehaviour type {0} was created";
 
 		public static T Instance { get; private set; }
 
@@ -21,7 +21,7 @@ namespace PiRhoSoft.Utilities
 		{
 			if (Instance != this)
 			{
-				Debug.LogWarningFormat(_secondInstanceWarning, GetType().Name);
+				Debug.LogWarningFormat(SECOND_INSTANCE_WARNING, GetType().Name);
 				Destroy(this);
 			}
 		}

@@ -2,57 +2,57 @@
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public abstract class SliderField<ValueType> : BaseField<ValueType>
+	public abstract class SliderField<TValueType> : BaseField<TValueType>
 	{
 		#region Class Names
 
-		public const string Stylesheet = "SliderStyle.uss";
-		public const string UssClassName = "pirho-slider-field";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string InputUssClassName = UssClassName + "__input";
+		public const string STYLESHEET = "SliderStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-slider-field";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string INPUT_USS_CLASS_NAME = USS_CLASS_NAME + "__input";
 
 		#endregion
 
 		#region Members
 
-		protected readonly SliderControl _control;
+		protected readonly SliderControl Control;
 
 		#endregion
 
 		#region Public Interface
 
-		public ValueType Minimum
+		public TValueType Minimum
 		{
-			get => _control.Minimum;
-			set => _control.Minimum = value;
+			get => Control.Minimum;
+			set => Control.Minimum = value;
 		}
 
-		public ValueType Maximum
+		public TValueType Maximum
 		{
-			get => _control.Maximum;
-			set => _control.Maximum = value;
+			get => Control.Maximum;
+			set => Control.Maximum = value;
 		}
 
 		protected SliderField(string label, SliderControl control) : base(label, control)
 		{
-			_control = control;
-			_control.AddToClassList(InputUssClassName);
-			_control.RegisterCallback<ChangeEvent<ValueType>>(evt =>
+			Control = control;
+			Control.AddToClassList(INPUT_USS_CLASS_NAME);
+			Control.RegisterCallback<ChangeEvent<TValueType>>(evt =>
 			{
 				base.value = evt.newValue;
 				evt.StopImmediatePropagation();
 			});
 
-			labelElement.AddToClassList(LabelUssClassName);
+			labelElement.AddToClassList(LABEL_USS_CLASS_NAME);
 
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
 		}
 
-		public override void SetValueWithoutNotify(ValueType newValue)
+		public override void SetValueWithoutNotify(TValueType newValue)
 		{
 			base.SetValueWithoutNotify(newValue);
-			_control.SetValueWithoutNotify(newValue);
+			Control.SetValueWithoutNotify(newValue);
 		}
 
 		#endregion
@@ -61,29 +61,29 @@ namespace PiRhoSoft.Utilities.Editor
 
 		protected abstract class SliderControl : VisualElement
 		{
-			public const string SliderUssClassName = InputUssClassName + "__slider";
-			public const string TextUssClassName = InputUssClassName + "__text";
+			public const string SLIDER_USS_CLASS_NAME = INPUT_USS_CLASS_NAME + "__slider";
+			public const string TEXT_USS_CLASS_NAME = INPUT_USS_CLASS_NAME + "__text";
 
-			public abstract ValueType Minimum { get; set; }
-			public abstract ValueType Maximum { get; set; }
+			public abstract TValueType Minimum { get; set; }
+			public abstract TValueType Maximum { get; set; }
 
-			public abstract void SetValueWithoutNotify(ValueType value);
+			public abstract void SetValueWithoutNotify(TValueType value);
 		}
 
 		#endregion
 
 		#region UXML Support
 
-		public abstract class UxmlTraits<AttributeType> : BaseFieldTraits<ValueType, AttributeType> where AttributeType : TypedUxmlAttributeDescription<ValueType>, new()
+		public abstract class UxmlTraits<TAttributeType> : BaseFieldTraits<TValueType, TAttributeType> where TAttributeType : TypedUxmlAttributeDescription<TValueType>, new()
 		{
-			protected readonly AttributeType _minimum = new AttributeType { name = "minimum" };
-			protected readonly AttributeType _maximum = new AttributeType { name = "maximum" };
+			protected readonly TAttributeType Minimum = new TAttributeType { name = "minimum" };
+			protected readonly TAttributeType Maximum = new TAttributeType { name = "maximum" };
 
 			public override void Init(VisualElement element, IUxmlAttributes bag, CreationContext cc)
 			{
-				var field = element as SliderField<ValueType>;
-				field.Minimum = _minimum.GetValueFromBag(bag, cc);
-				field.Maximum = _maximum.GetValueFromBag(bag, cc);
+				var field = element as SliderField<TValueType>;
+				field.Minimum = Minimum.GetValueFromBag(bag, cc);
+				field.Maximum = Maximum.GetValueFromBag(bag, cc);
 
 				base.Init(element, bag, cc);
 			}

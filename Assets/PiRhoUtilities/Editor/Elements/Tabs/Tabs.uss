@@ -1,5 +1,6 @@
 ﻿.pirho-tabs
 {
+    margin: 1px 0 1px 3px;
 }
 
 .pirho-tabs__header
@@ -10,32 +11,29 @@
 
 .pirho-tabs__content
 {
-	background-color: #C2C2C2;
-	border-color: #555555;
-	border-width: 0px 1px 1px 1px;
-	border-radius: 2px;
+	background-color: var(--unity-colors-window-background);
+    border-color: var(--unity-colors-window-border);
+	border-width: 0 1px 1px 1px;
+	border-radius: 3px;
 	padding: 5px;
 }
 
 .pirho-tabs__tab
 {
-	background-color: #A5A5A5;
+	background-color: var(--unity-colors-default-background);
 	flex-grow: 1;
 	-unity-font-style: bold;
 	align-self: center;
-	margin: 0px 0px -1px 0px;
+	margin: 0 0 -1px 0;
 	padding: 5px;
-	border-width: 1px 1px 0px 1px;
-	border-color: #000000;
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
-	border-bottom-right-radius: 0px;
-	border-bottom-left-radius: 0px;
+	border-width: 1px 1px 0 1px;
+	border-color: var(--unity-colors-window-border);
+    border-radius: 3px 3px 0 0;
 }
 
 .pirho-tabs__tab--selected
 {
-	background-color: #C2C2C2;
+	background-color: var(--unity-colors-window-background);
 }
 
 .pirho-tabs__page

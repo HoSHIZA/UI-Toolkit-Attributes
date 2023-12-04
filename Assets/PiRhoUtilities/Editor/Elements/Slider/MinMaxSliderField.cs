@@ -9,10 +9,10 @@ namespace PiRhoSoft.Utilities.Editor
 		#region Defaults
 
 		// These match unity's internal defaults
-		public const float DefaultMinimumValue = 0;
-		public const float DefaultMaximumValue = 10;
-		public const float DefaultMinimum = float.MinValue;
-		public const float DefaultMaximum = float.MaxValue;
+		public const float DEFAULT_MINIMUM_VALUE = 0;
+		public const float DEFAULT_MAXIMUM_VALUE = 10;
+		public const float DEFAULT_MINIMUM = float.MinValue;
+		public const float DEFAULT_MAXIMUM = float.MaxValue;
 
 		#endregion
 
@@ -57,16 +57,16 @@ namespace PiRhoSoft.Utilities.Editor
 
 			public MinMaxSliderControl()
 			{
-				_slider = new MinMaxSlider(DefaultMinimumValue, DefaultMaximumValue, DefaultMinimum, DefaultMaximum);
-				_slider.AddToClassList(SliderUssClassName);
+				_slider = new MinMaxSlider(DEFAULT_MINIMUM_VALUE, DEFAULT_MAXIMUM_VALUE, DEFAULT_MINIMUM, DEFAULT_MAXIMUM);
+				_slider.AddToClassList(SLIDER_USS_CLASS_NAME);
 
 				_minText = new FloatField();
 				_minText.RegisterValueChangedCallback(evt => this.SendChangeEvent(evt.previousValue, evt.newValue));
-				_minText.AddToClassList(TextUssClassName);
+				_minText.AddToClassList(TEXT_USS_CLASS_NAME);
 
 				_maxText = new FloatField();
 				_maxText.RegisterValueChangedCallback(evt => this.SendChangeEvent(evt.previousValue, evt.newValue));
-				_maxText.AddToClassList(TextUssClassName);
+				_maxText.AddToClassList(TEXT_USS_CLASS_NAME);
 
 				Add(_minText);
 				Add(_slider);
@@ -87,10 +87,10 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public new class UxmlTraits : BaseField<Vector2>.UxmlTraits
 		{
-			private readonly UxmlFloatAttributeDescription _maxValue = new UxmlFloatAttributeDescription { name = "minimum-value", defaultValue = DefaultMinimumValue };
-			private readonly UxmlFloatAttributeDescription _minValue = new UxmlFloatAttributeDescription { name = "maximum-value", defaultValue = DefaultMaximumValue };
-			private readonly UxmlFloatAttributeDescription _minimum = new UxmlFloatAttributeDescription { name = "minimum", defaultValue = DefaultMinimum };
-			private readonly UxmlFloatAttributeDescription _maximum = new UxmlFloatAttributeDescription { name = "maximum", defaultValue = DefaultMaximum };
+			private readonly UxmlFloatAttributeDescription _maxValue = new UxmlFloatAttributeDescription { name = "minimum-value", defaultValue = DEFAULT_MINIMUM_VALUE };
+			private readonly UxmlFloatAttributeDescription _minValue = new UxmlFloatAttributeDescription { name = "maximum-value", defaultValue = DEFAULT_MAXIMUM_VALUE };
+			private readonly UxmlFloatAttributeDescription _minimum = new UxmlFloatAttributeDescription { name = "minimum", defaultValue = DEFAULT_MINIMUM };
+			private readonly UxmlFloatAttributeDescription _maximum = new UxmlFloatAttributeDescription { name = "maximum", defaultValue = DEFAULT_MAXIMUM };
 
 			public override void Init(VisualElement element, IUxmlAttributes bag, CreationContext cc)
 			{

@@ -2,7 +2,7 @@
 {
 	public class ReadOnlyAttribute : PropertyTraitAttribute
 	{
-		public ReadOnlyAttribute() : base(PerContainerPhase, 10)
+		public ReadOnlyAttribute() : base(PER_CONTAINER_PHASE, 10)
 		{
 		}
 	}

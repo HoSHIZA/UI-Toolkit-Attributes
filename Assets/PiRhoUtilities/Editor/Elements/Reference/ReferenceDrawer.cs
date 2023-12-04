@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(ReferenceAttribute))]
-	class ReferenceDrawer : PropertyDrawer
+    internal class ReferenceDrawer : PropertyDrawer
 	{
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{

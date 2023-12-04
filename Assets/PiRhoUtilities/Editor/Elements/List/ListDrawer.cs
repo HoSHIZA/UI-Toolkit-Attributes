@@ -6,18 +6,18 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(ListAttribute))]
-	class ListDrawer : PropertyDrawer
+    internal class ListDrawer : PropertyDrawer
 	{
-		private const string _invalidTypeWarning = "(PULDIT) invalid type for ListAttribute on field '{0}': List can only be applied to SerializedList or SerializedArray fields";
-		private const string _invalidAddCallbackWarning = "(PULDIAC) invalid add callback for ListAttribute on field '{0}': The method must accept an int or have no parameters";
-		private const string _invalidAddReferenceCallbackWarning = "(PULDIAC) invalid add callback for ListAttribute on field '{0}': The method must accept an int and/or an object in either order or have no parameters";
-		private const string _invalidRemoveCallbackWarning = "(PULDIRMC) invalid remove callback for ListAttribute on field '{0}': The method must accept an int or have no parameters";
-		private const string _invalidReorderCallbackWarning = "(PULDIROC) invalid reorder callback for ListAttribute on field '{0}': The method must accept two ints or have no parameters";
-		private const string _invalidChangeCallbackWarning = "(PULDICC) invalid change callback for ListAttribute on field '{0}': The method must have no parameters";
+		private const string INVALID_TYPE_WARNING = "(PULDIT) invalid type for ListAttribute on field '{0}': List can only be applied to SerializedList or SerializedArray fields";
+		private const string INVALID_ADD_CALLBACK_WARNING = "(PULDIAC) invalid add callback for ListAttribute on field '{0}': The method must accept an int or have no parameters";
+		private const string INVALID_ADD_REFERENCE_CALLBACK_WARNING = "(PULDIAC) invalid add callback for ListAttribute on field '{0}': The method must accept an int and/or an object in either order or have no parameters";
+		private const string INVALID_REMOVE_CALLBACK_WARNING = "(PULDIRMC) invalid remove callback for ListAttribute on field '{0}': The method must accept an int or have no parameters";
+		private const string INVALID_REORDER_CALLBACK_WARNING = "(PULDIROC) invalid reorder callback for ListAttribute on field '{0}': The method must accept two ints or have no parameters";
+		private const string INVALID_CHANGE_CALLBACK_WARNING = "(PULDICC) invalid change callback for ListAttribute on field '{0}': The method must have no parameters";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
-			var items = property.FindPropertyRelative(SerializedList<string>.ItemsProperty);
+			var items = property.FindPropertyRelative(SerializedList<string>.ITEMS_PROPERTY);
 
 			if (items != null && items.isArray)
 			{
@@ -38,10 +38,12 @@ namespace PiRhoSoft.Utilities.Editor
 				// TODO: other stuff from ConfigureField
 
 				if (!string.IsNullOrEmpty(listAttribute.EmptyLabel))
-					field.EmptyLabel = listAttribute.EmptyLabel;
+                {
+                    field.EmptyLabel = listAttribute.EmptyLabel;
+                }
 
-				field.AllowAdd = listAttribute.AllowAdd != ListAttribute.Never;
-				field.AllowRemove = listAttribute.AllowRemove != ListAttribute.Never;
+                field.AllowAdd = listAttribute.AllowAdd != ListAttribute.NEVER;
+				field.AllowRemove = listAttribute.AllowRemove != ListAttribute.NEVER;
 				field.AllowReorder = listAttribute.AllowReorder;
 
 				SetupAdd(listAttribute, proxy, field, property, declaringType, isReference);
@@ -55,7 +57,7 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 			else
 			{
-				Debug.LogWarningFormat(_invalidTypeWarning, property.propertyPath);
+				Debug.LogWarningFormat(INVALID_TYPE_WARNING, property.propertyPath);
 				return new FieldContainer(property.displayName, string.Empty);
 			}
 		}
@@ -65,9 +67,11 @@ namespace PiRhoSoft.Utilities.Editor
 			if (field.AllowAdd)
 			{
 				if (!string.IsNullOrEmpty(listAttribute.AllowAdd))
-					proxy.CanAddCallback = ReflectionHelper.CreateValueSourceFunction(listAttribute.AllowAdd, property, field, declaringType, true);
+                {
+                    proxy.CanAddCallback = ReflectionHelper.CreateValueSourceFunction(listAttribute.AllowAdd, property, field, declaringType, true);
+                }
 
-				if (!string.IsNullOrEmpty(listAttribute.AddCallback))
+                if (!string.IsNullOrEmpty(listAttribute.AddCallback))
 				{
 					if (!isReference)
 					{
@@ -80,10 +84,14 @@ namespace PiRhoSoft.Utilities.Editor
 						{
 							var addCallbackIndex = ReflectionHelper.CreateActionCallback<int>(listAttribute.AddCallback, declaringType, property);
 							if (addCallbackIndex != null)
-								field.RegisterCallback<ListField.ItemAddedEvent>(evt => addCallbackIndex.Invoke(evt.Index));
-							else
-								Debug.LogWarningFormat(_invalidAddCallbackWarning, property.propertyPath);
-						}
+                            {
+                                field.RegisterCallback<ListField.ItemAddedEvent>(evt => addCallbackIndex.Invoke(evt.Index));
+                            }
+                            else
+                            {
+                                Debug.LogWarningFormat(INVALID_ADD_CALLBACK_WARNING, property.propertyPath);
+                            }
+                        }
 					}
 					else
 					{
@@ -96,10 +104,14 @@ namespace PiRhoSoft.Utilities.Editor
 						{
 							var addCallbackIndex = ReflectionHelper.CreateActionCallback<int>(listAttribute.AddCallback, declaringType, property);
 							if (addCallbackIndex != null)
-								field.RegisterCallback<ListField.ItemAddedEvent>(evt => addCallbackIndex.Invoke(evt.Index));
-							else
-								Debug.LogWarningFormat(_invalidAddReferenceCallbackWarning, property.propertyPath);
-						}
+                            {
+                                field.RegisterCallback<ListField.ItemAddedEvent>(evt => addCallbackIndex.Invoke(evt.Index));
+                            }
+                            else
+                            {
+                                Debug.LogWarningFormat(INVALID_ADD_REFERENCE_CALLBACK_WARNING, property.propertyPath);
+                            }
+                        }
 					}
 				}
 			}
@@ -131,10 +143,14 @@ namespace PiRhoSoft.Utilities.Editor
 					{
 						var removeCallbackIndex = ReflectionHelper.CreateActionCallback<int>(listAttribute.RemoveCallback, declaringType, property);
 						if (removeCallbackIndex != null)
-							field.RegisterCallback<ListField.ItemRemovedEvent>(evt => removeCallbackIndex.Invoke(evt.Index));
-						else
-							Debug.LogWarningFormat(_invalidRemoveCallbackWarning, property.propertyPath);
-					}
+                        {
+                            field.RegisterCallback<ListField.ItemRemovedEvent>(evt => removeCallbackIndex.Invoke(evt.Index));
+                        }
+                        else
+                        {
+                            Debug.LogWarningFormat(INVALID_REMOVE_CALLBACK_WARNING, property.propertyPath);
+                        }
+                    }
 				}
 			}
 		}
@@ -154,10 +170,14 @@ namespace PiRhoSoft.Utilities.Editor
 					{
 						var reorderCallbackFromTo = ReflectionHelper.CreateActionCallback<int, int>(listAttribute.ReorderCallback, declaringType, property);
 						if (reorderCallbackFromTo != null)
-							field.RegisterCallback<ListField.ItemReorderedEvent>(evt => reorderCallbackFromTo.Invoke(evt.FromIndex, evt.ToIndex));
-						else
-							Debug.LogWarningFormat(_invalidReorderCallbackWarning, property.propertyPath);
-					}
+                        {
+                            field.RegisterCallback<ListField.ItemReorderedEvent>(evt => reorderCallbackFromTo.Invoke(evt.FromIndex, evt.ToIndex));
+                        }
+                        else
+                        {
+                            Debug.LogWarningFormat(INVALID_REORDER_CALLBACK_WARNING, property.propertyPath);
+                        }
+                    }
 				}
 			}
 		}
@@ -168,10 +188,14 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				var changeCallback = ReflectionHelper.CreateActionCallback(listAttribute.ChangeCallback, declaringType, property);
 				if (changeCallback != null)
-					field.RegisterCallback<ListField.ItemsChangedEvent>(evt => changeCallback.Invoke());
-				else
-					Debug.LogWarningFormat(_invalidChangeCallbackWarning, property.propertyPath);
-			}
+                {
+                    field.RegisterCallback<ListField.ItemsChangedEvent>(evt => changeCallback.Invoke());
+                }
+                else
+                {
+                    Debug.LogWarningFormat(INVALID_CHANGE_CALLBACK_WARNING, property.propertyPath);
+                }
+            }
 		}
 	}
 }

@@ -40,7 +40,9 @@
 {
 	display: flex;
 	flex-grow: 1;
-	margin: 0px;
+    flex-shrink: 1;
+    max-width: 128px;
+	margin: 0;
 	align-self: stretch;
 }
 
@@ -52,17 +54,20 @@
 .pirho-dictionary-field--add-key-valid > .pirho-frame__header > .pirho-dictionary-field__key-text > .unity-text-field__input
 {
 	background-color: #99FF99;
+    color: var(--unity-colors-button-background);
 }
 
 .pirho-dictionary-field--add-key-invalid > .pirho-frame__header > .pirho-dictionary-field__key-text > .unity-text-field__input
 {
 	background-color: #FF9999;
+    color: var(--unity-colors-button-background);
 }
 
 .pirho-dictionary-field__add-button
 {
 	margin-left: 5px;
 	display: flex;
+    --unity-image-tint-color: var(--unity-colors-button-text);
 }
 
 .pirho-dictionary-field--add-disabled .pirho-dictionary-field__add-button
@@ -80,6 +85,7 @@
 	max-height: 16px;
 	align-self: flex-start;
 	margin-top: 3px;
+    --unity-image-tint-color: var(--unity-colors-button-text);
 }
 
 .pirho-dictionary-field--remove-disabled .pirho-dictionary-field__remove-button
@@ -95,6 +101,7 @@
 	margin-right: 5px;
 	flex-shrink: 0;
 	align-self: flex-start;
+    --unity-image-tint-color: var(--unity-colors-button-text);
 }
 
 .pirho-dictionary-field--reorder-disabled .pirho-dictionary-field__drag-handle
@@ -126,12 +133,12 @@
 
 .pirho-dictionary-field__item--even
 {
-	background-color: #DFDFDF;
+    background-color: var(--unity-colors-input_field-background);
 }
 
 .pirho-dictionary-field__item--odd
 {
-	background-color: #CBCBCB;
+    background-color: var(--unity-colors-helpbox-border);
 }
 
 .pirho-dictionary-field__item__content
@@ -144,4 +151,9 @@
 {
 	margin-left: 15px;
 	margin-top: 2px;
+}
+
+.pirho-dictionary-field__item > * > #unity-content
+{
+	margin-left: -2px;
 }

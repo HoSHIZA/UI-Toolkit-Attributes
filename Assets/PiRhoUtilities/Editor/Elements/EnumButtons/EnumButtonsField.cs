@@ -8,21 +8,21 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string Stylesheet = "EnumButtonsStyle.uss";
-		public const string UssClassName = "pirho-enum-buttons-field";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string InputUssClassName = UssClassName + "__input";
-		public const string ButtonUssClassName = InputUssClassName + "__button";
-		public const string ActiveButtonUssClassName = ButtonUssClassName + "--active";
-		public const string FirstButtonUssClassName = ButtonUssClassName + "--first";
-		public const string LastButtonUssClassName = ButtonUssClassName + "--last";
+		public const string STYLESHEET = "EnumButtonsStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-enum-buttons-field";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string INPUT_USS_CLASS_NAME = USS_CLASS_NAME + "__input";
+		public const string BUTTON_USS_CLASS_NAME = INPUT_USS_CLASS_NAME + "__button";
+		public const string ACTIVE_BUTTON_USS_CLASS_NAME = BUTTON_USS_CLASS_NAME + "--active";
+		public const string FIRST_BUTTON_USS_CLASS_NAME = BUTTON_USS_CLASS_NAME + "--first";
+		public const string LAST_BUTTON_USS_CLASS_NAME = BUTTON_USS_CLASS_NAME + "--last";
 
 		#endregion
 
 		#region Log Messages
 
-		private const string _invalidTypeWarning = "(PUEBFIT) failed to setup EnumButtonsField: the type '{0}' is not an enum";
-		private const string _invalidValueWarning = "(PUEBFIV) failed to set EnumButtonsField value: '{0}' is not a valid value for the enum '{1}'";
+		private const string INVALID_TYPE_WARNING = "(PUEBFIT) failed to setup EnumButtonsField: the type '{0}' is not an enum";
+		private const string INVALID_VALUE_WARNING = "(PUEBFIV) failed to set EnumButtonsField value: '{0}' is not a valid value for the enum '{1}'";
 
 		#endregion
 
@@ -53,18 +53,18 @@ namespace PiRhoSoft.Utilities.Editor
 		public EnumButtonsField(string label) : base(label, null)
 		{
 			_control = new EnumButtonsControl();
-			_control.AddToClassList(InputUssClassName);
+			_control.AddToClassList(INPUT_USS_CLASS_NAME);
 			_control.RegisterCallback<ChangeEvent<Enum>>(evt =>
 			{
 				base.value = evt.newValue;
 				evt.StopImmediatePropagation();
 			});
 
-			labelElement.AddToClassList(LabelUssClassName);
+			labelElement.AddToClassList(LABEL_USS_CLASS_NAME);
 
-			AddToClassList(UssClassName);
+			AddToClassList(USS_CLASS_NAME);
 			this.SetVisualInput(_control);
-			this.AddStyleSheet(Stylesheet);
+			this.AddStyleSheet(STYLESHEET);
 		}
 
 		public override void SetValueWithoutNotify(Enum newValue)
@@ -77,9 +77,15 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Binding
 
-		protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+#if UNITY_2023_2_OR_NEWER
+		protected override void HandleEventBubbleUp(EventBase evt)
 		{
-			base.ExecuteDefaultActionAtTarget(evt);
+			base.HandleEventBubbleUp(evt);
+#else
+        protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+        {
+            base.ExecuteDefaultActionAtTarget(evt);
+#endif
 
 			if (this.TryGetPropertyBindEvent(evt, out var property))
 			{
@@ -123,7 +129,7 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				if (value == null || Type != value.GetType())
 				{
-					Debug.LogWarningFormat(_invalidValueWarning, value, Type);
+					Debug.LogWarningFormat(INVALID_VALUE_WARNING, value, Type);
 				}
 				else if (!Equals(_value, value))
 				{
@@ -132,19 +138,19 @@ namespace PiRhoSoft.Utilities.Editor
 					{
 						var index = IndexOf(button);
 
-						button.EnableInClassList(FirstButtonUssClassName, index == 0);
-						button.EnableInClassList(LastButtonUssClassName, index == _names.Length - 1);
+						button.EnableInClassList(FIRST_BUTTON_USS_CLASS_NAME, index == 0);
+						button.EnableInClassList(LAST_BUTTON_USS_CLASS_NAME, index == _names.Length - 1);
 
 						if (UseFlags)
 						{
 							var current = GetIntFromEnum(Type, _value);
 							var buttonValue = GetIntFromEnum(Type, button.userData as Enum);
 
-							button.EnableInClassList(ActiveButtonUssClassName, (buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0));
+							button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, (buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0));
 						}
 						else
 						{
-							button.EnableInClassList(ActiveButtonUssClassName, _value.Equals(button.userData as Enum));
+							button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, _value.Equals(button.userData as Enum));
 						}
 					});
 				}
@@ -160,7 +166,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 					if (_type == null || !_type.IsEnum)
 					{
-						Debug.LogWarningFormat(_invalidTypeWarning, _type);
+						Debug.LogWarningFormat(INVALID_TYPE_WARNING, _type);
 					}
 					else
 					{
@@ -188,7 +194,7 @@ namespace PiRhoSoft.Utilities.Editor
 							userData = _values.GetValue(i)
 						};
 
-						button.AddToClassList(ButtonUssClassName);
+						button.AddToClassList(BUTTON_USS_CLASS_NAME);
 						Add(button);
 					}
 				}
@@ -206,15 +212,21 @@ namespace PiRhoSoft.Utilities.Editor
 					if ((buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0))
 					{
 						if (buttonValue != ~0)
-							current &= ~buttonValue;
-					}
+                        {
+                            current &= ~buttonValue;
+                        }
+                    }
 					else
 					{
 						if (buttonValue == 0)
-							current = 0;
-						else
-							current |= buttonValue;
-					}
+                        {
+                            current = 0;
+                        }
+                        else
+                        {
+                            current |= buttonValue;
+                        }
+                    }
 
 					selected = GetEnumFromInt(Type, current);
 				}
@@ -250,22 +262,34 @@ namespace PiRhoSoft.Utilities.Editor
 
 				var field = element as EnumButtonsField;
 				var typeName = _type.GetValueFromBag(bag, cc);
-				var type = TypeHelper.FindType(typeName);
+                
+                if (string.IsNullOrEmpty(typeName))
+                {
+                    return;
+                }
+
+                var type = TypeHelper.FindType(typeName);
 
 				var flags = false;
 				if (_flags.TryGetValueFromBag(bag, cc, ref flags))
-					field.UseFlags = flags;
+                {
+                    field.UseFlags = flags;
+                }
 
-				field.Type = type;
+                field.Type = type;
 
 				var valueName = _value.GetValueFromBag(bag, cc);
 				if (type != null && !string.IsNullOrEmpty(valueName))
 				{
 					if (TryParseValue(type, valueName, out var value))
-						field.SetValueWithoutNotify(value);
-					else
-						Debug.LogWarningFormat(_invalidValueWarning, valueName, type.Name);
-				}
+                    {
+                        field.SetValueWithoutNotify(value);
+                    }
+                    else
+                    {
+                        Debug.LogWarningFormat(INVALID_VALUE_WARNING, valueName, type.Name);
+                    }
+                }
 			}
 
 			private bool TryParseValue(Type type, string valueName, out Enum value)

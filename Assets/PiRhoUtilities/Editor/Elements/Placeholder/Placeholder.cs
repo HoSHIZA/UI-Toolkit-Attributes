@@ -7,8 +7,8 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string Stylesheet = "PlaceholderStyle.uss";
-		public const string UssClassName = "pirho-placeholder";
+		public const string STYLESHEET = "PlaceholderStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-placeholder";
 
 		#endregion
 
@@ -35,8 +35,8 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			pickingMode = PickingMode.Ignore;
 
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
 
 			RegisterCallback<AttachToPanelEvent>(OnAttached);
 		}
@@ -71,25 +71,42 @@ namespace PiRhoSoft.Utilities.Editor
 		private void OnAttached(AttachToPanelEvent evt)
 		{
 			if (parent is TextField textField)
-				AddToField(textField);
-		}
+            {
+                AddToField(textField);
+            }
+        }
 
 		#endregion
 
 		#region Events
 
-		public override void HandleEvent(EventBase evt)
+#if UNITY_2023_2_OR_NEWER
+		protected override void HandleEventBubbleUp(EventBase evt)
 		{
+			base.HandleEventBubbleUp(evt);
+#else
+        protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+        {
+            base.ExecuteDefaultActionAtTarget(evt);
+#endif
 			// Capture ChangeEvents so they aren't handled by the parent TextField.
 
 			if (evt is ChangeEvent<string>)
 			{
 				evt.StopPropagation();
-				evt.PreventDefault();
+#if UNITY_2023_2_OR_NEWER
+                focusController.IgnoreEvent(evt);
+#else
+                evt.PreventDefault();
+#endif
 			}
 			else
 			{
-				base.HandleEvent(evt);
+#if UNITY_2023_2_OR_NEWER
+			base.HandleEventBubbleUp(evt);
+#else
+            base.ExecuteDefaultActionAtTarget(evt);
+#endif
 			}
 		}
 

@@ -14,15 +14,17 @@ namespace PiRhoSoft.Utilities.Editor
 		private static readonly object[] _oneArgument = new object[1];
 		private static readonly object[] _twoArguments = new object[2];
 
-		public static bool SetupValueSourceCallback<FieldType>(string sourceName, Type declaringType, SerializedProperty property, VisualElement element, FieldType defaultValue, bool autoUpdate, Action<FieldType> updateAction)
+		public static bool SetupValueSourceCallback<TFieldType>(string sourceName, Type declaringType, SerializedProperty property, VisualElement element, TFieldType defaultValue, bool autoUpdate, Action<TFieldType> updateAction)
 		{
 			if (!string.IsNullOrEmpty(sourceName))
 			{
 				var valueFunction = GetValueFunction(sourceName, declaringType, property, element, out var needsSchedule, updateAction);
 				if (valueFunction == null)
-					return false;
+                {
+                    return false;
+                }
 
-				SetupSchedule(element, () => updateAction(valueFunction()), autoUpdate && needsSchedule);
+                SetupSchedule(element, () => updateAction(valueFunction()), autoUpdate && needsSchedule);
 			}
 			else
 			{
@@ -32,63 +34,77 @@ namespace PiRhoSoft.Utilities.Editor
 			return true;
 		}
 
-		public static Func<FieldType> CreateValueSourceFunction<FieldType>(string sourceName, SerializedProperty property, VisualElement element, Type declaringType, FieldType defaultValue)
+		public static Func<TFieldType> CreateValueSourceFunction<TFieldType>(string sourceName, SerializedProperty property, VisualElement element, Type declaringType, TFieldType defaultValue)
 		{
 			if (!string.IsNullOrEmpty(sourceName))
-				return GetValueFunction<FieldType>(sourceName, declaringType, property, element, out var _, null);
+            {
+                return GetValueFunction<TFieldType>(sourceName, declaringType, property, element, out var _, null);
+            }
 
-			return () => defaultValue;
+            return () => defaultValue;
 		}
 
-		public static Func<FieldType> CreateFunctionCallback<FieldType>(string sourceName, Type declaringType, SerializedProperty property)
+		public static Func<TFieldType> CreateFunctionCallback<TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
 			if (!string.IsNullOrEmpty(sourceName))
-				return GetValueFromMethodFunction<FieldType>(sourceName, declaringType, property);
+            {
+                return GetValueFromMethodFunction<TFieldType>(sourceName, declaringType, property);
+            }
 
-			return null;
+            return null;
 		}
 
-		public static Func<ParameterOne, FieldType> CreateFunctionCallback<ParameterOne, FieldType>(string sourceName, Type declaringType, SerializedProperty property)
+		public static Func<TParameterOne, TFieldType> CreateFunctionCallback<TParameterOne, TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
 			if (!string.IsNullOrEmpty(sourceName))
-				return GetValueFromMethodFunction<ParameterOne, FieldType>(sourceName, declaringType, property);
+            {
+                return GetValueFromMethodFunction<TParameterOne, TFieldType>(sourceName, declaringType, property);
+            }
 
-			return null;
+            return null;
 		}
 
-		public static Func<ParameterOne, ParameterTwo, FieldType> CreateFunctionCallback<ParameterOne, ParameterTwo, FieldType>(string sourceName, Type declaringType, SerializedProperty property)
+		public static Func<TParameterOne, TParameterTwo, TFieldType> CreateFunctionCallback<TParameterOne, TParameterTwo, TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
 			if (!string.IsNullOrEmpty(sourceName))
-				return GetValueFromMethodFunction<ParameterOne, ParameterTwo, FieldType>(sourceName, declaringType, property);
+            {
+                return GetValueFromMethodFunction<TParameterOne, TParameterTwo, TFieldType>(sourceName, declaringType, property);
+            }
 
-			return null;
+            return null;
 		}
 
 		public static Action CreateActionCallback(string sourceName, Type declaringType, SerializedProperty property)
 		{
 			if (!string.IsNullOrEmpty(sourceName))
-				return GetCallback(sourceName, declaringType, property);
+            {
+                return GetCallback(sourceName, declaringType, property);
+            }
 
-			return null;
+            return null;
 		}
 
-		public static Action<ParameterOne> CreateActionCallback<ParameterOne>(string sourceName, Type declaringType, SerializedProperty property)
+		public static Action<TParameterOne> CreateActionCallback<TParameterOne>(string sourceName, Type declaringType, SerializedProperty property)
 		{
 			if (!string.IsNullOrEmpty(sourceName))
-				return GetCallback<ParameterOne>(sourceName, declaringType, property);
+            {
+                return GetCallback<TParameterOne>(sourceName, declaringType, property);
+            }
 
-			return null;
+            return null;
 		}
 
-		public static Action<ParameterOne, ParameterTwo> CreateActionCallback<ParameterOne, ParameterTwo>(string sourceName, Type declaringType, SerializedProperty property)
+		public static Action<TParameterOne, TParameterTwo> CreateActionCallback<TParameterOne, TParameterTwo>(string sourceName, Type declaringType, SerializedProperty property)
 		{
 			if (!string.IsNullOrEmpty(sourceName))
-				return GetCallback<ParameterOne, ParameterTwo>(sourceName, declaringType, property);
+            {
+                return GetCallback<TParameterOne, TParameterTwo>(sourceName, declaringType, property);
+            }
 
-			return null;
+            return null;
 		}
 
-		private static Func<FieldType> GetValueFunction<FieldType>(string sourceName, Type declaringType, SerializedProperty property, VisualElement element, out bool needsSchedule, Action<FieldType> updateAction)
+		private static Func<TFieldType> GetValueFunction<TFieldType>(string sourceName, Type declaringType, SerializedProperty property, VisualElement element, out bool needsSchedule, Action<TFieldType> updateAction)
 		{
 			needsSchedule = true;
 
@@ -103,72 +119,80 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 
 			{ // Method
-				var valueFunction = GetValueFromMethodFunction<FieldType>(sourceName, declaringType, property);
+				var valueFunction = GetValueFromMethodFunction<TFieldType>(sourceName, declaringType, property);
 				if (valueFunction != null)
-					return valueFunction;
-			}
+                {
+                    return valueFunction;
+                }
+            }
 
 			{ // Property
-				var valueFunction = GetValueFromPropertyFunction<FieldType>(sourceName, declaringType, property);
+				var valueFunction = GetValueFromPropertyFunction<TFieldType>(sourceName, declaringType, property);
 				if (valueFunction != null)
-					return valueFunction;
-			}
+                {
+                    return valueFunction;
+                }
+            }
 
 			{ // Field
-				var valueFunction = GetValueFromFieldFunction<FieldType>(sourceName, declaringType, property, ref needsSchedule);
+				var valueFunction = GetValueFromFieldFunction<TFieldType>(sourceName, declaringType, property, ref needsSchedule);
 				if (valueFunction != null)
-					return valueFunction;
-			}
+                {
+                    return valueFunction;
+                }
+            }
 
 			return null;
 		}
 
-		private static ChangeTrigger<FieldType> GetSerializedPropertyTrigger<FieldType>(string sourceName, SerializedProperty property, Action<FieldType> updateAction)
+		private static ChangeTrigger<TFieldType> GetSerializedPropertyTrigger<TFieldType>(string sourceName, SerializedProperty property, Action<TFieldType> updateAction)
 		{
-			var propertyType = SerializedPropertyExtensions.GetPropertyType<FieldType>();
+			var propertyType = SerializedPropertyExtensions.GetPropertyType<TFieldType>();
 			
 			if (propertyType != SerializedPropertyType.Generic && propertyType != SerializedPropertyType.ManagedReference && propertyType != SerializedPropertyType.ExposedReference && propertyType != SerializedPropertyType.FixedBufferSize)
 			{
 				var sibling = property.GetSibling(sourceName);
 
 				if (sibling != null && sibling.propertyType != SerializedPropertyType.Generic)
-					return new ChangeTrigger<FieldType>(sibling, (changedProperty, oldValue, newValue) => updateAction?.Invoke(newValue));
-			}
+                {
+                    return new ChangeTrigger<TFieldType>(sibling, (changedProperty, oldValue, newValue) => updateAction?.Invoke(newValue));
+                }
+            }
 
 			return null;
 		}
 
-		private static Func<FieldType> GetValueFromMethodFunction<FieldType>(string sourceName, Type declaringType, SerializedProperty property)
+		private static Func<TFieldType> GetValueFromMethodFunction<TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
 			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _noParamters, null);
 
 			if (method != null)
 			{
-				if (typeof(FieldType).IsAssignableFrom(method.ReturnType))
+				if (typeof(TFieldType).IsAssignableFrom(method.ReturnType))
 				{
 					var owner = method.IsStatic ? null : property.GetOwner<object>();
-					return () => (FieldType)method.Invoke(owner, null);
+					return () => (TFieldType)method.Invoke(owner, null);
 				}
 			}
 
 			return null;
 		}
 
-		private static Func<ParameterOne, FieldType> GetValueFromMethodFunction<ParameterOne, FieldType>(string sourceName, Type declaringType, SerializedProperty property)
+		private static Func<TParameterOne, TFieldType> GetValueFromMethodFunction<TParameterOne, TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			_oneParamter[0] = typeof(ParameterOne);
+			_oneParamter[0] = typeof(TParameterOne);
 
 			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _oneParamter, null);
 
 			if (method != null)
 			{
-				if (typeof(FieldType).IsAssignableFrom(method.ReturnType))
+				if (typeof(TFieldType).IsAssignableFrom(method.ReturnType))
 				{
 					var owner = method.IsStatic ? null : property.GetOwner<object>();
 					return (parameterOne) =>
 					{
 						_oneArgument[0] = parameterOne;
-						return (FieldType)method.Invoke(owner, _oneArgument);
+						return (TFieldType)method.Invoke(owner, _oneArgument);
 					};
 				}
 			}
@@ -176,23 +200,23 @@ namespace PiRhoSoft.Utilities.Editor
 			return null;
 		}
 
-		private static Func<ParameterOne, ParameterTwo, FieldType> GetValueFromMethodFunction<ParameterOne, ParameterTwo, FieldType>(string sourceName, Type declaringType, SerializedProperty property)
+		private static Func<TParameterOne, TParameterTwo, TFieldType> GetValueFromMethodFunction<TParameterOne, TParameterTwo, TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			_twoParamters[0] = typeof(ParameterOne);
-			_twoParamters[1] = typeof(ParameterTwo);
+			_twoParamters[0] = typeof(TParameterOne);
+			_twoParamters[1] = typeof(TParameterTwo);
 
 			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _twoParamters, null);
 
 			if (method != null)
 			{
-				if (typeof(FieldType).IsAssignableFrom(method.ReturnType))
+				if (typeof(TFieldType).IsAssignableFrom(method.ReturnType))
 				{
 					var owner = method.IsStatic ? null : property.GetOwner<object>();
 					return (parameterOne, parameterTwo) =>
 					{
 						_twoArguments[0] = parameterOne;
 						_twoArguments[1] = parameterTwo;
-						return (FieldType)method.Invoke(owner, _twoArguments);
+						return (TFieldType)method.Invoke(owner, _twoArguments);
 					};
 				}
 			}
@@ -213,9 +237,9 @@ namespace PiRhoSoft.Utilities.Editor
 			return null;
 		}
 
-		private static Action<ParameterOne> GetCallback<ParameterOne>(string sourceName, Type declaringType, SerializedProperty property)
+		private static Action<TParameterOne> GetCallback<TParameterOne>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			_oneParamter[0] = typeof(ParameterOne);
+			_oneParamter[0] = typeof(TParameterOne);
 
 			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _oneParamter, null);
 
@@ -232,10 +256,10 @@ namespace PiRhoSoft.Utilities.Editor
 			return null;
 		}
 
-		private static Action<ParameterOne, ParameterTwo> GetCallback<ParameterOne, ParameterTwo>(string sourceName, Type declaringType, SerializedProperty property)
+		private static Action<TParameterOne, TParameterTwo> GetCallback<TParameterOne, TParameterTwo>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			_twoParamters[0] = typeof(ParameterOne);
-			_twoParamters[1] = typeof(ParameterTwo);
+			_twoParamters[0] = typeof(TParameterOne);
+			_twoParamters[1] = typeof(TParameterTwo);
 
 			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _twoParamters, null);
 
@@ -253,34 +277,36 @@ namespace PiRhoSoft.Utilities.Editor
 			return null;
 		}
 
-		private static Func<FieldType> GetValueFromPropertyFunction<FieldType>(string sourceName, Type declaringType, SerializedProperty property)
+		private static Func<TFieldType> GetValueFromPropertyFunction<TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			var prop = declaringType.GetProperty(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, typeof(FieldType), _noParamters, null);
+			var prop = declaringType.GetProperty(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, typeof(TFieldType), _noParamters, null);
 
 			if (prop != null)
 			{
 				if (prop.CanRead)
 				{
 					var owner = prop.GetGetMethod(true).IsStatic ? null : property.GetOwner<object>();
-					return () => (FieldType)prop.GetValue(owner);
+					return () => (TFieldType)prop.GetValue(owner);
 				}
 			}
 
 			return null;
 		}
 
-		private static Func<FieldType> GetValueFromFieldFunction<FieldType>(string sourceName, Type declaringType, SerializedProperty property, ref bool needsSchedule)
+		private static Func<TFieldType> GetValueFromFieldFunction<TFieldType>(string sourceName, Type declaringType, SerializedProperty property, ref bool needsSchedule)
 		{
 			var field = declaringType.GetField(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
 			if (field != null)
 			{
 				if (field.IsLiteral || field.IsInitOnly)
-					needsSchedule = false;
+                {
+                    needsSchedule = false;
+                }
 
-				if (typeof(FieldType) == field.FieldType)
+                if (typeof(TFieldType) == field.FieldType)
 				{
 					var owner = field.IsStatic ? null : property.GetOwner<object>();
-					return () => (FieldType)field.GetValue(owner);
+					return () => (TFieldType)field.GetValue(owner);
 				}
 			}
 
@@ -292,7 +318,9 @@ namespace PiRhoSoft.Utilities.Editor
 			action.Invoke();
 
 			if (autoUpdate)
-				element.schedule.Execute(action).Every(100);
-		}
+            {
+                element.schedule.Execute(action).Every(100);
+            }
+        }
 	}
 }

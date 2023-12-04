@@ -10,28 +10,25 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string Stylesheet = "Frame.uss";
-		public const string UssClassName = "pirho-frame";
-		public const string HeaderUssClassName = UssClassName + "__header";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string NoLabelUssClassName = UssClassName + "__label--none";
-		public const string ContentUssClassName = UssClassName + "__content";
-		public const string HeaderButtonsUssClassName = UssClassName + "__header-buttons";
-		public const string HeaderButtonUssClassName = UssClassName + "__header-button";
-		public const string CollapseButtonUssClassName = UssClassName + "__collapse-button";
-		public const string CollapsableUssClassName = UssClassName + "--collapsable";
-		public const string ExpandedUssClassName = UssClassName + "--expanded";
-		public const string CollapsedUssClassName = UssClassName + "--collapsed";
+		public const string STYLESHEET = "Frame.uss";
+		public const string USS_CLASS_NAME = "pirho-frame";
+		public const string HEADER_USS_CLASS_NAME = USS_CLASS_NAME + "__header";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string NO_LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label--none";
+		public const string CONTENT_USS_CLASS_NAME = USS_CLASS_NAME + "__content";
+		public const string HEADER_BUTTONS_USS_CLASS_NAME = USS_CLASS_NAME + "__header-buttons";
+		public const string HEADER_BUTTON_USS_CLASS_NAME = USS_CLASS_NAME + "__header-button";
+		public const string COLLAPSE_BUTTON_USS_CLASS_NAME = USS_CLASS_NAME + "__collapse-button";
+		public const string COLLAPSABLE_USS_CLASS_NAME = USS_CLASS_NAME + "--collapsable";
+		public const string EXPANDED_USS_CLASS_NAME = USS_CLASS_NAME + "--expanded";
+		public const string COLLAPSED_USS_CLASS_NAME = USS_CLASS_NAME + "--collapsed";
 
 		#endregion
 
 		#region Defaults
 
-		public const string CollapseTooltip = "Collapse this view";
-		public const string ExpandTooltip = "Expand this view";
-
-		public const bool DefaultIsCollapsable = true;
-		public const bool DefaultIsCollapsed = false;
+		public const bool DEFAULT_IS_COLLAPSABLE = true;
+		public const bool DEFAULT_IS_COLLAPSED = false;
 
 		#endregion
 
@@ -49,8 +46,8 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private readonly bool _addChildren = true;
 
-		private bool _isCollapsable = DefaultIsCollapsable;
-		private bool _isCollapsed = DefaultIsCollapsed;
+		private bool _isCollapsable = DEFAULT_IS_COLLAPSABLE;
+		private bool _isCollapsed = DEFAULT_IS_COLLAPSED;
 		private string _label = null;
 		private string _tooltip = null;
 
@@ -100,12 +97,14 @@ namespace PiRhoSoft.Utilities.Editor
 		public IconButton AddHeaderButton(Texture icon, string tooltip, string ussClassName, Action action)
 		{
 			var button = new IconButton(action) { image = icon, tooltip = tooltip };
-			button.AddToClassList(HeaderButtonUssClassName);
+			button.AddToClassList(HEADER_BUTTON_USS_CLASS_NAME);
 
 			if (!string.IsNullOrEmpty(ussClassName))
-				button.AddToClassList(ussClassName);
+            {
+                button.AddToClassList(ussClassName);
+            }
 
-			HeaderButtons.Add(button);
+            HeaderButtons.Add(button);
 			return button;
 		}
 
@@ -159,27 +158,33 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void BuildUi()
 		{
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
+            
+#if UNITY_2021_1_OR_NEWER
+            this.style.marginRight = -2;
+#else
+            this.style.marginRight = 3;
+#endif
 
 			Header = new VisualElement();
-			Header.AddToClassList(HeaderUssClassName);
+			Header.AddToClassList(HEADER_USS_CLASS_NAME);
 			hierarchy.Add(Header);
 
-			_collapseButton = new IconButton(() => IsCollapsed = !IsCollapsed) { image = CollapseIcon.Texture, tooltip = CollapseTooltip };
-			_collapseButton.AddToClassList(CollapseButtonUssClassName);
+            _collapseButton = new IconButton(() => IsCollapsed = !IsCollapsed) { image = CollapseIcon.Texture };
+			_collapseButton.AddToClassList(COLLAPSE_BUTTON_USS_CLASS_NAME);
 			Header.Add(_collapseButton);
 
 			_labelElement = new Label();
-			_labelElement.AddToClassList(LabelUssClassName);
+			_labelElement.AddToClassList(LABEL_USS_CLASS_NAME);
 			Header.Add(_labelElement);
 
 			HeaderButtons = new VisualElement();
-			HeaderButtons.AddToClassList(HeaderButtonsUssClassName);
+			HeaderButtons.AddToClassList(HEADER_BUTTONS_USS_CLASS_NAME);
 			Header.Add(HeaderButtons);
 
 			Content = new VisualElement();
-			Content.AddToClassList(ContentUssClassName);
+			Content.AddToClassList(CONTENT_USS_CLASS_NAME);
 			hierarchy.Add(Content);
 
 			UpdateCollapse();
@@ -188,17 +193,16 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void UpdateCollapse()
 		{
-			EnableInClassList(CollapsableUssClassName, _isCollapsable);
-			EnableInClassList(ExpandedUssClassName, !_isCollapsed);
-			EnableInClassList(CollapsedUssClassName, _isCollapsed);
+			EnableInClassList(COLLAPSABLE_USS_CLASS_NAME, _isCollapsable);
+			EnableInClassList(EXPANDED_USS_CLASS_NAME, !_isCollapsed);
+			EnableInClassList(COLLAPSED_USS_CLASS_NAME, _isCollapsed);
 
 			_collapseButton.image = _isCollapsed ? ExpandIcon.Texture : CollapseIcon.Texture;
-			_collapseButton.tooltip = _isCollapsed ? ExpandTooltip : CollapseTooltip;
 		}
 
 		private void UpdateLabel()
 		{
-			_labelElement.EnableInClassList(NoLabelUssClassName, string.IsNullOrEmpty(_label));
+			_labelElement.EnableInClassList(NO_LABEL_USS_CLASS_NAME, string.IsNullOrEmpty(_label));
 			_labelElement.text = _label;
 			_labelElement.tooltip = _tooltip;
 		}
@@ -218,15 +222,22 @@ namespace PiRhoSoft.Utilities.Editor
 			SetCollapsedWithoutNotify(!newValue);
 		}
 
-		protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+#if UNITY_2023_2_OR_NEWER
+		protected override void HandleEventBubbleUp(EventBase evt)
 		{
-			base.ExecuteDefaultActionAtTarget(evt);
-
+			base.HandleEventBubbleUp(evt);
+#else
+        protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+        {
+            base.ExecuteDefaultActionAtTarget(evt);
+#endif
+            
 			if (this.TryGetPropertyBindEvent(evt, out var property))
 			{
 				// TODO: Support binding expanded state directly to a bool?
-
+                
 				BindingExtensions.CreateBind(this, property, GetExpandedProperty, SetExpandedProperty, CompareExpandedProperties);
+
 				Label =_label ?? property.displayName;
 				Tooltip = _tooltip ?? property.GetTooltip();
 
@@ -270,14 +281,14 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			private readonly UxmlStringAttributeDescription _label = new UxmlStringAttributeDescription { name = "label" };
 			private readonly UxmlStringAttributeDescription _tooltip = new UxmlStringAttributeDescription { name = "tooltip" };
-			private readonly UxmlBoolAttributeDescription _collapsable = new UxmlBoolAttributeDescription { name = "is-collapsable", defaultValue = DefaultIsCollapsable };
-			private readonly UxmlBoolAttributeDescription _collapsed = new UxmlBoolAttributeDescription { name = "is-collapsed", defaultValue = DefaultIsCollapsed };
+			private readonly UxmlBoolAttributeDescription _collapsable = new UxmlBoolAttributeDescription { name = "is-collapsable", defaultValue = DEFAULT_IS_COLLAPSABLE };
+			private readonly UxmlBoolAttributeDescription _collapsed = new UxmlBoolAttributeDescription { name = "is-collapsed", defaultValue = DEFAULT_IS_COLLAPSED };
 
 			public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
 			{
 				base.Init(ve, bag, cc);
 
-				var frame = ve as Frame;
+				var frame = (Frame)ve;
 				frame.Label = _label.GetValueFromBag(bag, cc);
 				frame.Tooltip = _tooltip.GetValueFromBag(bag, cc);
 				frame.IsCollapsable = _collapsable.GetValueFromBag(bag, cc);

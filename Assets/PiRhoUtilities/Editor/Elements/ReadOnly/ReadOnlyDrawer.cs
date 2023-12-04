@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
-	class ReadOnlyDrawer : PropertyDrawer
+    internal class ReadOnlyDrawer : PropertyDrawer
 	{
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{

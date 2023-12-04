@@ -4,15 +4,15 @@ using System.Linq;
 
 namespace PiRhoSoft.Utilities
 {
-	public class HierarchyPool<BaseType>
-		where BaseType : class
+	public class HierarchyPool<TBaseType>
+		where TBaseType : class
 	{
 		private Dictionary<Type, ISubclassPool> _pools = new Dictionary<Type, ISubclassPool>();
 
-		public void Register<KeyType, Type>(Func<Type> creator, int capacity = ClassPool.DefaultCapacity, int growth = ClassPool.DefaultGrowth)
-			where Type : class, BaseType
+		public void Register<TKeyType, TYpe>(Func<TYpe> creator, int capacity = ClassPool.DEFAULT_CAPACITY, int growth = ClassPool.DEFAULT_GROWTH)
+			where TYpe : class, TBaseType
 		{
-			_pools.Add(typeof(KeyType), new SubclassPool<Type>(creator, capacity, growth));
+			_pools.Add(typeof(TKeyType), new SubclassPool<TYpe>(creator, capacity, growth));
 		}
 
 		public List<ClassPoolInfo> GetPoolInfo()
@@ -28,20 +28,20 @@ namespace PiRhoSoft.Utilities
 				.ToList();
 		}
 
-		public BaseType Reserve(Type type)
+		public TBaseType Reserve(Type type)
 		{
 			var pool = GetPool(type);
 			return pool?.Reserve();
 		}
 
-		public Type Reserve<Type>()
-			where Type : class, BaseType
+		public TYpe Reserve<TYpe>()
+			where TYpe : class, TBaseType
 		{
-			var pool = GetPool(typeof(Type));
-			return pool?.Reserve() as Type;
+			var pool = GetPool(typeof(TYpe));
+			return pool?.Reserve() as TYpe;
 		}
 
-		public void Release(BaseType item)
+		public void Release(TBaseType item)
 		{
 			var pool = GetPool(item.GetType());
 			pool?.Release(item);
@@ -52,25 +52,25 @@ namespace PiRhoSoft.Utilities
 			bool IsRegistered { get; }
 			int ReservedCount { get; }
 			int FreeCount { get; }
-			BaseType Reserve();
-			void Release(BaseType item);
+			TBaseType Reserve();
+			void Release(TBaseType item);
 		}
 
-		private class SubclassPool<Type> : ClassPool<Type>, ISubclassPool
-			where Type : class, BaseType
+		private class SubclassPool<TYpe> : ClassPool<TYpe>, ISubclassPool
+			where TYpe : class, TBaseType
 		{
 			public bool IsRegistered => true;
-			BaseType ISubclassPool.Reserve() => Reserve();
-			void ISubclassPool.Release(BaseType item) => Release((Type)item);
+			TBaseType ISubclassPool.Reserve() => Reserve();
+			void ISubclassPool.Release(TBaseType item) => Release((TYpe)item);
 
-			public SubclassPool(Func<Type> creator, int capacity, int growth) : base(creator, capacity, growth) { }
+			public SubclassPool(Func<TYpe> creator, int capacity, int growth) : base(creator, capacity, growth) { }
 		}
 
 		private class GenericSubclassPool : ClassPool<object>, ISubclassPool
 		{
 			public bool IsRegistered => false;
-			BaseType ISubclassPool.Reserve() => Reserve() as BaseType;
-			void ISubclassPool.Release(BaseType item) => Release(item);
+			TBaseType ISubclassPool.Reserve() => Reserve() as TBaseType;
+			void ISubclassPool.Release(TBaseType item) => Release(item);
 
 			public GenericSubclassPool(Type type) : base(() => Activator.CreateInstance(type)) {}
 		}
@@ -84,7 +84,7 @@ namespace PiRhoSoft.Utilities
 
 				// TODO: Figure out exactly what happens and handle when type has not been included in the build.
 
-				if (typeof(BaseType).IsAssignableFrom(type) && type.GetConstructor(Type.EmptyTypes) != null)
+				if (typeof(TBaseType).IsAssignableFrom(type) && type.GetConstructor(Type.EmptyTypes) != null)
 					pool = new GenericSubclassPool(type);
 				else
 					pool = null;

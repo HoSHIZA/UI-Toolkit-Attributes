@@ -7,7 +7,7 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string UssClassName = "pirho-field-container";
+		public const string USS_CLASS_NAME = "pirho-field-container";
 
 		#endregion
 
@@ -28,7 +28,7 @@ namespace PiRhoSoft.Utilities.Editor
 			SetLabel(label);
 
 			AddToClassList(BaseFieldExtensions.UssClassName);
-			AddToClassList(UssClassName);
+			AddToClassList(USS_CLASS_NAME);
 		}
 
 		public void SetLabel(string label)

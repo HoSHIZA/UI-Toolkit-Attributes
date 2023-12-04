@@ -4,7 +4,7 @@
 	{
 		public bool ShowMemberLabels { get; private set; }
 
-		public InlineAttribute(bool showMemberLabels = true) : base(ControlPhase, 0)
+		public InlineAttribute(bool showMemberLabels = true) : base(CONTROL_PHASE, 0)
 		{
 			ShowMemberLabels = showMemberLabels;
 		}

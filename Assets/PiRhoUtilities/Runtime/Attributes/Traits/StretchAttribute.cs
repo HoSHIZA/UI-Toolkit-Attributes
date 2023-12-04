@@ -2,7 +2,7 @@
 {
 	public class StretchAttribute : PropertyTraitAttribute
 	{
-		public StretchAttribute() : base(FieldPhase, 0)
+		public StretchAttribute() : base(FIELD_PHASE, 0)
 		{
 		}
 	}

@@ -6,11 +6,11 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(CustomLabelAttribute))]
-	class CustomLabelDrawer : PropertyDrawer
+    internal class CustomLabelDrawer : PropertyDrawer
 	{
-		private const string _invalidSourceError = "(PUCLDIS) invalid value source for CustomLabelAttribute on field '{0}': a string field, method, or property named '{1}' could not be found";
+		private const string INVALID_SOURCE_ERROR = "(PUCLDIS) invalid value source for CustomLabelAttribute on field '{0}': a string field, method, or property named '{1}' could not be found";
 
-		private static readonly string[] _labelClasses = new string[] { PropertyField.labelUssClassName, BaseFieldExtensions.LabelUssClassName, Frame.LabelUssClassName };
+		private static readonly string[] _labelClasses = new string[] { PropertyField.labelUssClassName, BaseFieldExtensions.LabelUssClassName, Frame.LABEL_USS_CLASS_NAME };
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -22,12 +22,14 @@ namespace PiRhoSoft.Utilities.Editor
 				var label = element.Q<Label>(className: className);
 				if (label != null)
 				{
-					void setLabel(string value) => label.text = value;
+					void SetLabel(string value) => label.text = value;
 
-					if (!ReflectionHelper.SetupValueSourceCallback(labelAttribute.LabelSource, fieldInfo.DeclaringType, property, label, labelAttribute.Label, labelAttribute.AutoUpdate, setLabel))
-						Debug.LogWarningFormat(_invalidSourceError, property.propertyPath, labelAttribute.LabelSource);
+					if (!ReflectionHelper.SetupValueSourceCallback(labelAttribute.LabelSource, fieldInfo.DeclaringType, property, label, labelAttribute.Label, labelAttribute.AutoUpdate, SetLabel))
+                    {
+                        Debug.LogWarningFormat(INVALID_SOURCE_ERROR, property.propertyPath, labelAttribute.LabelSource);
+                    }
 
-					break;
+                    break;
 				}
 			}
 

@@ -13,17 +13,27 @@ namespace PiRhoSoft.Utilities.Editor
 		public virtual void Watch(SerializedProperty property)
 		{
 			if (this.IsBound())
-				binding.Release();
+            {
+                binding.Release();
+            }
 
-			Property = property;
+            Property = property;
 
 			if (property != null)
-				this.BindProperty(property);
-		}
+            {
+                this.BindProperty(property);
+            }
+        }
 
-		protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+#if UNITY_2023_2_OR_NEWER
+		protected override void HandleEventBubbleUp(EventBase evt)
 		{
-			base.ExecuteDefaultActionAtTarget(evt);
+			base.HandleEventBubbleUp(evt);
+#else
+        protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+        {
+            base.ExecuteDefaultActionAtTarget(evt);
+#endif
 
 			if (this.TryGetPropertyBindEvent(evt, out var property))
 			{
@@ -40,8 +50,8 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Log Messages
 
-		private const string _invalidWatcherError = "(PUEPWIW) invalid type '{0}' for PropertyWatcher: PropertyWatcher can only be used with types that have a corresponding SerializedPropertyType";
-		private const string _invalidPropertyError = "(PUEPWIP) invalid property '{0}' for PropertyWatcher: the property is type '{1}' but should be type '{2}'";
+		private const string INVALID_WATCHER_ERROR = "(PUEPWIW) invalid type '{0}' for PropertyWatcher: PropertyWatcher can only be used with types that have a corresponding SerializedPropertyType";
+		private const string INVALID_PROPERTY_ERROR = "(PUEPWIP) invalid property '{0}' for PropertyWatcher: the property is type '{1}' but should be type '{2}'";
 
 		#endregion
 
@@ -72,20 +82,30 @@ namespace PiRhoSoft.Utilities.Editor
 					var requiredType = SerializedPropertyExtensions.GetPropertyType<T>();
 
 					if (requiredType == SerializedPropertyType.Generic)
-						Debug.LogWarningFormat(_invalidWatcherError, typeof(T).Name); // TODO: this will also trigger when T is intended to be a ManagedReference type
-					else
-						Debug.LogWarningFormat(_invalidPropertyError, property.propertyPath, property.propertyType, requiredType);
+                    {
+                        Debug.LogWarningFormat(INVALID_WATCHER_ERROR, typeof(T).Name); // TODO: this will also trigger when T is intended to be a ManagedReference type
+                    }
+                    else
+                    {
+                        Debug.LogWarningFormat(INVALID_PROPERTY_ERROR, property.propertyPath, property.propertyType, requiredType);
+                    }
 
-					base.Watch(null);
+                    base.Watch(null);
 				}
 			}
 
 			base.Watch(property);
 		}
 
-		protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+#if UNITY_2023_2_OR_NEWER
+		protected override void HandleEventBubbleUp(EventBase evt)
 		{
-			base.ExecuteDefaultActionAtTarget(evt);
+			base.HandleEventBubbleUp(evt);
+#else
+        protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+        {
+            base.ExecuteDefaultActionAtTarget(evt);
+#endif
 
 			if (!evt.isPropagationStopped && this.TryGetPropertyBindEvent(evt, out var property))
 			{

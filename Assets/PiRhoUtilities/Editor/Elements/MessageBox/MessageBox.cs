@@ -8,22 +8,22 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Log Messages
 
-		private const string _invalidTypeWarning = "(PUEMBIT) invalid message type '{0}' for MessageBox: message-type must be one of 'Info', 'Warning', or 'Error'";
+		private const string INVALID_TYPE_WARNING = "(PUEMBIT) invalid message type '{0}' for MessageBox: message-type must be one of 'Info', 'Warning', or 'Error'";
 
 		#endregion
 
 		#region Class Names
 
-		public const string Stylesheet = "MessageBox.uss";
-		public const string UssClassName = "pirho-message-box";
-		public const string ImageUssClassName = UssClassName + "__image";
-		public const string LabelUssClassName = UssClassName + "__label";
+		public const string STYLESHEET = "MessageBox.uss";
+		public const string USS_CLASS_NAME = "pirho-message-box";
+		public const string IMAGE_USS_CLASS_NAME = USS_CLASS_NAME + "__image";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
 
 		#endregion
 
 		#region Defaults
 
-		public const MessageBoxType DefaultType = MessageBoxType.Info;
+		public const MessageBoxType DEFAULT_TYPE = MessageBoxType.Info;
 
 		#endregion
 
@@ -32,7 +32,7 @@ namespace PiRhoSoft.Utilities.Editor
 		private readonly Image _image;
 		private readonly TextElement _label;
 
-		private MessageBoxType _type = DefaultType;
+		private MessageBoxType _type = DEFAULT_TYPE;
 
 		#endregion
 
@@ -57,17 +57,17 @@ namespace PiRhoSoft.Utilities.Editor
 			set	{ ((INotifyValueChanged<string>)_label).SetValueWithoutNotify(value); }
 		}
 
-		public MessageBox() : this(DefaultType, string.Empty)
+		public MessageBox() : this(DEFAULT_TYPE, string.Empty)
 		{
 		}
 
 		public MessageBox(MessageBoxType type, string message)
 		{
 			_image = new Image();
-			_image.AddToClassList(ImageUssClassName);
+			_image.AddToClassList(IMAGE_USS_CLASS_NAME);
 
 			_label = new TextElement();
-			_label.AddToClassList(LabelUssClassName);
+			_label.AddToClassList(LABEL_USS_CLASS_NAME);
 
 			Type = type;
 			Message = message;
@@ -75,8 +75,8 @@ namespace PiRhoSoft.Utilities.Editor
 			Add(_image);
 			Add(_label);
 
-			this.AddStyleSheet(Stylesheet);
-			AddToClassList(UssClassName);
+			this.AddStyleSheet(STYLESHEET);
+			AddToClassList(USS_CLASS_NAME);
 		}
 
 		#endregion
@@ -115,8 +115,10 @@ namespace PiRhoSoft.Utilities.Editor
 				var messageType = _messageType.GetValueFromBag(bag, cc);
 
 				if (!string.IsNullOrEmpty(messageType))
-					field.Type = ParseValue(messageType);
-			}
+                {
+                    field.Type = ParseValue(messageType);
+                }
+            }
 
 			private MessageBoxType ParseValue(string valueName)
 			{
@@ -126,8 +128,8 @@ namespace PiRhoSoft.Utilities.Editor
 				}
 				catch
 				{
-					Debug.LogWarningFormat(_invalidTypeWarning, valueName);
-					return DefaultType;
+					Debug.LogWarningFormat(INVALID_TYPE_WARNING, valueName);
+					return DEFAULT_TYPE;
 				}
 			}
 		}

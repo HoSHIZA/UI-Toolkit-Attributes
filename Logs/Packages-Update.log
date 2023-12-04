@@ -52,3 +52,13 @@ Update Mode: updateDependencies
 
 The following packages were updated:
   com.unity.test-framework from version 1.1.8 to 1.1.9
+
+=== Mon Dec  4 12:41:54 2023
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were added:
+  com.unity.ide.visualstudio@2.0.17
+The following packages were updated:
+  com.unity.test-framework from version 1.1.11 to 1.1.33

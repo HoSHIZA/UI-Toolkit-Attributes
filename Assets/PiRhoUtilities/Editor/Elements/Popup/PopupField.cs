@@ -9,24 +9,29 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string Stylesheet = "Popup/PopupStyle.uss";
-		public const string UssClassName = "pirho-popup-field";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string InputUssClassName = UssClassName + "__input";
+		public const string STYLESHEET = "Popup/PopupStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-popup-field";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string INPUT_USS_CLASS_NAME = USS_CLASS_NAME + "__input";
 
 		#endregion
 
 		#region Log Messages
 
-		private const string _invalidValuesError = "(PUPFIV) invalid values for PopupField: Values must not be null and must have a Count > 0";
-		private const string _invalidOptionsWarning = "(PUPFIO) invalid Options for PopupField: the number of Options does not match the number of Values";
-		private const string _missingValueWarning = "(PUPFMV) the value of PopupField did not exsist in the list of values: Changing to the first valid value";
+		private const string INVALID_VALUES_ERROR = "(PUPFIV) invalid values for PopupField: Values must not be null and must have a Count > 0";
+		private const string INVALID_OPTIONS_WARNING = "(PUPFIO) invalid Options for PopupField: the number of Options does not match the number of Values";
+		private const string MISSING_VALUE_WARNING = "(PUPFMV) the value of PopupField did not exsist in the list of values: Changing to the first valid value";
 
 		#endregion
 
 		#region Private Members
 
-		private UnityEditor.UIElements.PopupField<T> _popup;
+#if UNITY_2022_1_OR_NEWER
+		private UnityEngine.UIElements.PopupField<T> _popup;
+#else
+        private UnityEditor.UIElements.PopupField<T> _popup;
+#endif
+
 		private List<T> _values;
 		private List<string> _options;
 
@@ -43,7 +48,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public PopupField(string label) : base(label, null)
 		{
-			AddToClassList(UssClassName);
+			AddToClassList(USS_CLASS_NAME);
 		}
 
 		public PopupField(string label, List<T> values, List<string> options = null) : this(label)
@@ -67,20 +72,22 @@ namespace PiRhoSoft.Utilities.Editor
 				if (_values != null && _values.Count > 0)
 				{
 					if (!ValidateValue(value))
-						base.value = _values[0];
+                    {
+                        base.value = _values[0];
+                    }
 
-					CreatePopup();
+                    CreatePopup();
 				}
 				else
 				{
 					_values = null;
-					Debug.LogErrorFormat(_invalidValuesError);
+					Debug.LogErrorFormat(INVALID_VALUES_ERROR);
 				}
 
 				if (_options != null && _values != null && _options.Count != _values.Count)
 				{
 					_options = null;
-					Debug.LogWarningFormat(_invalidOptionsWarning);
+					Debug.LogWarningFormat(INVALID_OPTIONS_WARNING);
 				}
 			}
 		}
@@ -95,9 +102,11 @@ namespace PiRhoSoft.Utilities.Editor
 			else
 			{
 				if (_values != null)
-					base.SetValueWithoutNotify(_values[0]);
+                {
+                    base.SetValueWithoutNotify(_values[0]);
+                }
 
-				Debug.LogWarningFormat(_missingValueWarning);
+                Debug.LogWarningFormat(MISSING_VALUE_WARNING);
 			}
 		}
 
@@ -107,14 +116,21 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void CreatePopup()
 		{
-			_popup = new UnityEditor.UIElements.PopupField<T>(_values, value, Format, Format);
-			_popup.AddToClassList(InputUssClassName);
+#if UNITY_2022_1_OR_NEWER
+            _popup = new UnityEngine.UIElements.PopupField<T>(_values, value, Format, Format);
+#else
+            _popup = new UnityEditor.UIElements.PopupField<T>(_values, value, Format, Format);
+#endif
+            
+			_popup.AddToClassList(INPUT_USS_CLASS_NAME);
 			_popup.RegisterCallback<ChangeEvent<T>>(evt =>
 			{
 				if (_values.Contains(evt.newValue)) // ChangeEvent<string> is posted by _popup's TextElement but target is still _popup for some reason
-					base.value = evt.newValue;
+                {
+                    base.value = evt.newValue;
+                }
 
-				evt.StopImmediatePropagation();
+                evt.StopImmediatePropagation();
 			});
 
 			this.SetVisualInput(_popup);
@@ -126,26 +142,28 @@ namespace PiRhoSoft.Utilities.Editor
 			_popup = null;
 		}
 
-		private string Format(T value)
+		private string Format(T val)
 		{
-			var index = _values.IndexOf(value);
+			var index = _values.IndexOf(val);
 
 			if (_options == null || index < 0 || index >= _options.Count)
-				return value.ToString();
+            {
+                return val.ToString();
+            }
 
-			return _options[index];
+            return _options[index];
 		}
 
-		private bool ValidateValue(T value)
+		private bool ValidateValue(T val)
 		{
-			return _values != null && _values.Contains(value);
+			return _values != null && _values.Contains(val);
 		}
 
 		#endregion
 
 		#region UXML Support
 
-		public class UxmlTraits<AttributeType> : BaseFieldTraits<T, AttributeType> where AttributeType : TypedUxmlAttributeDescription<T>, new()
+		public class UxmlTraits<TAttributeType> : BaseFieldTraits<T, TAttributeType> where TAttributeType : TypedUxmlAttributeDescription<T>, new()
 		{
 			private readonly UxmlStringAttributeDescription _options = new UxmlStringAttributeDescription { name = "options" };
 			private readonly UxmlStringAttributeDescription _values = new UxmlStringAttributeDescription { name = "values" };
@@ -154,7 +172,7 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				base.Init(element, bag, cc);
 
-				var field = element as PopupField<T>;
+				var field = (PopupField<T>)element;
 				var options = _options.GetValueFromBag(bag, cc).Split(',');
 				var values = _values.GetValueFromBag(bag, cc).Split(',');
 
@@ -183,7 +201,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		protected override List<int> ParseValues(string[] from)
 		{
-			return from.Select(f => int.TryParse(f, out var value) ? value : default).ToList();
+			return from.Select(f => int.TryParse(f, out var result) ? result : default).ToList();
 		}
 	}
 
@@ -198,7 +216,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		protected override List<float> ParseValues(string[] from)
 		{
-			return from.Select(f => float.TryParse(f, out var value) ? value : default).ToList();
+			return from.Select(f => float.TryParse(f, out var result) ? result : default).ToList();
 		}
 	}
 

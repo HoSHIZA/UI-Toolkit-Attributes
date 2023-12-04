@@ -4,16 +4,16 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(StretchAttribute))]
-	class StretchDrawer : PropertyDrawer
+    internal class StretchDrawer : PropertyDrawer
 	{
-		public const string Stylesheet = "StretchStyle.uss";
-		public const string UssClassName = "pirho-stretch";
+		public const string STYLESHEET = "StretchStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-stretch";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
 			var element = this.CreateNextElement(property);
-			element.AddToClassList(UssClassName);
-			element.AddStyleSheet(Stylesheet);
+			element.AddToClassList(USS_CLASS_NAME);
+			element.AddStyleSheet(STYLESHEET);
 
 			return element;
 		}

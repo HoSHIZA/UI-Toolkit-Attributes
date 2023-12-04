@@ -9,9 +9,11 @@ namespace PiRhoSoft.Utilities
 			var result = 1;
 
 			for (var i = 0; i < exponent; i++)
-				result *= value;
+            {
+                result *= value;
+            }
 
-			return result;
+            return result;
 		}
 
 		public static int Snap(int value, int snap)

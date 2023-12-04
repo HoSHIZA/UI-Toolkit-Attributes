@@ -2,7 +2,7 @@
 {
 	public class MultilineAttribute : PropertyTraitAttribute
 	{
-		public MultilineAttribute() : base(FieldPhase, 0)
+		public MultilineAttribute() : base(FIELD_PHASE, 0)
 		{
 		}
 	}

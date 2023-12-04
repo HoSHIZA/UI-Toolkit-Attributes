@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -6,23 +7,23 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(DictionaryAttribute))]
-	class DictionaryDrawer : PropertyDrawer
+    internal class DictionaryDrawer : PropertyDrawer
 	{
-		private const string _invalidTypeWarning = "(PUDDIT) invalid type for DictionaryAttribute on field '{0}': Dictionary can only be applied to SerializedDictionary fields";
-		private const string _invalidAddCallbackWarning = "(PUDDIAC) invalid add callback for DictionaryAttribute on field '{0}': The method must accept a string or have no parameters";
-		private const string _invalidAddReferenceCallbackWarning = "(PUDDIAC) invalid add callback for DictionaryAttribute on field '{0}': The method must accept a string or have no parameters";
-		private const string _invalidRemoveCallbackWarning = "(PUDDIRMC) invalid remove callback for DictionaryAttribute on field '{0}': The method must accept an string or have no parameters";
-		private const string _invalidReorderCallbackWarning = "(PUDDIROC) invalid reorder callback for DictionaryAttribute on field '{0}': The method must accept two ints or have no parameters";
-		private const string _invalidChangeCallbackWarning = "(PUDDICC) invalid change callback for DictionaryAttribute on field '{0}': The method must have no parameters";
+		private const string INVALID_TYPE_WARNING = "(PUDDIT) invalid type for DictionaryAttribute on field '{0}': Dictionary can only be applied to SerializedDictionary fields";
+		private const string INVALID_ADD_CALLBACK_WARNING = "(PUDDIAC) invalid add callback for DictionaryAttribute on field '{0}': The method must accept a string or have no parameters";
+		private const string INVALID_ADD_REFERENCE_CALLBACK_WARNING = "(PUDDIAC) invalid add callback for DictionaryAttribute on field '{0}': The method must accept a string or have no parameters";
+		private const string INVALID_REMOVE_CALLBACK_WARNING = "(PUDDIRMC) invalid remove callback for DictionaryAttribute on field '{0}': The method must accept an string or have no parameters";
+		private const string INVALID_REORDER_CALLBACK_WARNING = "(PUDDIROC) invalid reorder callback for DictionaryAttribute on field '{0}': The method must accept two ints or have no parameters";
+		private const string INVALID_CHANGE_CALLBACK_WARNING = "(PUDDICC) invalid change callback for DictionaryAttribute on field '{0}': The method must have no parameters";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
-			var keys = property.FindPropertyRelative(SerializedDictionary<string, int>.KeyProperty);
-			var values = property.FindPropertyRelative(SerializedDictionary<string, int>.ValueProperty);
+			var keys = property.FindPropertyRelative(SerializedDictionary<string, int>.KEY_PROPERTY);
+			var values = property.FindPropertyRelative(SerializedDictionary<string, int>.VALUE_PROPERTY);
 
-			if (keys != null && keys.isArray && values != null && values.isArray && keys.arrayElementType == "string")
-			{
-				var isReference = fieldInfo.FieldType.BaseType.GetGenericTypeDefinition() == typeof(ReferenceDictionary<,>);
+			if (keys is { isArray: true } && values is { isArray: true } && keys.arrayElementType == "string")
+            {
+                var isReference = fieldInfo.FieldType.BaseType.GetGenericTypeDefinition() == typeof(ReferenceDictionary<,>);
 				var referenceType = isReference ? fieldInfo.GetFieldType() : null;
 				var declaringType = fieldInfo.DeclaringType;
 				var dictionaryAttribute = attribute as DictionaryAttribute;
@@ -39,13 +40,17 @@ namespace PiRhoSoft.Utilities.Editor
 				// TODO: other stuff from ConfigureField
 
 				if (!string.IsNullOrEmpty(dictionaryAttribute.AddPlaceholder))
-					field.AddPlaceholder = dictionaryAttribute.AddPlaceholder;
+                {
+                    field.AddPlaceholder = dictionaryAttribute.AddPlaceholder;
+                }
 
-				if (!string.IsNullOrEmpty(dictionaryAttribute.EmptyLabel))
-					field.EmptyLabel = dictionaryAttribute.EmptyLabel;
+                if (!string.IsNullOrEmpty(dictionaryAttribute.EmptyLabel))
+                {
+                    field.EmptyLabel = dictionaryAttribute.EmptyLabel;
+                }
 
-				field.AllowAdd = dictionaryAttribute.AllowAdd != DictionaryAttribute.Never;
-				field.AllowRemove = dictionaryAttribute.AllowRemove != DictionaryAttribute.Never;
+                field.AllowAdd = dictionaryAttribute.AllowAdd != DictionaryAttribute.NEVER;
+				field.AllowRemove = dictionaryAttribute.AllowRemove != DictionaryAttribute.NEVER;
 				field.AllowReorder = dictionaryAttribute.AllowReorder;
 
 				SetupAdd(dictionaryAttribute, proxy, field, property, declaringType, isReference);
@@ -59,7 +64,7 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 			else
 			{
-				Debug.LogWarningFormat(_invalidTypeWarning, property.propertyPath);
+				Debug.LogWarningFormat(INVALID_TYPE_WARNING, property.propertyPath);
 				return new FieldContainer(property.displayName);
 			}
 		}
@@ -91,10 +96,14 @@ namespace PiRhoSoft.Utilities.Editor
 						{
 							var addCallbackKey = ReflectionHelper.CreateActionCallback<string>(dictionaryAttribute.AddCallback, declaringType, property);
 							if (addCallbackKey != null)
-								field.RegisterCallback<DictionaryField.ItemAddedEvent>(evt => addCallbackKey.Invoke(evt.Key));
-							else
-								Debug.LogWarningFormat(_invalidAddCallbackWarning, property.propertyPath);
-						}
+                            {
+                                field.RegisterCallback<DictionaryField.ItemAddedEvent>(evt => addCallbackKey.Invoke(evt.Key));
+                            }
+                            else
+                            {
+                                Debug.LogWarningFormat(INVALID_ADD_CALLBACK_WARNING, property.propertyPath);
+                            }
+                        }
 					}
 					else
 					{
@@ -107,10 +116,14 @@ namespace PiRhoSoft.Utilities.Editor
 						{
 							var addCallbackKey = ReflectionHelper.CreateActionCallback<string>(dictionaryAttribute.AddCallback, declaringType, property);
 							if (addCallbackKey != null)
-								field.RegisterCallback<DictionaryField.ItemAddedEvent>(evt => addCallbackKey.Invoke(evt.Key));
-							else
-								Debug.LogWarningFormat(_invalidAddReferenceCallbackWarning, property.propertyPath);
-						}
+                            {
+                                field.RegisterCallback<DictionaryField.ItemAddedEvent>(evt => addCallbackKey.Invoke(evt.Key));
+                            }
+                            else
+                            {
+                                Debug.LogWarningFormat(INVALID_ADD_REFERENCE_CALLBACK_WARNING, property.propertyPath);
+                            }
+                        }
 					}
 				}
 			}
@@ -141,10 +154,14 @@ namespace PiRhoSoft.Utilities.Editor
 					{
 						var removeCallbackKey = ReflectionHelper.CreateActionCallback<string>(dictionaryAttribute.RemoveCallback, declaringType, property);
 						if (removeCallbackKey != null)
-							field.RegisterCallback<DictionaryField.ItemRemovedEvent>(evt => removeCallbackKey.Invoke(evt.Key));
-						else
-							Debug.LogWarningFormat(_invalidRemoveCallbackWarning, property.propertyPath);
-					}
+                        {
+                            field.RegisterCallback<DictionaryField.ItemRemovedEvent>(evt => removeCallbackKey.Invoke(evt.Key));
+                        }
+                        else
+                        {
+                            Debug.LogWarningFormat(INVALID_REMOVE_CALLBACK_WARNING, property.propertyPath);
+                        }
+                    }
 				}
 			}
 		}
@@ -164,10 +181,14 @@ namespace PiRhoSoft.Utilities.Editor
 					{
 						var reorderCallbackFromTo = ReflectionHelper.CreateActionCallback<int, int>(dictionaryAttribute.ReorderCallback, declaringType, property);
 						if (reorderCallbackFromTo != null)
-							field.RegisterCallback<DictionaryField.ItemReorderedEvent>(evt => reorderCallbackFromTo.Invoke(evt.FromIndex, evt.ToIndex));
-						else
-							Debug.LogWarningFormat(_invalidReorderCallbackWarning, property.propertyPath);
-					}
+                        {
+                            field.RegisterCallback<DictionaryField.ItemReorderedEvent>(evt => reorderCallbackFromTo.Invoke(evt.FromIndex, evt.ToIndex));
+                        }
+                        else
+                        {
+                            Debug.LogWarningFormat(INVALID_REORDER_CALLBACK_WARNING, property.propertyPath);
+                        }
+                    }
 				}
 			}
 		}
@@ -178,10 +199,14 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				var changeCallback = ReflectionHelper.CreateActionCallback(dictionaryAttribute.ChangeCallback, declaringType, property);
 				if (changeCallback != null)
-					field.RegisterCallback<DictionaryField.ItemsChangedEvent>(evt => changeCallback.Invoke());
-				else
-					Debug.LogWarningFormat(_invalidChangeCallbackWarning, property.propertyPath);
-			}
+                {
+                    field.RegisterCallback<DictionaryField.ItemsChangedEvent>(evt => changeCallback.Invoke());
+                }
+                else
+                {
+                    Debug.LogWarningFormat(INVALID_CHANGE_CALLBACK_WARNING, property.propertyPath);
+                }
+            }
 		}
 	}
 }

@@ -6,13 +6,13 @@ using UnityEngine;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class PickerProvider<ValueType> : ScriptableObject, ISearchWindowProvider where ValueType : class
+	public class PickerProvider<TValue> : ScriptableObject, ISearchWindowProvider where TValue : class
 	{
 		private string _title;
 		private List<string> _paths;
-		private List<ValueType> _items;
-		private Func<ValueType, Texture> _getIcon;
-		private Action<ValueType> _onSelected;
+		private List<TValue> _items;
+		private Func<TValue, Texture> _getIcon;
+		private Action<TValue> _onSelected;
 		private Texture2D _emptyIcon;
 
 		private void OnEnable()
@@ -27,7 +27,7 @@ namespace PiRhoSoft.Utilities.Editor
 			DestroyImmediate(_emptyIcon);
 		}
 
-		public void Setup(string title, List<string> paths, List<ValueType> items, Func<ValueType, Texture> getIcon, Action<ValueType> onSelected)
+		public void Setup(string title, List<string> paths, List<TValue> items, Func<TValue, Texture> getIcon, Action<TValue> onSelected)
 		{
 			_title = title;
 			_paths = paths;
@@ -37,8 +37,11 @@ namespace PiRhoSoft.Utilities.Editor
 		}
 
 		public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
-		{
-			var tree = new List<SearchTreeEntry> { new SearchTreeGroupEntry(new GUIContent(_title), 0) };
+        {
+            var tree = new List<SearchTreeEntry>
+            {
+                new SearchTreeGroupEntry(new GUIContent(_title), 0) 
+            };
 
 			if (_paths != null && _items != null)
 			{
@@ -89,7 +92,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)
 		{
-			_onSelected?.Invoke(searchTreeEntry.userData as ValueType);
+			_onSelected?.Invoke(searchTreeEntry.userData as TValue);
 			return true;
 		}
 	}

@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(GroupAttribute))]
-	class GroupDrawer : PropertyDrawer
+    internal class GroupDrawer : PropertyDrawer
 	{
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -28,10 +28,12 @@ namespace PiRhoSoft.Utilities.Editor
 					else if (SerializedProperty.EqualContents(property, sibling))
 					{
 						// this property is first and is responsible for drawing
-						frame = new Frame();
-						frame.Label = group.Name;
+						frame = new Frame
+                        {
+                            Label = group.Name
+                        };
 
-						var element = this.CreateNextElement(sibling);
+                        var element = this.CreateNextElement(sibling);
 						frame.Content.Add(element);
 					}
 					else

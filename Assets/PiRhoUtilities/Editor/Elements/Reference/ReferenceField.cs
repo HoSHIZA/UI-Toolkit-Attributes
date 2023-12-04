@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -15,19 +16,19 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Errors
 
-		private const string _invalidBindingError = "(PUERFIB) invalid binding '{0}' for ReferenceField: property '{1}' is type '{2}' but should be type 'ManagedReference'";
+		private const string INVALID_BINDING_ERROR = "(PUERFIB) invalid binding '{0}' for ReferenceField: property '{1}' is type '{2}' but should be type 'ManagedReference'";
 
 		#endregion
 
 		#region Class Names
 
-		public const string Stylesheet = "Reference.uss";
-		public const string UssClassName = "pirho-reference-field";
-		public const string SetUssClassName = UssClassName + "--set";
-		public const string NullUssClassName = UssClassName + "--null";
-		public const string MissingUssClassName = UssClassName + "--missing";
-		public const string SetButtonUssClassName = UssClassName + "__set-button";
-		public const string ClearButtonUssClassName = UssClassName + "__clear-button";
+		public const string STYLESHEET = "Reference.uss";
+		public const string USS_CLASS_NAME = "pirho-reference-field";
+		public const string SET_USS_CLASS_NAME = USS_CLASS_NAME + "--set";
+		public const string NULL_USS_CLASS_NAME = USS_CLASS_NAME + "--null";
+		public const string MISSING_USS_CLASS_NAME = USS_CLASS_NAME + "--missing";
+		public const string SET_BUTTON_USS_CLASS_NAME = USS_CLASS_NAME + "__set-button";
+		public const string CLEAR_BUTTON_USS_CLASS_NAME = USS_CLASS_NAME + "__clear-button";
 
 		#endregion
 
@@ -40,8 +41,8 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Labels
 
-		private const string _setButtonLabel = "Select type";
-		private const string _clearButtonLabel = "Reset to null";
+		private const string SET_BUTTON_LABEL = "Select type";
+		private const string CLEAR_BUTTON_LABEL = "Reset to null";
 
 		#endregion
 
@@ -121,9 +122,9 @@ namespace PiRhoSoft.Utilities.Editor
 			Drawer = drawer;
 		}
 
-		public void SetValueWithoutNotify(object value)
+		public void SetValueWithoutNotify(object val)
 		{
-			_value = value;
+			_value = val;
 		}
 
 		#endregion
@@ -136,14 +137,14 @@ namespace PiRhoSoft.Utilities.Editor
 			UpdateLabel();
 		}
 
-		private void SetValue(object value)
+		private void SetValue(object val)
 		{
 			var previous = _value;
 
-			if (!ReferenceEquals(previous, value))
+			if (!ReferenceEquals(previous, val))
 			{
-				SetValueWithoutNotify(value);
-				this.SendChangeEvent(previous, value);
+				SetValueWithoutNotify(val);
+				this.SendChangeEvent(previous, val);
 				Rebuild();
 			}
 		}
@@ -176,13 +177,13 @@ namespace PiRhoSoft.Utilities.Editor
 			_typeProvider = ScriptableObject.CreateInstance<TypeProvider>();
 
 			_frame = new Frame();
-			_setButton = _frame.AddHeaderButton(_setIcon.Texture, _setButtonLabel, SetButtonUssClassName, SelectType);
-			_clearButton = _frame.AddHeaderButton(_clearIcon.Texture, _clearButtonLabel, ClearButtonUssClassName, SetNull);
+			_setButton = _frame.AddHeaderButton(_setIcon.Texture, SET_BUTTON_LABEL, SET_BUTTON_USS_CLASS_NAME, SelectType);
+			_clearButton = _frame.AddHeaderButton(_clearIcon.Texture, CLEAR_BUTTON_LABEL, CLEAR_BUTTON_USS_CLASS_NAME, SetNull);
 
 			Add(_frame);
 
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
 		}
 
 		private void Rebuild()
@@ -206,9 +207,9 @@ namespace PiRhoSoft.Utilities.Editor
 				? $"{_label} ({type.Name})"
 				: _label;
 
-			EnableInClassList(SetUssClassName, _value != null);
-			EnableInClassList(NullUssClassName, _value == null);
-			EnableInClassList(MissingUssClassName, type == null);
+			EnableInClassList(SET_USS_CLASS_NAME, _value != null);
+			EnableInClassList(NULL_USS_CLASS_NAME, _value == null);
+			EnableInClassList(MISSING_USS_CLASS_NAME, type == null);
 		}
 
 		#endregion
@@ -240,33 +241,51 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Binding
 
-		protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+#if UNITY_2023_2_OR_NEWER
+		protected override void HandleEventBubbleUp(EventBase evt)
 		{
-			base.ExecuteDefaultActionAtTarget(evt);
-
+			base.HandleEventBubbleUp(evt);
+#else
+        protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+        {
+            base.ExecuteDefaultActionAtTarget(evt);
+#endif
+            
 			if (this.TryGetPropertyBindEvent(evt, out var property))
 			{
 				if (property.propertyType == SerializedPropertyType.ManagedReference)
 				{
 					BindingExtensions.CreateBind(_frame, property, GetExpandedProperty, SetExpandedProperty, CompareExpandedProperties);
-
+                    
 					if (_label == null)
-						Label = property.displayName;
+                    {
+                        Label = property.displayName;
+                    }
 
-					if (ReferenceType == null)
-						ReferenceType = property.GetManagedReferenceFieldType();
+                    if (ReferenceType == null)
+                    {
+                        ReferenceType = property.GetManagedReferenceFieldType();
+                    }
 
-					if (Drawer == null)
-						Drawer = new PropertyReferenceDrawer(property, null);
+                    if (Drawer == null)
+                    {
+                        Drawer = new PropertyReferenceDrawer(property, null);
+                    }
 
-					BindingExtensions.BindManagedReference(this, property, Rebuild);
+                    BindingExtensions.BindManagedReference(this, property, Rebuild);
 				}
 				else
 				{
-					Debug.LogErrorFormat(_invalidBindingError, bindingPath, property.propertyPath, property.propertyType);
+					Debug.LogErrorFormat(INVALID_BINDING_ERROR, bindingPath, property.propertyPath, property.propertyType);
 				}
-
+                
 				evt.StopPropagation();
+                
+#if UNITY_2023_2_OR_NEWER
+                focusController.IgnoreEvent(evt);
+#else
+                evt.PreventDefault();
+#endif
 			}
 		}
 
@@ -275,15 +294,15 @@ namespace PiRhoSoft.Utilities.Editor
 			return property.isExpanded;
 		}
 
-		private void SetExpandedProperty(SerializedProperty property, bool value)
+		private void SetExpandedProperty(SerializedProperty property, bool val)
 		{
-			property.isExpanded = value;
+			property.isExpanded = val;
 		}
 
-		private bool CompareExpandedProperties(bool value, SerializedProperty property, Func<SerializedProperty, bool> getter)
+		private bool CompareExpandedProperties(bool val, SerializedProperty property, Func<SerializedProperty, bool> getter)
 		{
 			var currentValue = getter(property);
-			return value == currentValue;
+			return val == currentValue;
 		}
 
 		#endregion
@@ -300,15 +319,17 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				base.Init(ve, bag, cc);
 
-				var field = ve as ReferenceField;
+				var field = (ReferenceField)ve;
 
 				field.Label = _label.GetValueFromBag(bag, cc);
 
 				var typeName = _type.GetValueFromBag(bag, cc);
 
 				if (!string.IsNullOrEmpty(typeName))
-					field.ReferenceType = Type.GetType(typeName, false);
-			}
+                {
+                    field.ReferenceType = Type.GetType(typeName, false);
+                }
+            }
 		}
 
 		#endregion

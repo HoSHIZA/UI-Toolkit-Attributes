@@ -9,13 +9,13 @@
 		public string MaximumSource { get; private set; }
 		public bool AutoUpdate { get; private set; }
 
-		public SliderAttribute(float minimum, float maximum) : base(ControlPhase, 0)
+		public SliderAttribute(float minimum, float maximum) : base(CONTROL_PHASE, 0)
 		{
 			Minimum = minimum;
 			Maximum = maximum;
 		}
 
-		public SliderAttribute(string minimumSource, string maximumSource, bool autoUpdate = true) : base(ControlPhase, 0)
+		public SliderAttribute(string minimumSource, string maximumSource, bool autoUpdate = true) : base(CONTROL_PHASE, 0)
 		{
 			MinimumSource = minimumSource;
 			MaximumSource = maximumSource;

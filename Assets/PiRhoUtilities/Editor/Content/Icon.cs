@@ -10,8 +10,8 @@ namespace PiRhoSoft.Utilities.Editor
 		public static readonly Icon CustomAdd = BuiltIn("Toolbar Plus More");
 		public static readonly Icon Remove = BuiltIn("Toolbar Minus");
 		public static readonly Icon Inspect = BuiltIn("UnityEditor.InspectorWindow");
-		public static readonly Icon Expanded = BuiltIn("IN foldout focus on");
-		public static readonly Icon Collapsed = BuiltIn("IN foldout focus");
+		public static readonly Icon Expanded = BuiltIn("IN foldout on");
+		public static readonly Icon Collapsed = BuiltIn("IN foldout");
 		public static readonly Icon Refresh = BuiltIn("preAudioLoopOff");
 		public static readonly Icon Load = BuiltIn("SceneLoadIn");
 		public static readonly Icon Unload = BuiltIn("SceneLoadOut");
@@ -29,9 +29,9 @@ namespace PiRhoSoft.Utilities.Editor
 		public static readonly Icon Locked = BuiltIn("LockIcon-On");
 		public static readonly Icon Unlocked = BuiltIn("LockIcon");
 
-		private const string _invalidIconError = "(PUIIII) failed to create icon texture: the built in icon {0} could not be loaded";
-		private const string _invalidDataError = "(PUIIID) failed to create icon texture: the supplied data is not a valid base 64 string";
-		private const string _invalidTextureError = "(PUIIIT) failed to create icon texture: the supplied data is not a valid texture";
+		private const string INVALID_ICON_ERROR = "(PUIIII) failed to create icon texture: the built in icon {0} could not be loaded";
+		private const string INVALID_DATA_ERROR = "(PUIIID) failed to create icon texture: the supplied data is not a valid base 64 string";
+		private const string INVALID_TEXTURE_ERROR = "(PUIIIT) failed to create icon texture: the supplied data is not a valid texture";
 
 		public static Icon BuiltIn(string name) => new Icon { _name = name };
 		public static Icon Base64(string data) => new Icon { _data = data };
@@ -46,9 +46,11 @@ namespace PiRhoSoft.Utilities.Editor
 			get
 			{
 				if (_texture == null)
-					_texture = LoadTexture();
+                {
+                    _texture = LoadTexture();
+                }
 
-				return _texture;
+                return _texture;
 			}
 		}
 
@@ -61,10 +63,14 @@ namespace PiRhoSoft.Utilities.Editor
 				var content = EditorGUIUtility.IconContent(_name);
 
 				if (content != null)
-					return content.image;
-				else
-					Debug.LogErrorFormat(_invalidIconError, _name);
-			}
+                {
+                    return content.image;
+                }
+                else
+                {
+                    Debug.LogErrorFormat(INVALID_ICON_ERROR, _name);
+                }
+            }
 			else if (!string.IsNullOrEmpty(_data))
 			{
 				var content = new Texture2D(1, 1);
@@ -75,13 +81,17 @@ namespace PiRhoSoft.Utilities.Editor
 				if (data != null)
 				{
 					if (content.LoadImage(data))
-						return content;
-					else
-						Debug.LogError(_invalidTextureError);
-				}
+                    {
+                        return content;
+                    }
+                    else
+                    {
+                        Debug.LogError(INVALID_TEXTURE_ERROR);
+                    }
+                }
 				else
 				{
-					Debug.LogError(_invalidDataError);
+					Debug.LogError(INVALID_DATA_ERROR);
 				}
 			}
 

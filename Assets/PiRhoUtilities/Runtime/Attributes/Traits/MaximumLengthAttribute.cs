@@ -6,12 +6,12 @@
 		public string MaximumLengthSource { get; private set; }
 		public bool AutoUpdate { get; private set; }
 
-		public MaximumLengthAttribute(int maximumLength) : base(ValidatePhase, 1)
+		public MaximumLengthAttribute(int maximumLength) : base(VALIDATE_PHASE, 1)
 		{
 			MaximumLength = maximumLength;
 		}
 
-		public MaximumLengthAttribute(string maximumLengthSource, bool autoUpdate = true) : base(ValidatePhase, 1)
+		public MaximumLengthAttribute(string maximumLengthSource, bool autoUpdate = true) : base(VALIDATE_PHASE, 1)
 		{
 			MaximumLengthSource = maximumLengthSource;
 			AutoUpdate = autoUpdate;

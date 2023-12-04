@@ -6,20 +6,20 @@ namespace PiRhoSoft.Utilities.Editor
 {
 	public class InlineField : VisualElement
 	{
-		public const string Stylesheet = "InlineStyle.uss";
-		public const string UssClassName = "pirho-inline";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string ChildrenUssClassName = UssClassName + "__children";
+		public const string STYLESHEET = "InlineStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-inline";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string CHILDREN_USS_CLASS_NAME = USS_CLASS_NAME + "__children";
 
 		public InlineField(SerializedProperty property, bool showMemberLabels)
 		{
 			var childContainer = new VisualElement();
-			childContainer.AddToClassList(ChildrenUssClassName);
+			childContainer.AddToClassList(CHILDREN_USS_CLASS_NAME);
 
 			if (!showMemberLabels)
 			{
 				var label = new FieldContainer(property.displayName);
-				label.AddToClassList(LabelUssClassName);
+				label.AddToClassList(LABEL_USS_CLASS_NAME);
 				Add(label);
 			}
 
@@ -27,14 +27,16 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				var field = new PropertyField(child);
 				if (!showMemberLabels)
-					field.SetFieldLabel(null);
+                {
+                    field.SetFieldLabel(null);
+                }
 
-				childContainer.Add(field);
+                childContainer.Add(field);
 			}
 
 			Add(childContainer);
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
 		}
 	}
 }

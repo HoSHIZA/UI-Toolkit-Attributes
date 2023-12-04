@@ -2,11 +2,11 @@
 {
 	public class DictionaryAttribute : PropertyTraitAttribute
 	{
-		public const string Always = "";
-		public const string Never = null;
+		public const string ALWAYS = "";
+		public const string NEVER = null;
 
-		public string AllowAdd = Always;
-		public string AllowRemove = Always;
+		public string AllowAdd = ALWAYS;
+		public string AllowRemove = ALWAYS;
 
 		public bool AllowReorder = true;
 		public bool IsCollapsable = true;
@@ -19,7 +19,7 @@
 		public string ReorderCallback = null;
 		public string ChangeCallback = null;
 
-		public DictionaryAttribute() : base(ContainerPhase, 0)
+		public DictionaryAttribute() : base(CONTAINER_PHASE, 0)
 		{
 		}
 	}

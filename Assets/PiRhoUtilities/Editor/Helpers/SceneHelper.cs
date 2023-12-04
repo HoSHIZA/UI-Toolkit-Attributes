@@ -48,9 +48,11 @@ namespace PiRhoSoft.Utilities.Editor
 			var path = EditorUtility.SaveFilePanel(title, "Assets", "NewScene.unity", "unity");
 
 			if (path.StartsWith(Application.dataPath))
-				return CreateScene(path.Substring(Application.dataPath.Length - 6), create);
-		
-			return new Scene();
+            {
+                return CreateScene(path.Substring(Application.dataPath.Length - 6), create);
+            }
+
+            return new Scene();
 		}
 
 		private static Scene CreateScene(string path, Action create)
@@ -94,9 +96,11 @@ namespace PiRhoSoft.Utilities.Editor
 			state.Scenes = new SceneState.SceneData[setup.Length];
 
 			for (var i = 0; i < setup.Length; i++)
-				state.Scenes[i] = new SceneState.SceneData { IsActive = setup[i].isActive, IsLoaded = setup[i].isLoaded, Path = setup[i].path };
+            {
+                state.Scenes[i] = new SceneState.SceneData { IsActive = setup[i].isActive, IsLoaded = setup[i].isLoaded, Path = setup[i].path };
+            }
 
-			return state;
+            return state;
 		}
 
 		public static void RestoreState(SceneState state)
@@ -104,9 +108,11 @@ namespace PiRhoSoft.Utilities.Editor
 			var scenes = new SceneSetup[state.Scenes.Length];
 
 			for (var i = 0; i < state.Scenes.Length; i++)
-				scenes[i] = new SceneSetup { isActive = state.Scenes[i].IsActive, isLoaded = state.Scenes[i].IsLoaded, path = state.Scenes[i].Path };
+            {
+                scenes[i] = new SceneSetup { isActive = state.Scenes[i].IsActive, isLoaded = state.Scenes[i].IsLoaded, path = state.Scenes[i].Path };
+            }
 
-			EditorSceneManager.RestoreSceneManagerSetup(scenes);
+            EditorSceneManager.RestoreSceneManagerSetup(scenes);
 		}
 
 		#endregion

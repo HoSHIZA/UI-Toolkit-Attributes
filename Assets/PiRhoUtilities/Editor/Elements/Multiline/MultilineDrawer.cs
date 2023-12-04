@@ -5,9 +5,9 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(MultilineAttribute))]
-	class MultilineDrawer : PropertyDrawer
+    internal class MultilineDrawer : PropertyDrawer
 	{
-		private const string _invalidDrawerWarning = "(PUMDID) invalid drawer for MultilineAttribute on field {0}: the element does not have a TextField";
+		private const string INVALID_DRAWER_WARNING = "(PUMDID) invalid drawer for MultilineAttribute on field {0}: the element does not have a TextField";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -15,11 +15,15 @@ namespace PiRhoSoft.Utilities.Editor
 			var input = element.Q<TextField>();
 
 			if (input != null)
-				input.multiline = true;
-			else
-				Debug.LogWarningFormat(_invalidDrawerWarning, property.propertyPath);
+            {
+                input.multiline = true;
+            }
+            else
+            {
+                Debug.LogWarningFormat(INVALID_DRAWER_WARNING, property.propertyPath);
+            }
 
-			return element;
+            return element;
 		}
 	}
 }

@@ -4,16 +4,16 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(MessageBoxAttribute))]
-	class MessageBoxDrawer : PropertyDrawer
+    internal class MessageBoxDrawer : PropertyDrawer
 	{
-		public const string Stylesheet = "MessageBoxStyle.uss";
-		public const string UssClassName = "pirho-trait-message";
-		public const string SideUssClassName = UssClassName + "--side";
-		public const string MessageUssClassName = UssClassName + "__message-box";
-		public const string AboveUssClassName = MessageUssClassName + "--above";
-		public const string BelowUssClassName = MessageUssClassName + "--below";
-		public const string LeftUssClassName = MessageUssClassName + "--left";
-		public const string RightUssClassName = MessageUssClassName + "--right";
+		public const string STYLESHEET = "MessageBoxStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-trait-message";
+		public const string SIDE_USS_CLASS_NAME = USS_CLASS_NAME + "--side";
+		public const string MESSAGE_USS_CLASS_NAME = USS_CLASS_NAME + "__message-box";
+		public const string ABOVE_USS_CLASS_NAME = MESSAGE_USS_CLASS_NAME + "--above";
+		public const string BELOW_USS_CLASS_NAME = MESSAGE_USS_CLASS_NAME + "--below";
+		public const string LEFT_USS_CLASS_NAME = MESSAGE_USS_CLASS_NAME + "--left";
+		public const string RIGHT_USS_CLASS_NAME = MESSAGE_USS_CLASS_NAME + "--right";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -21,34 +21,40 @@ namespace PiRhoSoft.Utilities.Editor
 			var element = this.CreateNextElement(property);
 			var container = new VisualElement();
 
-			container.AddStyleSheet(Stylesheet);
-			container.AddToClassList(UssClassName);
+			container.AddStyleSheet(STYLESHEET);
+			container.AddToClassList(USS_CLASS_NAME);
 			container.Add(element);
-
+            
 			var message = new MessageBox(messageAttribute.Type, messageAttribute.Message);
-			message.AddToClassList(MessageUssClassName);
+			message.AddToClassList(MESSAGE_USS_CLASS_NAME);
+            
+#if UNITY_2021_1_OR_NEWER
+            message.style.marginRight = -2;
+#else
+            message.style.marginRight = 3;
+#endif
 
 			if (messageAttribute.Location == TraitLocation.Above)
 			{
-				message.AddToClassList(BelowUssClassName);
+				message.AddToClassList(ABOVE_USS_CLASS_NAME);
 				container.Insert(0, message);
 			}
 			if (messageAttribute.Location == TraitLocation.Below)
 			{
-				message.AddToClassList(BelowUssClassName);
+				message.AddToClassList(BELOW_USS_CLASS_NAME);
 				container.Add(message);
 			}
 			else if (messageAttribute.Location == TraitLocation.Left)
 			{
-				message.AddToClassList(LeftUssClassName);
+				message.AddToClassList(LEFT_USS_CLASS_NAME);
 				container.Insert(0, message);
-				container.AddToClassList(SideUssClassName);
+				container.AddToClassList(SIDE_USS_CLASS_NAME);
 			}
 			else if (messageAttribute.Location == TraitLocation.Right)
 			{
-				message.AddToClassList(RightUssClassName);
+				message.AddToClassList(RIGHT_USS_CLASS_NAME);
 				container.Add(message);
-				container.AddToClassList(SideUssClassName);
+				container.AddToClassList(SIDE_USS_CLASS_NAME);
 			}
 
 			return container;

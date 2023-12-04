@@ -5,23 +5,23 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public abstract class PickerField<ValueType> : BaseField<ValueType> where ValueType : class
+	public abstract class PickerField<T> : BaseField<T> where T : class
 	{
 		#region Class Names
 
-		public const string Stylesheet = "PickerStyle.uss";
-		public const string UssClassName = "pirho-picker-field";
-		public const string InputUssClassName = UssClassName + "__input";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string ButtonUssClassName = InputUssClassName + "__button";
-		public const string IconUssClassName = ButtonUssClassName + "__icon";
-		public const string InputLabelUssClassName = ButtonUssClassName + "__label";
+		public const string STYLESHEET = "PickerStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-picker-field";
+		public const string INPUT_USS_CLASS_NAME = USS_CLASS_NAME + "__input";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string BUTTON_USS_CLASS_NAME = INPUT_USS_CLASS_NAME + "__button";
+		public const string ICON_USS_CLASS_NAME = BUTTON_USS_CLASS_NAME + "__icon";
+		public const string INPUT_LABEL_USS_CLASS_NAME = BUTTON_USS_CLASS_NAME + "__label";
 
 		#endregion
 
 		#region Members
 
-		protected readonly PickerControl _control;
+		protected readonly PickerControl Control;
 
 		#endregion
 
@@ -29,27 +29,27 @@ namespace PiRhoSoft.Utilities.Editor
 
 		protected PickerField(string label, PickerControl control) : base(label, control)
 		{
-			_control = control;
-			_control.AddToClassList(InputUssClassName);
-			_control.RegisterCallback<ChangeEvent<ValueType>>(evt =>
+			Control = control;
+			Control.AddToClassList(INPUT_USS_CLASS_NAME);
+			Control.RegisterCallback<ChangeEvent<T>>(evt =>
 			{
-				if (evt.currentTarget == _control)
+				if (evt.currentTarget == Control)
 				{
 					base.value = evt.newValue;
 					evt.StopImmediatePropagation();
 				}
 			});
 
-			labelElement.AddToClassList(LabelUssClassName);
+			labelElement.AddToClassList(LABEL_USS_CLASS_NAME);
 
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
 		}
 
-		public override void SetValueWithoutNotify(ValueType newValue)
+		public override void SetValueWithoutNotify(T newValue)
 		{
 			base.SetValueWithoutNotify(newValue);
-			_control.SetValueWithoutNotify(newValue);
+			Control.SetValueWithoutNotify(newValue);
 		}
 
 		#endregion
@@ -63,29 +63,31 @@ namespace PiRhoSoft.Utilities.Editor
 			private readonly TextElement _label;
 			private readonly VisualElement _arrow;
 			
-			protected PickerProvider<ValueType> _provider;
+			protected PickerProvider<T> Provider;
 
-			public abstract void SetValueWithoutNotify(ValueType newValue);
+			public abstract void SetValueWithoutNotify(T newValue);
 
 			public PickerControl()
 			{
 				_button = new Button();
-				_button.AddToClassList(ButtonUssClassName);
-				_button.AddToClassList(BasePopupField<ValueType, ValueType>.inputUssClassName);
+				_button.AddToClassList(BUTTON_USS_CLASS_NAME);
+				_button.AddToClassList(BasePopupField<T, T>.inputUssClassName);
 				_button.clicked += () =>
 				{
-					if (_provider)
-						SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(new Vector2(worldBound.center.x, worldBound.yMax + worldBound.height - 4)), worldBound.width), _provider);
-				};
+					if (Provider)
+                    {
+                        SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(new Vector2(worldBound.center.x, worldBound.yMax + worldBound.height - 4)), worldBound.width), Provider);
+                    }
+                };
 
 				_icon = new Image { pickingMode = PickingMode.Ignore };
-				_icon.AddToClassList(IconUssClassName);
+				_icon.AddToClassList(ICON_USS_CLASS_NAME);
 
 				_label = new TextElement { pickingMode = PickingMode.Ignore };
-				_label.AddToClassList(InputLabelUssClassName);
+				_label.AddToClassList(INPUT_LABEL_USS_CLASS_NAME);
 
 				_arrow = new VisualElement { pickingMode = PickingMode.Ignore };
-				_arrow.AddToClassList(BasePopupField<ValueType, ValueType>.arrowUssClassName);
+				_arrow.AddToClassList(BasePopupField<T, T>.arrowUssClassName);
 
 				_button.Add(_icon);
 				_button.Add(_label);

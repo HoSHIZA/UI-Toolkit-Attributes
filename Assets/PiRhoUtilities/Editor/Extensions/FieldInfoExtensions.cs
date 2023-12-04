@@ -10,20 +10,20 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Attributes
 
-		public static bool HasAttribute<AttributeType>(this FieldInfo field) where AttributeType : Attribute
+		public static bool HasAttribute<TAttributeType>(this FieldInfo field) where TAttributeType : Attribute
 		{
-			return field.GetCustomAttribute<AttributeType>() != null;
+			return field.GetCustomAttribute<TAttributeType>() != null;
 		}
 
-		public static AttributeType GetAttribute<AttributeType>(this FieldInfo field) where AttributeType : Attribute
+		public static TAttributeType GetAttribute<TAttributeType>(this FieldInfo field) where TAttributeType : Attribute
 		{
-			return field.TryGetAttribute<AttributeType>(out var attribute) ? attribute : null;
+			return field.TryGetAttribute<TAttributeType>(out var attribute) ? attribute : null;
 		}
 
-		public static bool TryGetAttribute<AttributeType>(this FieldInfo field, out AttributeType attribute) where AttributeType : Attribute
+		public static bool TryGetAttribute<TAttributeType>(this FieldInfo field, out TAttributeType attribute) where TAttributeType : Attribute
 		{
-			var attributes = field.GetCustomAttributes(typeof(AttributeType), false);
-			attribute = attributes != null && attributes.Length > 0 ? attributes[0] as AttributeType : null;
+			var attributes = field.GetCustomAttributes(typeof(TAttributeType), false);
+			attribute = attributes != null && attributes.Length > 0 ? attributes[0] as TAttributeType : null;
 
 			return attribute != null;
 		}
@@ -69,14 +69,18 @@ namespace PiRhoSoft.Utilities.Editor
 			var ilist = interfaces.FirstOrDefault(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>));
 
 			if (ilist != null)
-				return ilist.GetGenericArguments()[0];
+            {
+                return ilist.GetGenericArguments()[0];
+            }
 
-			var iDict = interfaces.FirstOrDefault(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+            var iDict = interfaces.FirstOrDefault(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 
 			if (iDict != null)
-				return iDict.GetGenericArguments()[1];
+            {
+                return iDict.GetGenericArguments()[1];
+            }
 
-			return fieldInfo.FieldType;
+            return fieldInfo.FieldType;
 		}
 	}
 }

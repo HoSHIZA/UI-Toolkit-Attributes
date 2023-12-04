@@ -4,5 +4,5 @@
 
 .pirho-popup-field__input
 {
-	margin-left: 0px;
+	margin-left: 0;
 }

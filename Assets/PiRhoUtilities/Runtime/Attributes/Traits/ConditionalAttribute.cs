@@ -60,7 +60,7 @@
 		public EnumTest EnumTest { get; private set; }
 		public ObjectTest ObjectTest { get; private set; }
 
-		public ConditionalAttribute(string valueSource, int intValue, NumberTest test) : base(TestPhase, 0)
+		public ConditionalAttribute(string valueSource, int intValue, NumberTest test) : base(TEST_PHASE, 0)
 		{
 			ValueSource = valueSource;
 			IntValue = intValue;
@@ -68,7 +68,7 @@
 			Type = TestType.Int;
 		}
 
-		public ConditionalAttribute(string valueSource, float floatValue, NumberTest test) : base(TestPhase, 0)
+		public ConditionalAttribute(string valueSource, float floatValue, NumberTest test) : base(TEST_PHASE, 0)
 		{
 			ValueSource = valueSource;
 			FloatValue = floatValue;
@@ -76,7 +76,7 @@
 			Type = TestType.Float;
 		}
 
-		public ConditionalAttribute(string valueSource, string stringValue, StringTest test) : base(TestPhase, 0)
+		public ConditionalAttribute(string valueSource, string stringValue, StringTest test) : base(TEST_PHASE, 0)
 		{
 			ValueSource = valueSource;
 			StringValue = stringValue;
@@ -84,7 +84,7 @@
 			Type = TestType.String;
 		}
 
-		public ConditionalAttribute(string valueSource, BoolTest test) : base(TestPhase, 0)
+		public ConditionalAttribute(string valueSource, BoolTest test) : base(TEST_PHASE, 0)
 		{
 			ValueSource = valueSource;
 			BoolTest = test;
@@ -92,7 +92,7 @@
 		}
 
 
-		public ConditionalAttribute(string valueSource, int valueAsInt, EnumTest test) : base(TestPhase, 0)
+		public ConditionalAttribute(string valueSource, int valueAsInt, EnumTest test) : base(TEST_PHASE, 0)
 		{
 			ValueSource = valueSource;
 			IntValue = valueAsInt;
@@ -101,7 +101,7 @@
 		}
 
 
-		public ConditionalAttribute(string valueSource, ObjectTest test) : base(TestPhase, 0)
+		public ConditionalAttribute(string valueSource, ObjectTest test) : base(TEST_PHASE, 0)
 		{
 			ValueSource = valueSource;
 			ObjectTest = test;

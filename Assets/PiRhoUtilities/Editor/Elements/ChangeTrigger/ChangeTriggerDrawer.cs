@@ -7,10 +7,10 @@ using Object = UnityEngine.Object;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(ChangeTriggerAttribute))]
-	class ChangeTriggerDrawer : PropertyDrawer
+    internal class ChangeTriggerDrawer : PropertyDrawer
 	{
-		private const string _invalidTypeWarning = "(PUCTDIT) invalid type for ChangeTriggerAttribute on field '{0}': ChangeTrigger can only be applied to serializable fields";
-		private const string _invalidMethodWarning = "(PUCTDIM) invalid method for ChangeTriggerAttribute on field '{0}': the method '{1}' should take 0, 1, or 2 parameters of type '{2}'";
+		private const string INVALID_TYPE_WARNING = "(PUCTDIT) invalid type for ChangeTriggerAttribute on field '{0}': ChangeTrigger can only be applied to serializable fields";
+		private const string INVALID_METHOD_WARNING = "(PUCTDIM) invalid method for ChangeTriggerAttribute on field '{0}': the method '{1}' should take 0, 1, or 2 parameters of type '{2}'";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -19,9 +19,11 @@ namespace PiRhoSoft.Utilities.Editor
 			var change = CreateControl(property, fieldInfo.DeclaringType, changeAttribute.Method);
 
 			if (change != null)
-				element.Add(change);
+            {
+                element.Add(change);
+            }
 
-			return element;
+            return element;
 		}
 
 		private PropertyWatcher CreateControl(SerializedProperty property, Type declaringType, string method)
@@ -54,7 +56,7 @@ namespace PiRhoSoft.Utilities.Editor
 				case SerializedPropertyType.ManagedReference: return CreateControl<object>(property, declaringType, method);
 			}
 
-			Debug.LogWarningFormat(_invalidTypeWarning, property.propertyPath, this.GetFieldType().Name);
+			Debug.LogWarningFormat(INVALID_TYPE_WARNING, property.propertyPath, this.GetFieldType().Name);
 			return null;
 		}
 
@@ -66,8 +68,10 @@ namespace PiRhoSoft.Utilities.Editor
 				return new ChangeTrigger<T>(property, (_, oldValue, newValue) =>
 				{
 					if (!EditorApplication.isPlaying)
-						none();
-				});
+                    {
+                        none();
+                    }
+                });
 			}
 			else
 			{
@@ -77,8 +81,10 @@ namespace PiRhoSoft.Utilities.Editor
 					return new ChangeTrigger<T>(property, (_, oldValue, newValue) =>
 					{
 						if (!EditorApplication.isPlaying)
-							one(newValue);
-					});
+                        {
+                            one(newValue);
+                        }
+                    });
 				}
 				else
 				{
@@ -88,13 +94,15 @@ namespace PiRhoSoft.Utilities.Editor
 						return new ChangeTrigger<T>(property, (_, oldValue, newValue) =>
 						{
 							if (!EditorApplication.isPlaying)
-								two(oldValue, newValue);
-						});
+                            {
+                                two(oldValue, newValue);
+                            }
+                        });
 					}
 				}
 			}
 
-			Debug.LogWarningFormat(_invalidMethodWarning, property.propertyPath, method, typeof(T).Name);
+			Debug.LogWarningFormat(INVALID_METHOD_WARNING, property.propertyPath, method, typeof(T).Name);
 			return null;
 		}
 	}

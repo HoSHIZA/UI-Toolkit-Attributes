@@ -8,10 +8,10 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string Stylesheet = "EulerStyle.uss";
-		public const string UssClassName = "pirho-euler-field";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string InputUssClassName = UssClassName + "__input";
+		public const string STYLESHEET = "EulerStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-euler-field";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string INPUT_USS_CLASS_NAME = USS_CLASS_NAME + "__input";
 
 		#endregion
 
@@ -30,18 +30,18 @@ namespace PiRhoSoft.Utilities.Editor
 		public EulerField(string label) : base(label, null)
 		{
 			_vectorField = new Vector3Field();
-			_vectorField.AddToClassList(InputUssClassName);
+			_vectorField.AddToClassList(INPUT_USS_CLASS_NAME);
 			_vectorField.RegisterCallback<ChangeEvent<Vector3>>(evt =>
 			{
 				base.value = Quaternion.Euler(evt.newValue);
 				evt.StopImmediatePropagation();
 			});
 
-			labelElement.AddToClassList(LabelUssClassName);
+			labelElement.AddToClassList(LABEL_USS_CLASS_NAME);
 
-			AddToClassList(UssClassName);
+			AddToClassList(USS_CLASS_NAME);
 			this.SetVisualInput(_vectorField);
-			this.AddStyleSheet(Stylesheet);
+			this.AddStyleSheet(STYLESHEET);
 		}
 
 		public override void SetValueWithoutNotify(Quaternion newValue)

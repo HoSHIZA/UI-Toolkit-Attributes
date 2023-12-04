@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
@@ -130,9 +131,11 @@ namespace PiRhoSoft.Utilities.Editor
 			field.Bind(_property.serializedObject);
 
 			if (string.IsNullOrEmpty(key))
-				key = " "; // An empty label will cause the label to be removed
+            {
+                key = " "; // An empty label will cause the label to be removed
+            }
 
-			if (field.SetFieldLabel(key)) // TODO: for references this should include the type name
+            if (field.SetFieldLabel(key)) // TODO: for references this should include the type name
 			{
 				return field;
 			}
@@ -153,19 +156,17 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				var property = _keysProperty.GetArrayElementAtIndex(i);
 				if (property.stringValue == key)
-					return false;
-			}
+                {
+                    return false;
+                }
+            }
 
-			return CanAddKeyCallback != null
-				? CanAddKeyCallback.Invoke(key)
-				: true;
+			return CanAddKeyCallback == null || CanAddKeyCallback.Invoke(key);
 		}
 
 		public bool CanAdd(Type type)
 		{
-			return type != null && CanAddTypeCallback != null
-				? CanAddTypeCallback.Invoke(type)
-				: true;
+			return type == null || CanAddTypeCallback == null || CanAddTypeCallback.Invoke(type);
 		}
 
 		public bool AddItem(string key, Type type)
@@ -206,9 +207,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public bool CanRemove(int index, string key)
 		{
-			return CanRemoveCallback != null
-				? CanRemoveCallback.Invoke(key)
-				: true;
+			return CanRemoveCallback == null || CanRemoveCallback.Invoke(key);
 		}
 
 		public void RemoveItem(int index, string key)
@@ -218,12 +217,9 @@ namespace PiRhoSoft.Utilities.Editor
 			_property.serializedObject.ApplyModifiedProperties();
 		}
 
-		public bool IsReorderable
-		{
-			get => true;
-		}
+		public bool IsReorderable => true;
 
-		public void ReorderItem(int from, int to)
+        public void ReorderItem(int from, int to)
 		{
 			_keysProperty.MoveArrayElement(from, to);
 			_valuesProperty.MoveArrayElement(from, to);

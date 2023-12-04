@@ -37,11 +37,15 @@ namespace PiRhoSoft.Utilities.Editor
 				_isDisposed = true;
 
 				if (_object != null)
-					ChangeHelper.Finish(_object);
-				else if (_serializedObject != null)
-					ChangeHelper.Finish(_serializedObject);
+                {
+                    ChangeHelper.Finish(_object);
+                }
+                else if (_serializedObject != null)
+                {
+                    ChangeHelper.Finish(_serializedObject);
+                }
 
-				Undo.CollapseUndoOperations(_group);
+                Undo.CollapseUndoOperations(_group);
 			}
 		}
 	}
@@ -70,10 +74,14 @@ namespace PiRhoSoft.Utilities.Editor
 				EditorUtility.SetDirty(obj);
 
 				if (obj is GameObject gameObject)
-					EditorSceneManager.MarkSceneDirty(gameObject.scene);
-				else if (obj is Component component)
-					EditorSceneManager.MarkSceneDirty(component.gameObject.scene);
-			}
+                {
+                    EditorSceneManager.MarkSceneDirty(gameObject.scene);
+                }
+                else if (obj is Component component)
+                {
+                    EditorSceneManager.MarkSceneDirty(component.gameObject.scene);
+                }
+            }
 		}
 
 		public static void Finish(SerializedObject obj)

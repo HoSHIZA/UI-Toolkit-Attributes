@@ -9,12 +9,12 @@ namespace PiRhoSoft.Utilities
 		public string OptionsSource { get; private set; }
 		public bool AutoUpdate { get; private set; }
 
-		public ComboBoxAttribute(string[] options) : base(ControlPhase, 0)
+		public ComboBoxAttribute(string[] options) : base(CONTROL_PHASE, 0)
 		{
 			Options = options.ToList();
 		}
 
-		public ComboBoxAttribute(string optionsSource, bool autoUpdate = true) : base(ControlPhase, 0)
+		public ComboBoxAttribute(string optionsSource, bool autoUpdate = true) : base(CONTROL_PHASE, 0)
 		{
 			OptionsSource = optionsSource;
 			AutoUpdate = autoUpdate;

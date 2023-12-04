@@ -12,14 +12,14 @@
 .pirho-enum-buttons-field__input__button
 {
 	flex-grow: 1;
-	margin: 0px;
-	border-radius: 0px;
-	border-right-width: 0px;
+	margin: 0;
+	border-radius: 0;
+	border-right-width: 0;
 }
 
 .pirho-enum-buttons-field__input__button--active
 {
-	background-color: #6B6B6B;
+	background-color: var(--unity-colors-button-background-pressed);
 }
 
 .pirho-enum-buttons-field__input__button--first

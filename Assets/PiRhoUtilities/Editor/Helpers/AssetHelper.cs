@@ -25,7 +25,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 	public class AssetHelper : AssetPostprocessor
 	{
-		private const string _invalidPathError = "(UAHIP) failed to create asset at path {0}: the path must be inside the 'Assets' folder for this project";
+		private const string INVALID_PATH_ERROR = "(UAHIP) failed to create asset at path {0}: the path must be inside the 'Assets' folder for this project";
 
 		private static readonly Dictionary<string, AssetList> _assetLists = new Dictionary<string, AssetList>();
 
@@ -36,9 +36,9 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Creation
 
-		public static ObjectType Create<ObjectType>() where ObjectType : ScriptableObject
+		public static TObject Create<TObject>() where TObject : ScriptableObject
 		{
-			return (ObjectType)Create(typeof(ObjectType));
+			return (TObject)Create(typeof(TObject));
 		}
 		
 		public static Object Create(Type createType)
@@ -51,27 +51,31 @@ namespace PiRhoSoft.Utilities.Editor
 				var asset = CreateAssetAtPath(path, createType);
 		
 				if (asset == null)
-					Debug.LogErrorFormat(_invalidPathError, path);
-		
-				return asset;
+                {
+                    Debug.LogErrorFormat(INVALID_PATH_ERROR, path);
+                }
+
+                return asset;
 			}
 		
 			return null;
 		}
 		
-		public static AssetType CreateAsset<AssetType>(string name) where AssetType : ScriptableObject
+		public static TAsset CreateAsset<TAsset>(string name) where TAsset : ScriptableObject
 		{
-			return CreateAsset(name, typeof(AssetType)) as AssetType;
+			return CreateAsset(name, typeof(TAsset)) as TAsset;
 		}
 		
-		public static AssetType GetOrCreateAsset<AssetType>(string name) where AssetType : ScriptableObject
+		public static TAsset GetOrCreateAsset<TAsset>(string name) where TAsset : ScriptableObject
 		{
-			var asset = GetAsset<AssetType>();
+			var asset = GetAsset<TAsset>();
 		
 			if (asset == null)
-				asset = CreateAsset<AssetType>(name);
-		
-			return asset;
+            {
+                asset = CreateAsset<TAsset>(name);
+            }
+
+            return asset;
 		}
 		
 		public static ScriptableObject CreateAsset(string name, Type type)
@@ -90,17 +94,21 @@ namespace PiRhoSoft.Utilities.Editor
 			var asset = GetAsset(type) as ScriptableObject;
 		
 			if (asset == null)
-				asset = CreateAsset(name, type);
-		
-			return asset;
+            {
+                asset = CreateAsset(name, type);
+            }
+
+            return asset;
 		}
 		
 		public static ScriptableObject CreateAssetAtPath(string path, Type type)
 		{
 			if (!path.StartsWith(Application.dataPath))
-				return null;
-		
-			path = path.Substring(Application.dataPath.Length - 6); // keep 'Assets' as the root folder
+            {
+                return null;
+            }
+
+            path = path.Substring(Application.dataPath.Length - 6); // keep 'Assets' as the root folder
 		
 			var asset = ScriptableObject.CreateInstance(type);
 		
@@ -114,20 +122,20 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Lookup
 
-		public static AssetType GetAsset<AssetType>() where AssetType : Object
+		public static TAsset GetAsset<TAsset>() where TAsset : Object
 		{
-			return GetAssets<AssetType>().FirstOrDefault();
+			return GetAssets<TAsset>().FirstOrDefault();
 		}
 
-		public static AssetType GetAssetWithId<AssetType>(string id) where AssetType : Object
+		public static TAsset GetAssetWithId<TAsset>(string id) where TAsset : Object
 		{
 			var path = AssetDatabase.GUIDToAssetPath(id);
-			return GetAssetAtPath<AssetType>(path);
+			return GetAssetAtPath<TAsset>(path);
 		}
 
-		public static AssetType GetAssetAtPath<AssetType>(string path) where AssetType : Object
+		public static TAsset GetAssetAtPath<TAsset>(string path) where TAsset : Object
 		{
-			return AssetDatabase.LoadAssetAtPath<AssetType>(path);
+			return AssetDatabase.LoadAssetAtPath<TAsset>(path);
 		}
 
 		public static Object GetAsset(Type assetType)
@@ -150,9 +158,9 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Listing
 
-		public static IEnumerable<AssetType> GetAssets<AssetType>() where AssetType : Object
+		public static IEnumerable<TAsset> GetAssets<TAsset>() where TAsset : Object
 		{
-			return GetAssets(typeof(AssetType)).Select(asset => asset as AssetType);
+			return GetAssets(typeof(TAsset)).Select(asset => asset as TAsset);
 		}
 
 		public static IEnumerable<Object> GetAssets(Type assetType)
@@ -160,9 +168,9 @@ namespace PiRhoSoft.Utilities.Editor
 			return AssetDatabase.FindAssets($"t:{assetType.Name}").Select(id => GetAssetWithId(id, assetType)).Where(asset => asset);
 		}
 
-		public static AssetList GetAssetList<AssetType>() where AssetType : Object
+		public static AssetList GetAssetList<TAsset>() where TAsset : Object
 		{
-			return GetAssetList(typeof(AssetType));
+			return GetAssetList(typeof(TAsset));
 		}
 
 		public static AssetList GetAssetList(Type assetType)
@@ -174,7 +182,7 @@ namespace PiRhoSoft.Utilities.Editor
 				list = new AssetList(assetType);
 
 				var assets = GetAssets(assetType);
-				var paths = assets.Select(asset => GetPath(asset));
+				var paths = assets.Select(GetPath);
 				var prefix = FindCommonPath(paths);
 
 				list.Assets = assets.ToList();
@@ -214,25 +222,30 @@ namespace PiRhoSoft.Utilities.Editor
 				for (; index < count; index++)
 				{
 					if (prefix[index] != path[index])
-						break;
-				}
+                    {
+                        break;
+                    }
+                }
 
 				prefix = prefix.Substring(0, index);
 
 				var slash = prefix.LastIndexOf('/');
 				if (slash != prefix.Length - 1)
-					prefix = slash >= 0 ? prefix.Substring(0, slash + 1) : string.Empty;
-			}
+                {
+                    prefix = slash >= 0 ? prefix.Substring(0, slash + 1) : string.Empty;
+                }
+            }
 
 			return prefix;
 		}
 
-		private static Regex _assetPathExpression = new Regex(@".*/(Assets/.*/)[^/]+", RegexOptions.Compiled);
-		private static Regex _packagePathExpression = new Regex(@".*/PackageCache(/[^/]+)@[^/]+(/.*/)[^/]+", RegexOptions.Compiled);
-		private static string _packageFormat = "Packages{0}{1}";
-		private static string _unknownPath = "UNKNOWN";
+		private static readonly Regex _assetPathExpression = new Regex(@".*/(Assets/.*/)[^/]+", RegexOptions.Compiled);
+		private static readonly Regex _packagePathExpression = new Regex(@".*/PackageCache(/[^/]+)@[^/]+(/.*/)[^/]+", RegexOptions.Compiled);
+        
+        private const string PACKAGE_FORMAT = "Packages{0}{1}";
+        private const string UNKNOWN_PATH = "UNKNOWN";
 
-		public static string GetScriptPath([CallerFilePath] string filename = "")
+        public static string GetScriptPath([CallerFilePath] string filename = "")
 		{
 			return GetAssetPath(filename);
 		}
@@ -243,13 +256,17 @@ namespace PiRhoSoft.Utilities.Editor
 
 			var assetMatch = _assetPathExpression.Match(normalized);
 			if (assetMatch.Success)
-				return assetMatch.Groups[1].Value;
+            {
+                return assetMatch.Groups[1].Value;
+            }
 
-			var packageMatch = _packagePathExpression.Match(normalized);
+            var packageMatch = _packagePathExpression.Match(normalized);
 			if (packageMatch.Success)
-				return string.Format(_packageFormat, packageMatch.Groups[1].Value, packageMatch.Groups[2].Value);
+            {
+                return string.Format(PACKAGE_FORMAT, packageMatch.Groups[1].Value, packageMatch.Groups[2].Value);
+            }
 
-			return _unknownPath;
+            return UNKNOWN_PATH;
 		}
 
 		#endregion

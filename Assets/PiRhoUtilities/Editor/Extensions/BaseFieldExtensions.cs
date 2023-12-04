@@ -11,32 +11,46 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Internal Lookups
 
-		private const string _changedInternalsError = "(PUBFECI) failed to setup BaseField: Unity internals have changed";
+		private const string CHANGED_INTERNALS_ERROR = "(PUBFECI) failed to setup BaseField: Unity internals have changed";
 
 		public static readonly string UssClassName = BaseField<int>.ussClassName;
 		public static readonly string LabelUssClassName = BaseField<int>.labelUssClassName;
 		public static readonly string NoLabelVariantUssClassName = BaseField<int>.noLabelVariantUssClassName;
-
-		private const string _visualInputName = "visualInput";
-
-		private const string _configureFieldName = "ConfigureField";
-		private static MethodInfo _configureFieldMethod;
-		private static object[] _configureFieldParameters = new object[2];
-		private static PropertyField _configureFieldInstance;
+        
+		private const string VISUAL_INPUT_NAME = "visualInput";
+        
+		private const string CONFIGURE_FIELD_NAME = "ConfigureField";
+        
+		private static readonly MethodInfo _configureFieldMethod;
+        
+#if UNITY_2021_1_OR_NEWER
+		private static readonly object[] _configureFieldParameters = new object[3];
+#else
+		private static readonly object[] _configureFieldParameters = new object[2];
+#endif
+        
+		private static readonly PropertyField _configureFieldInstance;
 
 		static BaseFieldExtensions()
 		{
-			var configureFieldMethod = typeof(PropertyField).GetMethod(_configureFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+			var configureFieldMethod = typeof(PropertyField).GetMethod(CONFIGURE_FIELD_NAME, BindingFlags.Instance | BindingFlags.NonPublic);
 
-			if (configureFieldMethod != null && configureFieldMethod.HasSignature(typeof(VisualElement), null, typeof(SerializedProperty)))
+			if (configureFieldMethod != null && configureFieldMethod.HasSignature(typeof(VisualElement), 
+#if UNITY_2021_1_OR_NEWER
+                    null, typeof(SerializedProperty), null))
+#else
+                    null, typeof(SerializedProperty)))
+#endif
 			{
 				_configureFieldMethod = configureFieldMethod;
 				_configureFieldInstance = new PropertyField();
 			}
 
 			if (_configureFieldMethod == null)
-				Debug.LogError(_changedInternalsError);
-		}
+            {
+                Debug.LogError(CHANGED_INTERNALS_ERROR);
+            }
+        }
 
 		// can't do these lookups in a static constructor since they are dependent on the generic type
 
@@ -50,9 +64,11 @@ namespace PiRhoSoft.Utilities.Editor
 			var property = type.GetProperty(name, flags);
 
 			if (property == null)
-				Debug.LogError(_changedInternalsError);
+            {
+                Debug.LogError(CHANGED_INTERNALS_ERROR);
+            }
 
-			return property;
+            return property;
 		}
 
 		#endregion
@@ -61,12 +77,12 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public static VisualElement GetVisualInput<T>(this BaseField<T> field)
 		{
-			return GetProperty<T>(_visualInputName, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(field) as VisualElement;
+			return GetProperty<T>(VISUAL_INPUT_NAME, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(field) as VisualElement;
 		}
 
 		public static void SetVisualInput<T>(this BaseField<T> field, VisualElement element)
 		{
-			GetProperty<T>(_visualInputName, BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(field, element);
+			GetProperty<T>(VISUAL_INPUT_NAME, BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(field, element);
 		}
 
 		public static VisualElement ConfigureProperty<T>(this BaseField<T> field, SerializedProperty property)
@@ -81,6 +97,9 @@ namespace PiRhoSoft.Utilities.Editor
 
 			_configureFieldParameters[0] = field;
 			_configureFieldParameters[1] = property;
+#if UNITY_2021_1_OR_NEWER
+            _configureFieldParameters[2] = null;
+#endif
 
 			return method?.Invoke(_configureFieldInstance, _configureFieldParameters) as VisualElement;
 		}

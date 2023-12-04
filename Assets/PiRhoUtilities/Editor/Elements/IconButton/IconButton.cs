@@ -9,14 +9,14 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Log Messages
 
-		private const string _missingIconWarning = "(PUEIBMI) unknown icon '{0}' for IconButton: the icon could not be found";
+		private const string MISSING_ICON_WARNING = "(PUEIBMI) unknown icon '{0}' for IconButton: the icon could not be found";
 
 		#endregion 
 
 		#region Class Names
 
-		public const string Stylesheet = "IconButton.uss";
-		public const string UssClassName = "pirho-icon-button";
+		public const string STYLESHEET = "IconButton.uss";
+		public const string USS_CLASS_NAME = "pirho-icon-button";
 
 		#endregion
 
@@ -45,8 +45,10 @@ namespace PiRhoSoft.Utilities.Editor
 			remove
 			{
 				if (_clickable != null)
-					_clickable.clicked -= value;
-			}
+                {
+                    _clickable.clicked -= value;
+                }
+            }
 		}
 
 		public IconButton() : this(null)
@@ -57,17 +59,21 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			Clicked += clickEvent;
 
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
 		}
 
 		public void SetIcon(string iconName)
 		{
 			if (_icons.TryGetValue(iconName, out var icon))
-				image = icon.Texture;
-			else
-				Debug.LogWarningFormat(_missingIconWarning, iconName);
-		}
+            {
+                image = icon.Texture;
+            }
+            else
+            {
+                Debug.LogWarningFormat(MISSING_ICON_WARNING, iconName);
+            }
+        }
 
 		#endregion
 
@@ -105,7 +111,7 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				base.Init(ve, bag, cc);
 
-				var button = ve as IconButton;
+				var button = (IconButton)ve;
 				var name = _icon.GetValueFromBag(bag, cc);
 
 				button.SetIcon(name);

@@ -5,9 +5,9 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(DelayAttribute))]
-	class DelayDrawer : PropertyDrawer
+    internal class DelayDrawer : PropertyDrawer
 	{
-		private const string _invalidDrawerWarning = "(PUDDID) invalid drawer for DelayedAttribute on field {0}: the element does not have a TextInputBaseField";
+		private const string INVALID_DRAWER_WARNING = "(PUDDID) invalid drawer for DelayedAttribute on field {0}: the element does not have a TextInputBaseField";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -32,20 +32,30 @@ namespace PiRhoSoft.Utilities.Editor
 				inputs.ForEach(field =>
 				{
 					if (field is TextInputBaseField<int> i)
-						i.isDelayed = true;
-					else if (field is TextInputBaseField<float> f)
-						f.isDelayed = true;
-					else if (field is TextInputBaseField<string> s)
-						s.isDelayed = true;
-					else if (field is TextInputBaseField<long> l)
-						l.isDelayed = true;
-					else if (field is TextInputBaseField<double> d)
-						d.isDelayed = true;
-				});
+                    {
+                        i.isDelayed = true;
+                    }
+                    else if (field is TextInputBaseField<float> f)
+                    {
+                        f.isDelayed = true;
+                    }
+                    else if (field is TextInputBaseField<string> s)
+                    {
+                        s.isDelayed = true;
+                    }
+                    else if (field is TextInputBaseField<long> l)
+                    {
+                        l.isDelayed = true;
+                    }
+                    else if (field is TextInputBaseField<double> d)
+                    {
+                        d.isDelayed = true;
+                    }
+                });
 			}
 			else
 			{
-				Debug.LogWarningFormat(_invalidDrawerWarning, property.propertyPath);
+				Debug.LogWarningFormat(INVALID_DRAWER_WARNING, property.propertyPath);
 			}
 
 			return element;

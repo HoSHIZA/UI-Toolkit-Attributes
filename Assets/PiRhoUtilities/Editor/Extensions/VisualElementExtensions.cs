@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEditor;
@@ -13,17 +12,18 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Internal Lookups
 
-		private const string _changedInternalsError = "(PUVEECI) failed to setup VisualElement: Unity internals have changed";
+		private const string CHANGED_INTERNALS_ERROR = "(PUVEECI) failed to setup VisualElement: Unity internals have changed";
 
-		private const string _serializedPropertyBindEventName = "UnityEditor.UIElements.SerializedPropertyBindEvent, UnityEditor";
-		private static Type _serializedPropertyBindEventType;
-		private static string _bindPropertyName = "bindProperty";
-		private static PropertyInfo _bindPropertyProperty;
+		private const string SERIALIZED_PROPERTY_BIND_EVENT_NAME = "UnityEditor.UIElements.SerializedPropertyBindEvent, UnityEditor";
+		private static readonly Type _serializedPropertyBindEventType;
+        
+        private const string BIND_PROPERTY_NAME = "bindProperty";
+        private static readonly PropertyInfo _bindPropertyProperty;
 
 		static VisualElementExtensions()
 		{
-			var serializedPropertyBindEventType = Type.GetType(_serializedPropertyBindEventName);
-			var bindPropertyProperty = serializedPropertyBindEventType?.GetProperty(_bindPropertyName, BindingFlags.Instance | BindingFlags.Public);
+			var serializedPropertyBindEventType = Type.GetType(SERIALIZED_PROPERTY_BIND_EVENT_NAME);
+			var bindPropertyProperty = serializedPropertyBindEventType?.GetProperty(BIND_PROPERTY_NAME, BindingFlags.Instance | BindingFlags.Public);
 
 			if (serializedPropertyBindEventType != null && bindPropertyProperty != null && bindPropertyProperty.PropertyType == typeof(SerializedProperty))
 			{
@@ -32,8 +32,10 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 
 			if (_serializedPropertyBindEventType == null || _bindPropertyProperty == null)
-				Debug.LogError(_changedInternalsError);
-		}
+            {
+                Debug.LogError(CHANGED_INTERNALS_ERROR);
+            }
+        }
 
 		#endregion
 
@@ -49,20 +51,19 @@ namespace PiRhoSoft.Utilities.Editor
 		}
 
 		public static void SendChangeEvent<T>(this VisualElement element, T previous, T current)
-		{
-			using (var changeEvent = ChangeEvent<T>.GetPooled(previous, current))
-			{
-				changeEvent.target = element;
-				element.SendEvent(changeEvent);
-			}
-		}
+        {
+            using var changeEvent = ChangeEvent<T>.GetPooled(previous, current);
+            
+            changeEvent.target = element;
+            element.SendEvent(changeEvent);
+        }
 
 		#endregion
 
 		#region Style
 
-		private const string _missingStylesheetError = "(PUEHMS) failed to load stylesheet: the asset '{0}' could not be found";
-		private const string _missingUxmlError = "(PUEHMU) failed to load uxml: the asset '{0}' could not be found";
+		private const string MISSING_STYLESHEET_ERROR = "(PUEHMS) failed to load stylesheet: the asset '{0}' could not be found";
+		private const string MISSING_UXML_ERROR = "(PUEHMU) failed to load uxml: the asset '{0}' could not be found";
 
 		public static void AddStyleSheet(this VisualElement element, string filename, [CallerFilePath] string callerFilename = "")
 		{
@@ -70,10 +71,14 @@ namespace PiRhoSoft.Utilities.Editor
 			var stylesheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(path);
 
 			if (stylesheet != null)
-				element.styleSheets.Add(stylesheet);
-			else
-				Debug.LogErrorFormat(_missingStylesheetError, path);
-		}
+            {
+                element.styleSheets.Add(stylesheet);
+            }
+            else
+            {
+                Debug.LogErrorFormat(MISSING_STYLESHEET_ERROR, path);
+            }
+        }
 
 		public static void AddUxml(this VisualElement element, string filename, [CallerFilePath] string callerFilename = "")
 		{
@@ -81,16 +86,23 @@ namespace PiRhoSoft.Utilities.Editor
 			var uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
 
 			if (uxml != null)
-				uxml.CloneTree(element);
-			else
-				Debug.LogErrorFormat(_missingUxmlError, path);
-		}
+            {
+                uxml.CloneTree(element);
+            }
+            else
+            {
+                Debug.LogErrorFormat(MISSING_UXML_ERROR, path);
+            }
+        }
 
 		public static VisualElement GetRootElement(this VisualElement element)
 		{
 			while (element.parent != null)
-				element = element.parent;
-			return element;
+            {
+                element = element.parent;
+            }
+
+            return element;
 		}
 
 		public static void SetDisplayed(this VisualElement element, bool displayed)
@@ -103,26 +115,34 @@ namespace PiRhoSoft.Utilities.Editor
 			if (isValid)
 			{
 				if (!element.ClassListContains(validClass))
-					element.AddToClassList(validClass);
+                {
+                    element.AddToClassList(validClass);
+                }
 
-				if (element.ClassListContains(invalidClass))
-					element.RemoveFromClassList(invalidClass);
-			}
+                if (element.ClassListContains(invalidClass))
+                {
+                    element.RemoveFromClassList(invalidClass);
+                }
+            }
 			else
 			{
 				if (!element.ClassListContains(invalidClass))
-					element.AddToClassList(invalidClass);
+                {
+                    element.AddToClassList(invalidClass);
+                }
 
-				if (element.ClassListContains(validClass))
-					element.RemoveFromClassList(validClass);
-			}
+                if (element.ClassListContains(validClass))
+                {
+                    element.RemoveFromClassList(validClass);
+                }
+            }
 		}
 
 		#endregion
 
 		#region Property Configuration
 
-		private const string _labelName = "label";
+		private const string LABEL_NAME = "label";
 
 		public static bool SetFieldLabel(this VisualElement field, string label)
 		{
@@ -162,26 +182,21 @@ namespace PiRhoSoft.Utilities.Editor
 				// clear the binding of the property to the foldout label
 				var foldoutToggle = foldout.Q<Toggle>(className: Foldout.toggleUssClassName);
 				var foldoutLabel = foldoutToggle.Q<Label>(className: Toggle.textUssClassName);
-
+                
 				foldoutLabel.bindingPath = null;
-				foldoutLabel.binding.Release();
+				foldoutLabel.binding?.Release();
 				return true;
 			}
 			else if (field.GetType().InheritsGeneric(typeof(BaseField<>)))
 			{
 				// label is public but this allows access without knowing the generic type of the BaseField
-				field.GetType().GetProperty(_labelName, BindingFlags.Instance | BindingFlags.Public).SetValue(field, label);
+				field.GetType().GetProperty(LABEL_NAME, BindingFlags.Instance | BindingFlags.Public).SetValue(field, label);
 				return true;
 			}
 			else
 			{
 				return false;
 			}
-		}
-
-		public static void ConfigureAsField(this VisualElement element, Label label, SerializedProperty property)
-		{
-			label.tooltip = property.GetTooltip();
 		}
 
 		#endregion

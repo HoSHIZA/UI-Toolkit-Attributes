@@ -2,7 +2,7 @@
 {
 	public class ObjectPickerAttribute : PropertyTraitAttribute
 	{
-		public ObjectPickerAttribute() : base(ControlPhase, 0)
+		public ObjectPickerAttribute() : base(CONTROL_PHASE, 0)
 		{
 		}
 	}

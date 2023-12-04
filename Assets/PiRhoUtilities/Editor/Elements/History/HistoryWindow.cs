@@ -11,23 +11,23 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string Stylesheet = "HistoryStyle.uss";
-		public const string UssClassName = "pirho-history";
-		public const string HeaderUssClassName = UssClassName + "__header";
-		public const string HeaderButtonUssClassName = HeaderUssClassName + "__button";
-		public const string ListUssClassName = UssClassName + "__list";
-		public const string ListItemUssClassName = ListUssClassName + "__item";
-		public const string ListItemIconUssClassName = ListItemUssClassName + "__icon";
-		public const string ListItemLabelUssClassName = ListItemUssClassName + "__label";
-		public const string CurrentListItemUssClassName = ListItemUssClassName + "--current";
+		public const string STYLESHEET = "HistoryStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-history";
+		public const string HEADER_USS_CLASS_NAME = USS_CLASS_NAME + "__header";
+		public const string HEADER_BUTTON_USS_CLASS_NAME = HEADER_USS_CLASS_NAME + "__button";
+		public const string LIST_USS_CLASS_NAME = USS_CLASS_NAME + "__list";
+		public const string LIST_ITEM_USS_CLASS_NAME = LIST_USS_CLASS_NAME + "__item";
+		public const string LIST_ITEM_ICON_USS_CLASS_NAME = LIST_ITEM_USS_CLASS_NAME + "__icon";
+		public const string LIST_ITEM_LABEL_USS_CLASS_NAME = LIST_ITEM_USS_CLASS_NAME + "__label";
+		public const string CURRENT_LIST_ITEM_USS_CLASS_NAME = LIST_ITEM_USS_CLASS_NAME + "--current";
 
 		#endregion
 
 		#region Window Names
 
-		private const string _windowMenu = "Window/PiRho Utilities/History";
-		private const string _moveBackMenu = "Edit/History/Move Back &LEFT";
-		private const string _moveForwardMenu = "Edit/History/Move Forward &RIGHT";
+		private const string WINDOW_MENU = "Window/PiRho Utilities/History";
+		private const string MOVE_BACK_MENU = "Edit/History/Move Back &LEFT";
+		private const string MOVE_FORWARD_MENU = "Edit/History/Move Forward &RIGHT";
 
 		#endregion
 
@@ -47,7 +47,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Window Management
 
-		[MenuItem(_windowMenu)]
+		[MenuItem(WINDOW_MENU)]
 		public static void Open()
 		{
 			var window = GetWindow<HistoryWindow>();
@@ -55,31 +55,35 @@ namespace PiRhoSoft.Utilities.Editor
 			window.Show();
 		}
 
-		[MenuItem(_moveBackMenu, validate = true)]
+		[MenuItem(MOVE_BACK_MENU, validate = true)]
 		public static bool CanMoveBack()
 		{
 			return HistoryList.Current > 0;
 		}
 
-		[MenuItem(_moveForwardMenu, validate = true)]
+		[MenuItem(MOVE_FORWARD_MENU, validate = true)]
 		public static bool CanMoveForward()
 		{
 			return HistoryList.Current < HistoryList.History.Count - 1;
 		}
 
-		[MenuItem(_moveBackMenu, priority = 1)]
+		[MenuItem(MOVE_BACK_MENU, priority = 1)]
 		public static void MoveBack()
 		{
 			if (CanMoveBack())
-				HistoryList.Select(HistoryList.Current - 1);
-		}
+            {
+                HistoryList.Select(HistoryList.Current - 1);
+            }
+        }
 
-		[MenuItem(_moveForwardMenu, priority = 2)]
+		[MenuItem(MOVE_FORWARD_MENU, priority = 2)]
 		public static void MoveForward()
 		{
 			if (CanMoveForward())
-				HistoryList.Select(HistoryList.Current + 1);
-		}
+            {
+                HistoryList.Select(HistoryList.Current + 1);
+            }
+        }
 
 		#endregion
 
@@ -87,23 +91,23 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void OnEnable()
 		{
-			rootVisualElement.AddStyleSheet(Stylesheet);
-			rootVisualElement.AddToClassList(UssClassName);
+			rootVisualElement.AddStyleSheet(STYLESHEET);
+			rootVisualElement.AddToClassList(USS_CLASS_NAME);
 
 			var header = new VisualElement();
-			header.AddToClassList(HeaderUssClassName);
+			header.AddToClassList(HEADER_USS_CLASS_NAME);
 
 			_back = new Button(MoveBack) { text = "Back" };
-			_back.AddToClassList(HeaderButtonUssClassName);
+			_back.AddToClassList(HEADER_BUTTON_USS_CLASS_NAME);
 
 			_forward = new Button(MoveForward) { text = "Forward" };
-			_forward.AddToClassList(HeaderButtonUssClassName);
+			_forward.AddToClassList(HEADER_BUTTON_USS_CLASS_NAME);
 
 			_listView = new ListView(HistoryList.History, 21, MakeItem, BindItem);
-			_listView.AddToClassList(ListUssClassName);
+			_listView.AddToClassList(LIST_USS_CLASS_NAME);
 			_listView.selectionType = SelectionType.Single;
-			_listView.onItemChosen += item => Select();
-			_listView.onSelectionChanged += selection => Highlight();
+			_listView.onItemsChosen += item => Select();
+			_listView.onSelectionChange += selection => Highlight();
 
 			header.Add(_back);
 			header.Add(_forward);
@@ -135,8 +139,10 @@ namespace PiRhoSoft.Utilities.Editor
 		private void BindItem(VisualElement item, int index)
 		{
 			if (item is HistoryItem history)
-				history.Bind(index);
-		}
+            {
+                history.Bind(index);
+            }
+        }
 
 		private void Select()
 		{
@@ -150,8 +156,10 @@ namespace PiRhoSoft.Utilities.Editor
 		private void Highlight()
 		{
 			if (_listView.selectedItem is Object[] obj && obj.Length > 0)
-				EditorGUIUtility.PingObject(obj[0]);
-		}
+            {
+                EditorGUIUtility.PingObject(obj[0]);
+            }
+        }
 
 		private class HistoryItem : VisualElement, IDraggable
 		{
@@ -168,14 +176,14 @@ namespace PiRhoSoft.Utilities.Editor
 			public HistoryItem()
 			{
 				_icon = new Image();
-				_icon.AddToClassList(ListItemIconUssClassName);
+				_icon.AddToClassList(LIST_ITEM_ICON_USS_CLASS_NAME);
 
 				_label = new Label { pickingMode = PickingMode.Ignore };
-				_label.AddToClassList(ListItemLabelUssClassName);
+				_label.AddToClassList(LIST_ITEM_LABEL_USS_CLASS_NAME);
 				
 				Add(_icon);
 				Add(_label);
-				AddToClassList(ListItemUssClassName);
+				AddToClassList(LIST_ITEM_USS_CLASS_NAME);
 
 				this.MakeDraggable();
 			}
@@ -185,7 +193,7 @@ namespace PiRhoSoft.Utilities.Editor
 				_index = index;
 				_icon.image = HistoryList.GetIcon(_index);
 				_label.text = HistoryList.GetName(_index);
-				_label.EnableInClassList(CurrentListItemUssClassName, _index == HistoryList.Current);
+				_label.EnableInClassList(CURRENT_LIST_ITEM_USS_CLASS_NAME, _index == HistoryList.Current);
 			}
 		}
 
@@ -195,7 +203,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private static class HistoryList
 		{
-			private const int _capacity = 100;
+			private const int CAPACITY = 100;
 
 			private static bool _skipNextSelection = false;
 
@@ -231,20 +239,26 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				var objects = History[index];
 				if (objects.Length > 1)
-					return string.Join(", ", objects.Select(obj => GetName(obj)));
+                {
+                    return string.Join(", ", objects.Select(GetName));
+                }
 
-				return GetName(objects[0]);
+                return GetName(objects[0]);
 			}
 
 			private static string GetName(Object obj)
 			{
 				if (obj == null)
-					return "(missing)";
+                {
+                    return "(missing)";
+                }
 
-				if (string.IsNullOrEmpty(obj.name))
-					return $"'{obj.GetType().Name}'";
+                if (string.IsNullOrEmpty(obj.name))
+                {
+                    return $"'{obj.GetType().Name}'";
+                }
 
-				return obj.name;
+                return obj.name;
 			}
 
 			private static void Clear()
@@ -264,12 +278,16 @@ namespace PiRhoSoft.Utilities.Editor
 							var trailing = History.Count - Current - 1;
 
 							if (trailing > 0)
-								History.RemoveRange(Current + 1, trailing);
+                            {
+                                History.RemoveRange(Current + 1, trailing);
+                            }
 
-							if (Current == _capacity)
-								History.RemoveAt(0);
+                            if (Current == CAPACITY)
+                            {
+                                History.RemoveAt(0);
+                            }
 
-							History.Add(Selection.objects);
+                            History.Add(Selection.objects);
 							Current = History.Count - 1;
 						}
 					}

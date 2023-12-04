@@ -11,7 +11,7 @@ namespace PiRhoSoft.Utilities
 	[Serializable]
 	public class ReferenceList<T> : ICollection<T>, IEnumerable<T>, IEnumerable, IList<T>, IReadOnlyCollection<T>, IReadOnlyList<T>, ICollection, IList
 	{
-		public const string ItemsProperty = nameof(_items);
+		public const string ITEMS_PROPERTY = nameof(_items);
 
 		// This is protected so it can be found by the editor
 		[SerializeReference] protected List<T> _items = new List<T>();

@@ -11,20 +11,20 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Attributes
 
-		public static bool HasAttribute<AttributeType>(this Type type) where AttributeType : Attribute
+		public static bool HasAttribute<TAttributeType>(this Type type) where TAttributeType : Attribute
 		{
-			return type.GetAttribute<AttributeType>() != null;
+			return type.GetAttribute<TAttributeType>() != null;
 		}
 
-		public static AttributeType GetAttribute<AttributeType>(this Type type) where AttributeType : Attribute
+		public static TAttributeType GetAttribute<TAttributeType>(this Type type) where TAttributeType : Attribute
 		{
-			return type.TryGetAttribute<AttributeType>(out var attribute) ? attribute : null;
+			return type.TryGetAttribute<TAttributeType>(out var attribute) ? attribute : null;
 		}
 
-		public static bool TryGetAttribute<AttributeType>(this Type type, out AttributeType attribute) where AttributeType : Attribute
+		public static bool TryGetAttribute<TAttributeType>(this Type type, out TAttributeType attribute) where TAttributeType : Attribute
 		{
-			var attributes = type.GetCustomAttributes(typeof(AttributeType), false);
-			attribute = attributes != null && attributes.Length > 0 ? attributes[0] as AttributeType : null;
+			var attributes = type.GetCustomAttributes(typeof(TAttributeType), false);
+			attribute = attributes != null && attributes.Length > 0 ? attributes[0] as TAttributeType : null;
 
 			return attribute != null;
 		}
@@ -54,9 +54,11 @@ namespace PiRhoSoft.Utilities.Editor
 		public static T CreateInstance<T>(this Type type) where T : class
 		{
 			if (type.IsCreatableAs(typeof(T)))
-				return Activator.CreateInstance(type) as T;
+            {
+                return Activator.CreateInstance(type) as T;
+            }
 
-			return null;
+            return null;
 		}
 
 		public static bool IsCreatable(this Type type)
@@ -64,9 +66,9 @@ namespace PiRhoSoft.Utilities.Editor
 			return type.IsValueType || type.GetConstructor(Type.EmptyTypes) != null;
 		}
 
-		public static bool IsCreatableAs<BaseType>(this Type type)
+		public static bool IsCreatableAs<TBaseType>(this Type type)
 		{
-			return type.IsCreatableAs(typeof(BaseType));
+			return type.IsCreatableAs(typeof(TBaseType));
 		}
 
 		public static bool IsCreatableAs(this Type type, Type baseType)
@@ -81,9 +83,11 @@ namespace PiRhoSoft.Utilities.Editor
 			while (baseType != null)
 			{
 				if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == genericType)
-					return true;
+                {
+                    return true;
+                }
 
-				baseType = baseType.BaseType;
+                baseType = baseType.BaseType;
 			}
 
 			return false;
@@ -95,9 +99,9 @@ namespace PiRhoSoft.Utilities.Editor
 			return includeAbstract ? types : types.Where(type => !type.IsAbstract);
 		}
 
-		public static bool ImplementsInterface<InterfaceType>(this Type type)
+		public static bool ImplementsInterface<TInterfaceType>(this Type type)
 		{
-			return type.ImplementsInterface(typeof(InterfaceType));
+			return type.ImplementsInterface(typeof(TInterfaceType));
 		}
 
 		public static bool ImplementsInterface(this Type type, Type interfaceType)
@@ -134,24 +138,36 @@ namespace PiRhoSoft.Utilities.Editor
 		private static bool IsSerializable(this Type type, bool inner)
 		{
 			if (type.IsAbstract)
-				return false; // covers static as well
+            {
+                return false; // covers static as well
+            }
 
-			if (type.IsEnum)
-				return true;
+            if (type.IsEnum)
+            {
+                return true;
+            }
 
-			if (type.IsGenericType)
-				return !inner && type.GetGenericTypeDefinition() == typeof(List<>) && IsSerializable(type.GetGenericArguments()[0], true);
+            if (type.IsGenericType)
+            {
+                return !inner && type.GetGenericTypeDefinition() == typeof(List<>) && IsSerializable(type.GetGenericArguments()[0], true);
+            }
 
-			if (type.IsArray && type.GetElementType().IsSerializable(true))
-				return !inner;
+            if (type.IsArray && type.GetElementType().IsSerializable(true))
+            {
+                return !inner;
+            }
 
-			if (typeof(Object).IsAssignableFrom(type))
-				return true;
+            if (typeof(Object).IsAssignableFrom(type))
+            {
+                return true;
+            }
 
-			if (type.HasAttribute<SerializableAttribute>())
-				return true;
+            if (type.HasAttribute<SerializableAttribute>())
+            {
+                return true;
+            }
 
-			return SerializableTypes.Contains(type);
+            return SerializableTypes.Contains(type);
 		}
 
 		#endregion

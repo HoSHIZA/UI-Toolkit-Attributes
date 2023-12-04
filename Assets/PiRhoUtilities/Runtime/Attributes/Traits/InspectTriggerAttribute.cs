@@ -4,7 +4,7 @@
 	{
 		public string Method { get; private set; }
 
-		public InspectTriggerAttribute(string method) : base(TestPhase, 0)
+		public InspectTriggerAttribute(string method) : base(TEST_PHASE, 0)
 		{
 			Method = method;
 		}

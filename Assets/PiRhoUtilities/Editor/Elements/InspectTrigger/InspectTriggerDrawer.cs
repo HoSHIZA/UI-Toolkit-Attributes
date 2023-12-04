@@ -5,9 +5,9 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(InspectTriggerAttribute))]
-	class InspectTriggerDrawer : PropertyDrawer
+    internal class InspectTriggerDrawer : PropertyDrawer
 	{
-		private const string _invalidMethodWarning = "(PUITDIM) invalid method for InspectTriggerAttribute on field '{0}': a parameterless method named '{1}' colud not be found on type '{2}'";
+		private const string INVALID_METHOD_WARNING = "(PUITDIM) invalid method for InspectTriggerAttribute on field '{0}': a parameterless method named '{1}' colud not be found on type '{2}'";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -19,11 +19,13 @@ namespace PiRhoSoft.Utilities.Editor
 			if (method != null)
 			{
 				if (!EditorApplication.isPlaying)
-					method.Invoke();
-			}
+                {
+                    method.Invoke();
+                }
+            }
 			else
 			{
-				Debug.LogWarningFormat(_invalidMethodWarning, property.propertyPath, inspectAttribute.Method, fieldInfo.DeclaringType.Name);
+				Debug.LogWarningFormat(INVALID_METHOD_WARNING, property.propertyPath, inspectAttribute.Method, fieldInfo.DeclaringType.Name);
 			}
 
 			return element;

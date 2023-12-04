@@ -5,8 +5,8 @@ namespace PiRhoSoft.Utilities.Editor
 {
 	public abstract class SerializedDataField<T> : PropertyWatcher<string>
 	{
-		private const string _contentPropertyName = "_content";
-		private const string _referencesPropertyName = "_references";
+		private const string CONTENT_PROPERTY_NAME = "_content";
+		private const string REFERENCES_PROPERTY_NAME = "_references";
 
 		private T _value;
 		private readonly SerializedData _data;
@@ -17,8 +17,8 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			_value = value;
 			_data = new SerializedData();
-			_contentProperty = property.FindPropertyRelative(_contentPropertyName);
-			_referencesProperty = property.FindPropertyRelative(_referencesPropertyName);
+			_contentProperty = property.FindPropertyRelative(CONTENT_PROPERTY_NAME);
+			_referencesProperty = property.FindPropertyRelative(REFERENCES_PROPERTY_NAME);
 
 			style.display = DisplayStyle.Flex;
 
@@ -68,9 +68,11 @@ namespace PiRhoSoft.Utilities.Editor
 
 			var i = 0;
 			foreach (var reference in _data.EditorReferences)
-				_referencesProperty.GetArrayElementAtIndex(i++).objectReferenceValue = reference;
+            {
+                _referencesProperty.GetArrayElementAtIndex(i++).objectReferenceValue = reference;
+            }
 
-			_contentProperty.serializedObject.ApplyModifiedProperties();
+            _contentProperty.serializedObject.ApplyModifiedProperties();
 
 			Update(_value);
 		}

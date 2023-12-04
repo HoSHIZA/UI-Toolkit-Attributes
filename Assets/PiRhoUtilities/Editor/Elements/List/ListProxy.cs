@@ -128,25 +128,23 @@ namespace PiRhoSoft.Utilities.Editor
 			field.Bind(_property.serializedObject);
 
 			if (!(field is Foldout))
-				field.SetFieldLabel(null); // TODO: for references this should be the type name
+            {
+                field.SetFieldLabel(null); // TODO: for references this should be the type name
+            }
 
-			return field;
+            return field;
 		}
 
 		public int Count => _property.arraySize;
 
 		public bool CanAdd()
 		{
-			return CanAddCallback != null
-				? CanAddCallback.Invoke()
-				: true;
+			return CanAddCallback == null || CanAddCallback.Invoke();
 		}
 
 		public bool CanAdd(Type type)
 		{
-			return type != null && CanAddTypeCallback != null
-				? CanAddTypeCallback.Invoke(type)
-				: true;
+			return type == null || CanAddTypeCallback == null || CanAddTypeCallback.Invoke(type);
 		}
 
 		public bool AddItem(Type type)
@@ -181,9 +179,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public bool CanRemove(int index)
 		{
-			return CanRemoveCallback != null
-				? CanRemoveCallback.Invoke(index)
-				: true;
+			return CanRemoveCallback == null || CanRemoveCallback.Invoke(index);
 		}
 		
 		public void RemoveItem(int index)

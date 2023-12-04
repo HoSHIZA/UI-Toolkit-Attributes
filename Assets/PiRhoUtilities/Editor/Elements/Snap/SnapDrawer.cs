@@ -6,10 +6,10 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(SnapAttribute))]
-	class SnapDrawer : PropertyDrawer
+    internal class SnapDrawer : PropertyDrawer
 	{
-		private const string _invalidTypeWarning = "(PUSNDIT) invalid type for SnapAttribute on field {0}: Snap can only be applied to int, float, vector, rect, or bounds fields";
-		private const string _invalidSourceError = "(PUSNDIS) invalid source for SnapAttribute on field '{0}': a field, method, or property of type '{1}' named '{2}' could not be found";
+		private const string INVALID_TYPE_WARNING = "(PUSNDIT) invalid type for SnapAttribute on field {0}: Snap can only be applied to int, float, vector, rect, or bounds fields";
+		private const string INVALID_SOURCE_ERROR = "(PUSNDIS) invalid source for SnapAttribute on field '{0}': a field, method, or property of type '{1}' named '{2}' could not be found";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -31,7 +31,7 @@ namespace PiRhoSoft.Utilities.Editor
 				case SerializedPropertyType.BoundsInt: SetupSnap(snapAttribute.SnapSource, property, element, new BoundsInt(Vector3Int.RoundToInt(snapAttribute.Bounds.center), Vector3Int.RoundToInt(snapAttribute.Bounds.extents)), SnapBoundsInt); break;
 				default:
 				{
-					Debug.LogWarningFormat(property.serializedObject.targetObject, _invalidTypeWarning, property.propertyPath);
+					Debug.LogWarningFormat(property.serializedObject.targetObject, INVALID_TYPE_WARNING, property.propertyPath);
 					break;
 				}
 			}
@@ -50,7 +50,7 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 			else
 			{
-				Debug.LogWarningFormat(_invalidSourceError, property.propertyPath, nameof(T), sourceName);
+				Debug.LogWarningFormat(INVALID_SOURCE_ERROR, property.propertyPath, nameof(T), sourceName);
 			}
 		}
 

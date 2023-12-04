@@ -7,7 +7,7 @@ namespace PiRhoSoft.Utilities.Editor
 	[CustomPropertyDrawer(typeof(ObjectPickerAttribute))]
 	public class ObjectPickerDrawer : PropertyDrawer
 	{
-		private const string _invalidPropertyTypeWarning = "(PUOPDIPT) invalid type for ObjectPickerAttribute on field {0}: ObjectPicker can only be applied to Object or derived fields";
+		private const string INVALID_PROPERTY_TYPE_WARNING = "(PUOPDIPT) invalid type for ObjectPickerAttribute on field {0}: ObjectPicker can only be applied to Object or derived fields";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -19,7 +19,7 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 			else
 			{
-				Debug.LogWarningFormat(property.serializedObject.targetObject, _invalidPropertyTypeWarning, property.propertyPath);
+				Debug.LogWarningFormat(property.serializedObject.targetObject, INVALID_PROPERTY_TYPE_WARNING, property.propertyPath);
 			}
 
 			return new FieldContainer(property.displayName);

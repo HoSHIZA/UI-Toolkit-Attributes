@@ -7,19 +7,19 @@ using Object = UnityEngine.Object;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(ValidateAttribute))]
-	class ValidateDrawer : PropertyDrawer
+    internal class ValidateDrawer : PropertyDrawer
 	{
-		public const string Stylesheet = "ValidateStyle.uss";
-		public const string UssClassName = "pirho-validate";
-		public const string SideUssClassName = UssClassName + "--side";
-		public const string MessageUssClassName = UssClassName + "__message";
-		public const string AboveUssClassName = MessageUssClassName + "--above";
-		public const string BelowUssClassName = MessageUssClassName + "--below";
-		public const string LeftUssClassName = MessageUssClassName + "--left";
-		public const string RightUssClassName = MessageUssClassName + "--right";
+		public const string STYLESHEET = "ValidateStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-validate";
+		public const string SIDE_USS_CLASS_NAME = USS_CLASS_NAME + "--side";
+		public const string MESSAGE_USS_CLASS_NAME = USS_CLASS_NAME + "__message";
+		public const string ABOVE_USS_CLASS_NAME = MESSAGE_USS_CLASS_NAME + "--above";
+		public const string BELOW_USS_CLASS_NAME = MESSAGE_USS_CLASS_NAME + "--below";
+		public const string LEFT_USS_CLASS_NAME = MESSAGE_USS_CLASS_NAME + "--left";
+		public const string RIGHT_USS_CLASS_NAME = MESSAGE_USS_CLASS_NAME + "--right";
 
-		private const string _invalidTypeWarning = "(PUVDIT) invalid type for ValidateAttribute on field '{0}': Validate can only be applied to serializable fields";
-		private const string _invalidMethodWarning = "(PUVDIM) invalid method for ValidateAttribute on field '{0}': the method '{1}' should return a bool and take 0, or 1 parameter of type '{2}'";
+		private const string INVALID_TYPE_WARNING = "(PUVDIT) invalid type for ValidateAttribute on field '{0}': Validate can only be applied to serializable fields";
+		private const string INVALID_METHOD_WARNING = "(PUVDIM) invalid method for ValidateAttribute on field '{0}': the method '{1}' should return a bool and take 0, or 1 parameter of type '{2}'";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -27,38 +27,38 @@ namespace PiRhoSoft.Utilities.Editor
 			var validateAttribute = attribute as ValidateAttribute;
 
 			var message = new MessageBox(validateAttribute.Type, validateAttribute.Message);
-			message.AddToClassList(MessageUssClassName);
+			message.AddToClassList(MESSAGE_USS_CLASS_NAME);
 
 			var change = CreateControl(message, property, fieldInfo.DeclaringType, validateAttribute.Method);
 			if (change != null)
 			{
 				var container = new VisualElement();
-				container.AddToClassList(UssClassName);
-				container.AddStyleSheet(Stylesheet);
+				container.AddToClassList(USS_CLASS_NAME);
+				container.AddStyleSheet(STYLESHEET);
 				container.Add(element);
 				container.Add(change);
 
 				if (validateAttribute.Location == TraitLocation.Above)
 				{
-					message.AddToClassList(BelowUssClassName);
+					message.AddToClassList(BELOW_USS_CLASS_NAME);
 					container.Insert(0, message);
 				}
 				if (validateAttribute.Location == TraitLocation.Below)
 				{
-					message.AddToClassList(BelowUssClassName);
+					message.AddToClassList(BELOW_USS_CLASS_NAME);
 					container.Add(message);
 				}
 				else if (validateAttribute.Location == TraitLocation.Left)
 				{
-					message.AddToClassList(LeftUssClassName);
+					message.AddToClassList(LEFT_USS_CLASS_NAME);
 					container.Insert(0, message);
-					container.AddToClassList(SideUssClassName);
+					container.AddToClassList(SIDE_USS_CLASS_NAME);
 				}
 				else if (validateAttribute.Location == TraitLocation.Right)
 				{
-					message.AddToClassList(RightUssClassName);
+					message.AddToClassList(RIGHT_USS_CLASS_NAME);
 					container.Add(message);
-					container.AddToClassList(SideUssClassName);
+					container.AddToClassList(SIDE_USS_CLASS_NAME);
 				}
 
 				return container;
@@ -97,7 +97,7 @@ namespace PiRhoSoft.Utilities.Editor
 				case SerializedPropertyType.ManagedReference: return CreateControl<object>(message, property, declaringType, method);
 			}
 
-			Debug.LogWarningFormat(_invalidTypeWarning, property.propertyPath, this.GetFieldType().Name);
+			Debug.LogWarningFormat(INVALID_TYPE_WARNING, property.propertyPath, this.GetFieldType().Name);
 			return null;
 		}
 
@@ -120,14 +120,16 @@ namespace PiRhoSoft.Utilities.Editor
 				}
 			}
 
-			Debug.LogWarningFormat(_invalidMethodWarning, property.propertyPath, method, typeof(T).Name);
+			Debug.LogWarningFormat(INVALID_METHOD_WARNING, property.propertyPath, method, typeof(T).Name);
 			return null;
 		}
 
 		private void Validated(MessageBox message, bool valid)
 		{
 			if (!EditorApplication.isPlaying)
-				message.SetDisplayed(!valid);
-		}
+            {
+                message.SetDisplayed(!valid);
+            }
+        }
 	}
 }

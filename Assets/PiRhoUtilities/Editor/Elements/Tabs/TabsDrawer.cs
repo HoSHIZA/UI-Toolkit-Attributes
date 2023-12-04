@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(TabsAttribute))]
-	class TabsDrawer : PropertyDrawer
+    internal class TabsDrawer : PropertyDrawer
 	{
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{

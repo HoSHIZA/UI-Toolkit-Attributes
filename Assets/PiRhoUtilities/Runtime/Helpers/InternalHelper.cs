@@ -9,44 +9,44 @@ namespace PiRhoSoft.Utilities
 		// TODO: need to be able to pass in parameter types to disambiguate overloads
 		// TODO: error reporting
 
-		public static DelegateType CreateDelegate<DelegateType>(MethodInfo method) where DelegateType : Delegate
+		public static TDelegateType CreateDelegate<TDelegateType>(MethodInfo method) where TDelegateType : Delegate
 		{
-			return (DelegateType)Delegate.CreateDelegate(typeof(DelegateType), method, false);
+			return (TDelegateType)Delegate.CreateDelegate(typeof(TDelegateType), method, false);
 		}
 
-		public static DelegateType CreateDelegate<DelegateType>(Type type, string methodName) where DelegateType : Delegate
+		public static TDelegateType CreateDelegate<TDelegateType>(Type type, string methodName) where TDelegateType : Delegate
 		{
 			var method = type.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-			return method != null ? (DelegateType)Delegate.CreateDelegate(typeof(DelegateType), method, false) : null;
+			return method != null ? (TDelegateType)Delegate.CreateDelegate(typeof(TDelegateType), method, false) : null;
 		}
 
-		public static Func<PropertyType> CreateGetDelegate<PropertyType>(Type type, string propertyName)
+		public static Func<TPropertyType> CreateGetDelegate<TPropertyType>(Type type, string propertyName)
 		{
 			var property = type.GetProperty(propertyName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 			var method = property != null ? property.GetGetMethod(true) : null; // nonPublic parameter means also get non public, rather than only get non public
 
-			return method != null ? (Func<PropertyType>)Delegate.CreateDelegate(typeof(Func<PropertyType>), method, false) : null;
+			return method != null ? (Func<TPropertyType>)Delegate.CreateDelegate(typeof(Func<TPropertyType>), method, false) : null;
 		}
 
-		public static Action<PropertyType> CreateSetDelegate<PropertyType>(Type type, string propertyName)
+		public static Action<TPropertyType> CreateSetDelegate<TPropertyType>(Type type, string propertyName)
 		{
 			var property = type.GetProperty(propertyName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 			var method = property != null ? property.GetSetMethod(true) : null; // same as GetGetMethod in CreateGetDelegate
 
-			return method != null ? (Action<PropertyType>)Delegate.CreateDelegate(typeof(Action<PropertyType>), method, false) : null;
+			return method != null ? (Action<TPropertyType>)Delegate.CreateDelegate(typeof(Action<TPropertyType>), method, false) : null;
 		}
 
-		public static Func<FieldType> CreateGetField<FieldType>(Type type, string fieldName)
+		public static Func<TFieldType> CreateGetField<TFieldType>(Type type, string fieldName)
 		{
 			var field = type.GetField(fieldName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
 			if (field != null)
-				return () => (FieldType)field.GetValue(null);
+				return () => (TFieldType)field.GetValue(null);
 
 			return null;
 		}
 
-		public static Action<FieldType> CreateSetField<FieldType>(Type type, string fieldName)
+		public static Action<TFieldType> CreateSetField<TFieldType>(Type type, string fieldName)
 		{
 			var field = type.GetField(fieldName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
@@ -56,17 +56,17 @@ namespace PiRhoSoft.Utilities
 			return null;
 		}
 
-		public static Func<FieldType> CreateGetField<FieldType>(Type type, string fieldName, object obj)
+		public static Func<TFieldType> CreateGetField<TFieldType>(Type type, string fieldName, object obj)
 		{
 			var field = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
 			if (field != null)
-				return () => (FieldType)field.GetValue(obj);
+				return () => (TFieldType)field.GetValue(obj);
 
 			return null;
 		}
 
-		public static Action<FieldType> CreateSetField<FieldType>(Type type, string fieldName, object obj)
+		public static Action<TFieldType> CreateSetField<TFieldType>(Type type, string fieldName, object obj)
 		{
 			var field = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 

@@ -11,22 +11,22 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public new const string Stylesheet = "Picker/ObjectPicker/ObjectPickerStyle.uss";
-		public new const string UssClassName = "pirho-object-picker-field";
-		public const string InspectUssClassName = UssClassName + "__inspect";
+		public new const string STYLESHEET = "Picker/ObjectPicker/ObjectPickerStyle.uss";
+		public new const string USS_CLASS_NAME = "pirho-object-picker-field";
+		public const string INSPECT_USS_CLASS_NAME = USS_CLASS_NAME + "__inspect";
 
 		#endregion
 
 		#region Log Messages
 
-		private const string _invalidTypeWarning = "(PUOPFIT) Invalid type for ObjectPickerField: the type '{0}' must be derived from UnityEngine.Object";
-		private const string _invalidValueWarning = "(PUOPFIT) Failed to set ObjectPickerField value: '{0}' is not a object of type '{1}'";
+		private const string INVALID_TYPE_WARNING = "(PUOPFIT) Invalid type for ObjectPickerField: the type '{0}' must be derived from UnityEngine.Object";
+		private const string INVALID_VALUE_WARNING = "(PUOPFIT) Failed to set ObjectPickerField value: '{0}' is not a object of type '{1}'";
 
 		#endregion
 
 		#region Members
 
-		private ObjectPickerControl Picker => _control as ObjectPickerControl;
+		private ObjectPickerControl Picker => Control as ObjectPickerControl;
 
 		#endregion
 
@@ -44,7 +44,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public ObjectPickerField(string label) : base(label, new ObjectPickerControl())
 		{
-			AddToClassList(UssClassName);
+			AddToClassList(USS_CLASS_NAME);
 		}
 
 		public ObjectPickerField(string label, Type type) : this(label)
@@ -76,7 +76,7 @@ namespace PiRhoSoft.Utilities.Editor
 			public ObjectPickerControl()
 			{
 				_inspect = new IconButton(Inspect) { image = Icon.Inspect.Texture, tooltip = "View this object in the inspector" };
-				_inspect.AddToClassList(InspectUssClassName);
+				_inspect.AddToClassList(INSPECT_USS_CLASS_NAME);
 				_inspect.SetEnabled(false);
 
 				Add(_inspect);
@@ -89,9 +89,9 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				if (_value != newValue)
 				{
-					if (newValue && (Type == null || !Type.IsAssignableFrom(newValue.GetType())))
+					if (newValue && (Type == null || !Type.IsInstanceOfType(newValue)))
 					{
-						Debug.LogWarningFormat(_invalidValueWarning, newValue.name, Type);
+						Debug.LogWarningFormat(INVALID_VALUE_WARNING, newValue.name, Type);
 					}
 					else
 					{
@@ -110,24 +110,26 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				if (type != _type)
 				{
-					if (_provider)
-						Object.DestroyImmediate(_provider);
+					if (Provider)
+                    {
+                        Object.DestroyImmediate(Provider);
+                    }
 
-					_provider = null;
+                    Provider = null;
 					_type = type;
 
 					if (_type == null || !(typeof(Object).IsAssignableFrom(_type)))
 					{
-						Debug.LogWarningFormat(_invalidTypeWarning, _type);
+						Debug.LogWarningFormat(INVALID_TYPE_WARNING, _type);
 					}
 					else
 					{
-						_provider = ScriptableObject.CreateInstance<ObjectProvider>();
+						Provider = ScriptableObject.CreateInstance<ObjectProvider>();
 
 						if (typeof(Component).IsAssignableFrom(_type) || typeof(GameObject) == _type)
 						{
 							var objects = ObjectHelper.GetObjectList(_type, true);
-							_provider.Setup(type.Name, objects.Paths.Prepend("None").ToList(), objects.Objects.Prepend(null).ToList(), GetIcon, OnSelected);
+							Provider.Setup(type.Name, objects.Paths.Prepend("None").ToList(), objects.Objects.Prepend(null).ToList(), GetIcon, OnSelected);
 						}
 						else
 						{
@@ -136,23 +138,29 @@ namespace PiRhoSoft.Utilities.Editor
 							var paths = databaseAssets.Paths.Prepend("None");
 							var assets = databaseAssets.Assets.Prepend(null);
 
-							_provider.Setup(_type.Name, paths.ToList(), assets.ToList(), GetIcon, OnSelected);
+							Provider.Setup(_type.Name, paths.ToList(), assets.ToList(), GetIcon, OnSelected);
 						}
 					}
 
-					if (_type == null || (_value && !_type.IsAssignableFrom(_value.GetType())))
-						OnSelected(null);
-					else
-						SetLabel(GetIcon(_value), GetLabel());
-				}
+					if (_type == null || (_value && !_type.IsInstanceOfType(_value)))
+                    {
+                        OnSelected(null);
+                    }
+                    else
+                    {
+                        SetLabel(GetIcon(_value), GetLabel());
+                    }
+                }
 			}
 
 			private Texture GetIcon(Object obj)
 			{
 				if (obj)
-					return AssetPreview.GetMiniThumbnail(obj);
+                {
+                    return AssetPreview.GetMiniThumbnail(obj);
+                }
 
-				return Type != null ? AssetPreview.GetMiniTypeThumbnail(Type) : null;
+                return Type != null ? AssetPreview.GetMiniTypeThumbnail(Type) : null;
 			}
 
 			private string GetLabel()
@@ -163,14 +171,18 @@ namespace PiRhoSoft.Utilities.Editor
 			private void OnSelected(Object selected)
 			{
 				if (_value != selected)
-					this.SendChangeEvent(_value, selected);
-			}
+                {
+                    this.SendChangeEvent(_value, selected);
+                }
+            }
 
 			private void Inspect()
 			{
 				if (_value)
-					Selection.activeObject = _value;
-			}
+                {
+                    Selection.activeObject = _value;
+                }
+            }
 
 			#region IDragReceiver Implementation
 
@@ -211,16 +223,20 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				base.Init(element, bag, cc);
 
-				var field = element as ObjectPickerField;
+				var field = (ObjectPickerField)element;
 				var typeName = _type.GetValueFromBag(bag, cc);
 				var valueName = _value.GetValueFromBag(bag, cc);
 
 				if (!string.IsNullOrEmpty(typeName))
-					field.Type = TypeHelper.FindType(typeName);
+                {
+                    field.Type = TypeHelper.FindType(typeName);
+                }
 
-				if (!string.IsNullOrEmpty(valueName))
-					field.SetValueWithoutNotify(AssetDatabase.LoadAssetAtPath(valueName, field.Type));
-			}
+                if (!string.IsNullOrEmpty(valueName))
+                {
+                    field.SetValueWithoutNotify(AssetDatabase.LoadAssetAtPath(valueName, field.Type));
+                }
+            }
 		}
 
 		#endregion

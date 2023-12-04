@@ -1,6 +1,7 @@
 ﻿using PiRhoSoft.Utilities.Editor;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -82,7 +83,7 @@ namespace PiRhoSoft.Utilities.Samples
 			_sampleList = rootVisualElement.Query<ListView>("sample-list");
 			_sampleList.makeItem = () => new Label();
 			_sampleList.bindItem = (element, index) => (element as Label).text = _items[index].Name;
-			_sampleList.onSelectionChanged += SelectionChanged;
+			_sampleList.onSelectionChange += list => SelectionChanged(list.ToList());
 			_sampleList.itemsSource = _items;
 			_sampleList.selectionType = SelectionType.Single;
 

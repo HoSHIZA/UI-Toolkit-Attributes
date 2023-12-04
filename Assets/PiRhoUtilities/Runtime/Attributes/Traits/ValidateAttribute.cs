@@ -7,7 +7,7 @@
 		public MessageBoxType Type { get; private set; }
 		public TraitLocation Location { get; set; }
 
-		public ValidateAttribute(string method, string message, MessageBoxType type = MessageBoxType.Warning) : base(ValidatePhase, 0)
+		public ValidateAttribute(string method, string message, MessageBoxType type = MessageBoxType.Warning) : base(VALIDATE_PHASE, 0)
 		{
 			Method = method;
 			Type = type;

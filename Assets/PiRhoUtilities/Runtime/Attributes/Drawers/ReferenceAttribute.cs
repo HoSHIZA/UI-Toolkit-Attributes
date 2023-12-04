@@ -4,7 +4,7 @@
 	{
 		public bool IsCollapsable = true;
 
-		public ReferenceAttribute() : base(ControlPhase, 0)
+		public ReferenceAttribute() : base(CONTROL_PHASE, 0)
 		{
 		}
 	}

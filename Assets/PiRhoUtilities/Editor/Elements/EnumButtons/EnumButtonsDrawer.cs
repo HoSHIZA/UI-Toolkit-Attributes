@@ -6,9 +6,9 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(EnumButtonsAttribute))]
-	class EnumButtonsDrawer : PropertyDrawer
+    internal class EnumButtonsDrawer : PropertyDrawer
 	{
-		private const string _invalidTypeWarning = "(PUEBDIT) invalid type for EnumButtonsAttribute on field '{0}': EnumButtons can only be applied to Enum fields";
+		private const string INVALID_TYPE_WARNING = "(PUEBDIT) invalid type for EnumButtonsAttribute on field '{0}': EnumButtons can only be applied to Enum fields";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -23,13 +23,15 @@ namespace PiRhoSoft.Utilities.Editor
 				};
 
 				if (flags.Flags.HasValue)
-					field.UseFlags = true;
+                {
+                    field.UseFlags = true;
+                }
 
-				return field.ConfigureProperty(property);
+                return field.ConfigureProperty(property);
 			}
 			else
 			{
-				Debug.LogWarningFormat(_invalidTypeWarning, property.propertyPath);
+				Debug.LogWarningFormat(INVALID_TYPE_WARNING, property.propertyPath);
 				return new FieldContainer(property.displayName);
 			}
 		}

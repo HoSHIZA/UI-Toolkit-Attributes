@@ -9,13 +9,13 @@ namespace PiRhoSoft.Utilities
 
 	public abstract class Resource : ScriptableObject, ISerializationCallbackReceiver
 	{
-		public const string _invalidPathWarning = "(URIP) Invalid Resource location: the {0} at path {1} should be beneath a folder called 'Resources' so it can be loaded at runtime";
+		public const string INVALID_PATH_WARNING = "(URIP) Invalid Resource location: the {0} at path {1} should be beneath a folder called 'Resources' so it can be loaded at runtime";
 
 #pragma warning disable CS0414
 
-		private static readonly string ResourcesFolder = "Resources/";
-		private static readonly int FolderLength = "Resources/".Length;
-		private static readonly int ExtensionLength = ".asset".Length;
+		private static readonly string _resourcesFolder = "Resources/";
+		private static readonly int _folderLength = "Resources/".Length;
+		private static readonly int _extensionLength = ".asset".Length;
 
 #pragma warning restore CS0414
 
@@ -43,12 +43,12 @@ namespace PiRhoSoft.Utilities
 			// passing their path to Resources Load (and then only if the object is in a Resources folder).
 
 			var path = UnityEditor.AssetDatabase.GetAssetPath(obj);
-			var index = path.IndexOf(ResourcesFolder);
+			var index = path.IndexOf(_resourcesFolder);
 
 			if (index < 0)
 			{
 				if (!string.IsNullOrEmpty(path))
-					Debug.LogWarningFormat(obj, _invalidPathWarning, obj.GetType().Name, path);
+					Debug.LogWarningFormat(obj, INVALID_PATH_WARNING, obj.GetType().Name, path);
 
 				return path;
 			}
@@ -57,7 +57,7 @@ namespace PiRhoSoft.Utilities
 				// Unity merges all Resources folders so the path needed to look up the Resource is just the portion
 				// beneath the Resources folder.
 
-				return path.Substring(index + FolderLength, path.Length - index - FolderLength - ExtensionLength);
+				return path.Substring(index + _folderLength, path.Length - index - _folderLength - _extensionLength);
 			}
 #else
 			return string.Empty;

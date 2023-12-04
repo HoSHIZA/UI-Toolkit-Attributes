@@ -72,8 +72,8 @@ namespace PiRhoSoft.Utilities.Samples
 		private IDictionaryProxy CreatePropertyProxy(SerializedObject obj, string propertyName)
 		{
 			var property = obj.FindProperty(propertyName);
-			var keys = property.FindPropertyRelative(SerializedDictionary<string, int>.KeyProperty);
-			var values = property.FindPropertyRelative(SerializedDictionary<string, int>.ValueProperty);
+			var keys = property.FindPropertyRelative(SerializedDictionary<string, int>.KEY_PROPERTY);
+			var values = property.FindPropertyRelative(SerializedDictionary<string, int>.VALUE_PROPERTY);
 
 			return new PropertyDictionaryProxy(property, keys, values, null);
 		}

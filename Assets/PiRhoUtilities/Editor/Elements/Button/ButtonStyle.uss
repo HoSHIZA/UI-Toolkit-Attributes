@@ -21,6 +21,7 @@
 
 .pirho-trait-button__button
 {
+    margin: 1px -2px 0 3px;
 }
 
 .pirho-trait-button__button--above
@@ -33,10 +34,10 @@
 
 .pirho-trait-button__button--left
 {
-	margin-right: 0px;
+	margin-right: 0;
 }
 
 .pirho-trait-button__button--right
 {
-	margin-left: 0px;
+	margin-left: 0;
 }

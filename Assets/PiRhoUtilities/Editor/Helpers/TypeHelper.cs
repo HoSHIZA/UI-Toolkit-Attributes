@@ -25,14 +25,14 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Listing
 
-		public static IEnumerable<Type> GetDerivedTypes<BaseType>(bool includeAbstract)
+		public static IEnumerable<Type> GetDerivedTypes<TBaseType>(bool includeAbstract)
 		{
-			return typeof(BaseType).GetDerivedTypes(includeAbstract);
+			return typeof(TBaseType).GetDerivedTypes(includeAbstract);
 		}
 
-		public static IEnumerable<Type> GetTypesWithAttribute<AttributeType>() where AttributeType : Attribute
+		public static IEnumerable<Type> GetTypesWithAttribute<TAttributeType>() where TAttributeType : Attribute
 		{
-			return TypeCache.GetTypesWithAttribute<AttributeType>();
+			return TypeCache.GetTypesWithAttribute<TAttributeType>();
 		}
 
 		public static IEnumerable<Type> GetTypesWithAttribute(Type attributeType)
@@ -82,9 +82,11 @@ namespace PiRhoSoft.Utilities.Editor
 				if (type != rootType)
 				{
 					if (types.Any(t => t.BaseType == type))
-						Path += "/" + Type.Name;
+                    {
+                        Path += "/" + Type.Name;
+                    }
 
-					type = type.BaseType;
+                    type = type.BaseType;
 				}
 
 				// prepend all parent type names up to but not including the root type
@@ -107,17 +109,23 @@ namespace PiRhoSoft.Utilities.Editor
 
 			// search in default runtime assembly
 			if (type == null)
-				type = Type.GetType($"{name}, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+            {
+                type = Type.GetType($"{name}, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+            }
 
-			// search in default editor assembly
+            // search in default editor assembly
 			if (type == null)
-				type = Type.GetType($"{name}, Assembly-CSharp-Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+            {
+                type = Type.GetType($"{name}, Assembly-CSharp-Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+            }
 
-			// search in Unity
+            // search in Unity
 			if (type == null)
-				type = typeof(Object).Assembly.GetType(name);
+            {
+                type = typeof(Object).Assembly.GetType(name);
+            }
 
-			return type;
+            return type;
 		}
 
 		#endregion

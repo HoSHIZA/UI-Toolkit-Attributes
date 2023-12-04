@@ -10,7 +10,7 @@ namespace PiRhoSoft.Utilities.Editor
 	[CustomEditor(typeof(Object), true, isFallback = true)]
 	[CanEditMultipleObjects]
 	public class DefaultEditor : UnityEditor.Editor
-	{
+    {
 		public override VisualElement CreateInspectorGUI()
 		{
 			var container = new VisualElement();
@@ -23,9 +23,11 @@ namespace PiRhoSoft.Utilities.Editor
 					var propertyField = new PropertyField(iterator.Copy()) { name = "PropertyField:" + iterator.propertyPath };
 
 					if (iterator.propertyPath == "m_Script" && serializedObject.targetObject != null)
-						propertyField.SetEnabled(value: false);
+                    {
+                        propertyField.SetEnabled(value: false);
+                    }
 
-					container.Add(propertyField);
+                    container.Add(propertyField);
 				}
 				while (iterator.NextVisible(false));
 			}

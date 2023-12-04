@@ -8,8 +8,8 @@ namespace PiRhoSoft.Utilities.Editor
 		#region Defaults
 
 		// These match unity's internal defaults
-		public const int DefaultMinimum = 0;
-		public const int DefaultMaximum = 10;
+		public const int DEFAULT_MINIMUM = 0;
+		public const int DEFAULT_MAXIMUM = 10;
 
 		#endregion
 
@@ -47,10 +47,10 @@ namespace PiRhoSoft.Utilities.Editor
 
 			public SliderIntControl()
 			{
-				_slider = new SliderInt(DefaultMinimum, DefaultMaximum);
-				_slider.AddToClassList(SliderUssClassName);
+				_slider = new SliderInt(DEFAULT_MINIMUM, DEFAULT_MAXIMUM);
+				_slider.AddToClassList(SLIDER_USS_CLASS_NAME);
 				_text = new IntegerField();
-				_text.AddToClassList(TextUssClassName);
+				_text.AddToClassList(TEXT_USS_CLASS_NAME);
 
 				Add(_slider);
 				Add(_text);
@@ -73,8 +73,8 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			public UxmlTraits()
 			{
-				_minimum.defaultValue = DefaultMinimum;
-				_maximum.defaultValue = DefaultMaximum;
+				Minimum.defaultValue = DEFAULT_MINIMUM;
+				Maximum.defaultValue = DEFAULT_MAXIMUM;
 			}
 		}
 

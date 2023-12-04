@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(NoLabelAttribute))]
-	class NoLabelDrawer : PropertyDrawer
+    internal class NoLabelDrawer : PropertyDrawer
 	{
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{

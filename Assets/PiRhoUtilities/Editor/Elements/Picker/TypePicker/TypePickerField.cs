@@ -11,27 +11,27 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public new const string Stylesheet = "Picker/TypePicker/TypePickerStyle.uss";
-		public new const string UssClassName = "pirho-scene-picker-field";
+		public new const string STYLESHEET = "Picker/TypePicker/TypePickerStyle.uss";
+		public new const string USS_CLASS_NAME = "pirho-scene-picker-field";
 
 		#endregion
 
 		#region Log Messages
 
-		private const string _invalidTypeWarning = "(PUTPFIT) Invalid type for TypePickerField: the type '{0}' could not be found";
-		private const string _invalidValueWarning = "(PUTPFIT) Failed to set TypePickerField value: '{0}' is not derivable from type '{1}'";
+		private const string INVALID_TYPE_WARNING = "(PUTPFIT) Invalid type for TypePickerField: the type '{0}' could not be found";
+		private const string INVALID_VALUE_WARNING = "(PUTPFIT) Failed to set TypePickerField value: '{0}' is not derivable from type '{1}'";
 
 		#endregion
 
 		#region Defaults
 
-		public const bool DefaultShowAbstract = false;
+		public const bool DEFAULT_SHOW_ABSTRACT = false;
 
 		#endregion
 
 		#region Members
 
-		private TypePickerControl _picker => _control as TypePickerControl;
+		private TypePickerControl Picker => Control as TypePickerControl;
 
 		#endregion
 
@@ -39,14 +39,14 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public Type Type
 		{
-			get => _picker.Type;
-			set => _picker.SetType(value, ShowAbstract);
+			get => Picker.Type;
+			set => Picker.SetType(value, ShowAbstract);
 		}
 
 		public bool ShowAbstract
 		{
-			get => _picker.ShowAbstract;
-			set => _picker.SetType(Type, value);
+			get => Picker.ShowAbstract;
+			set => Picker.SetType(Type, value);
 		}
 
 		public TypePickerField() : this(null, null)
@@ -55,15 +55,15 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public TypePickerField(string label) : base(label, new TypePickerControl())
 		{
-			AddToClassList(UssClassName);
+			AddToClassList(USS_CLASS_NAME);
 		}
 
-		public TypePickerField(string label, Type type, bool showAbstract = DefaultShowAbstract) : this(label)
+		public TypePickerField(string label, Type type, bool showAbstract = DEFAULT_SHOW_ABSTRACT) : this(label)
 		{
-			_picker.SetType(type, showAbstract);
+			Picker.SetType(type, showAbstract);
 		}
 
-		public TypePickerField(Type type, bool showAbstract = DefaultShowAbstract) : this(null, type, showAbstract)
+		public TypePickerField(Type type, bool showAbstract = DEFAULT_SHOW_ABSTRACT) : this(null, type, showAbstract)
 		{
 		}
 
@@ -75,10 +75,10 @@ namespace PiRhoSoft.Utilities.Editor
 		private class TypePickerControl : PickerControl, IDragReceiver
 		{
 			public Type Type { get; private set; }
-			public bool ShowAbstract { get; private set; } = DefaultShowAbstract;
+			public bool ShowAbstract { get; private set; } = DEFAULT_SHOW_ABSTRACT;
 
 			private Type _value;
-			private string _valueName => _value?.AssemblyQualifiedName ?? string.Empty;
+			private string ValueName => _value?.AssemblyQualifiedName ?? string.Empty;
 
 			private Texture _typeIcon;
 
@@ -91,13 +91,13 @@ namespace PiRhoSoft.Utilities.Editor
 
 			public override void SetValueWithoutNotify(string newValue)
 			{
-				if (_valueName != newValue)
+				if (ValueName != newValue)
 				{
 					var type = GetType(newValue);
 
 					if (!string.IsNullOrEmpty(newValue) && (Type == null || !Type.IsAssignableFrom(type)))
 					{
-						Debug.LogWarningFormat(_invalidValueWarning, newValue, Type);
+						Debug.LogWarningFormat(INVALID_VALUE_WARNING, newValue, Type);
 					}
 					else
 					{
@@ -115,32 +115,38 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				if (type != Type || showAbstract != ShowAbstract)
 				{
-					if (_provider)
-						Object.DestroyImmediate(_provider);
+					if (Provider)
+                    {
+                        Object.DestroyImmediate(Provider);
+                    }
 
-					_provider = null;
+                    Provider = null;
 
 					Type = type;
 					ShowAbstract = showAbstract;
 
 					if (Type == null)
 					{
-						Debug.LogWarningFormat(_invalidTypeWarning);
+						Debug.LogWarningFormat(INVALID_TYPE_WARNING);
 					}
 					else
 					{
 						var types = TypeHelper.GetTypeList(Type, showAbstract);
 
-						_provider = ScriptableObject.CreateInstance<TypeProvider>();
-						_provider.Setup(types.BaseType.Name, types.Paths.Prepend("None").ToList(), types.Types.Select(t => t.AssemblyQualifiedName).Prepend(string.Empty).ToList(), GetIcon, OnSelected);
+						Provider = ScriptableObject.CreateInstance<TypeProvider>();
+						Provider.Setup(types.BaseType.Name, types.Paths.Prepend("None").ToList(), types.Types.Select(t => t.AssemblyQualifiedName).Prepend(string.Empty).ToList(), GetIcon, OnSelected);
 						_typeIcon = AssetPreview.GetMiniTypeThumbnail(Type);
 					}
 
 					if (Type == null || (_value != null && !Type.IsAssignableFrom(_value)))
-						OnSelected(null);
-					else
-						SetLabel(GetIcon(Type), GetLabel());
-				}
+                    {
+                        OnSelected(null);
+                    }
+                    else
+                    {
+                        SetLabel(GetIcon(Type), GetLabel());
+                    }
+                }
 			}
 
 			private Type GetType(string typeName)
@@ -157,14 +163,18 @@ namespace PiRhoSoft.Utilities.Editor
 			private Texture GetIcon(Type type)
 			{
 				if (type == null)
-					return _typeIcon;
+                {
+                    return _typeIcon;
+                }
 
-				var icon = AssetPreview.GetMiniTypeThumbnail(type);
+                var icon = AssetPreview.GetMiniTypeThumbnail(type);
 				
 				if (icon == null)
-					return _typeIcon;
+                {
+                    return _typeIcon;
+                }
 
-				return icon;
+                return icon;
 			}
 
 			private string GetLabel()
@@ -174,9 +184,11 @@ namespace PiRhoSoft.Utilities.Editor
 
 			private void OnSelected(string selected)
 			{
-				if (_valueName != selected)
-					this.SendChangeEvent(_valueName, selected);
-			}
+				if (ValueName != selected)
+                {
+                    this.SendChangeEvent(ValueName, selected);
+                }
+            }
 
 			#region IDragReceiver Implementation
 
@@ -211,7 +223,7 @@ namespace PiRhoSoft.Utilities.Editor
 		public new class UxmlTraits : BaseFieldTraits<string, UxmlStringAttributeDescription>
 		{
 			private readonly UxmlStringAttributeDescription _type = new UxmlStringAttributeDescription { name = "type" };
-			private readonly UxmlBoolAttributeDescription _showAbstract = new UxmlBoolAttributeDescription { name = "show-abstract", defaultValue = DefaultShowAbstract };
+			private readonly UxmlBoolAttributeDescription _showAbstract = new UxmlBoolAttributeDescription { name = "show-abstract", defaultValue = DEFAULT_SHOW_ABSTRACT };
 
 			public override void Init(VisualElement element, IUxmlAttributes bag, CreationContext cc)
 			{
@@ -219,9 +231,11 @@ namespace PiRhoSoft.Utilities.Editor
 				var typeName = _type.GetValueFromBag(bag, cc);
 
 				if (!string.IsNullOrEmpty(typeName))
-					field.Type = TypeHelper.FindType(typeName);
+                {
+                    field.Type = TypeHelper.FindType(typeName);
+                }
 
-				field.ShowAbstract = _showAbstract.GetValueFromBag(bag, cc);
+                field.ShowAbstract = _showAbstract.GetValueFromBag(bag, cc);
 
 				base.Init(element, bag, cc);
 			}

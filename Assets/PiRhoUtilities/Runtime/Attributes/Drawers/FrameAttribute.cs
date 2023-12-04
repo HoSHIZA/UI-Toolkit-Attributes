@@ -4,7 +4,7 @@
 	{
 		public bool IsCollapsable = true;
 
-		public FrameAttribute() : base(ControlPhase, 0)
+		public FrameAttribute() : base(CONTROL_PHASE, 0)
 		{
 		}
 	}

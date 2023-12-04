@@ -7,14 +7,14 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string Stylesheet = "Tabs.uss";
-		public const string UssClassName = "pirho-tabs";
-		public const string HeaderUssClassName = UssClassName + "__header";
-		public const string ContentUssClassName = UssClassName + "__content";
-		public const string TabUssClassName = UssClassName + "__tab";
-		public const string TabSelectedUssClassName = TabUssClassName + "--selected";
-		public const string PageUssClassName = UssClassName + "__page";
-		public const string PageSelectedUssClassName = PageUssClassName + "--selected";
+		public const string STYLESHEET = "Tabs.uss";
+		public const string USS_CLASS_NAME = "pirho-tabs";
+		public const string HEADER_USS_CLASS_NAME = USS_CLASS_NAME + "__header";
+		public const string CONTENT_USS_CLASS_NAME = USS_CLASS_NAME + "__content";
+		public const string TAB_USS_CLASS_NAME = USS_CLASS_NAME + "__tab";
+		public const string TAB_SELECTED_USS_CLASS_NAME = TAB_USS_CLASS_NAME + "--selected";
+		public const string PAGE_USS_CLASS_NAME = USS_CLASS_NAME + "__page";
+		public const string PAGE_SELECTED_USS_CLASS_NAME = PAGE_USS_CLASS_NAME + "--selected";
 
 		#endregion
 
@@ -36,18 +36,24 @@ namespace PiRhoSoft.Utilities.Editor
 		public Tabs()
 		{
 			Header = new VisualElement();
-			Header.AddToClassList(HeaderUssClassName);
+			Header.AddToClassList(HEADER_USS_CLASS_NAME);
 
 			Content = new VisualElement();
-			Content.AddToClassList(ContentUssClassName);
+			Content.AddToClassList(CONTENT_USS_CLASS_NAME);
 
 			Pages = Content.Query<TabPage>().Build();
 
 			hierarchy.Add(Header);
 			hierarchy.Add(Content);
 
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
+            
+#if UNITY_2021_1_OR_NEWER
+            this.style.marginRight = -2;
+#else
+            this.style.marginRight = 3;
+#endif
 		}
 
 		public TabPage GetPage(string name)
@@ -57,8 +63,10 @@ namespace PiRhoSoft.Utilities.Editor
 			Pages.ForEach(page =>
 			{
 				if (page.Label == name)
-					found = page;
-			});
+                {
+                    found = page;
+                }
+            });
 
 			return found;
 		}
@@ -75,17 +83,21 @@ namespace PiRhoSoft.Utilities.Editor
 				Header.Add(page.Button);
 
 				if (page.IsActive && _activePage == null)
-					_activePage = page;
-			});
+                {
+                    _activePage = page;
+                }
+            });
 
 			if (_activePage == null && Content.childCount > 0)
-				_activePage = Content[0] as TabPage;
+            {
+                _activePage = Content[0] as TabPage;
+            }
 
-			Pages.ForEach(page =>
+            Pages.ForEach(page =>
 			{
 				page.IsActive = page == _activePage;
-				page.EnableInClassList(PageSelectedUssClassName, page.IsActive);
-				page.Button.EnableInClassList(TabSelectedUssClassName, page.IsActive);
+				page.EnableInClassList(PAGE_SELECTED_USS_CLASS_NAME, page.IsActive);
+				page.Button.EnableInClassList(TAB_SELECTED_USS_CLASS_NAME, page.IsActive);
 			});
 		}
 

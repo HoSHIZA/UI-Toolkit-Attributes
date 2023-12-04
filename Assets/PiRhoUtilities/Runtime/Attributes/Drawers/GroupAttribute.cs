@@ -4,7 +4,7 @@
 	{
 		public string Name { get; private set; }
 
-		public GroupAttribute(string name, int drawOrder = 0) : base(ContainerPhase, drawOrder)
+		public GroupAttribute(string name, int drawOrder = 0) : base(CONTAINER_PHASE, drawOrder)
 		{
 			Name = name;
 		}

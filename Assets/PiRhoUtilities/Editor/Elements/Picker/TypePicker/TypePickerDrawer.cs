@@ -7,7 +7,7 @@ namespace PiRhoSoft.Utilities.Editor
 	[CustomPropertyDrawer(typeof(TypePickerAttribute))]
 	public class TypePickerDrawer : PropertyDrawer
 	{
-		private const string _invalidTypeWarning = "(PUTPDIT) Invalid type for TypePickerAttribute on field {0}: TypePicker can only be applied to string fields";
+		private const string INVALID_TYPE_WARNING = "(PUTPDIT) Invalid type for TypePickerAttribute on field {0}: TypePicker can only be applied to string fields";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -18,7 +18,7 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 			else
 			{
-				Debug.LogWarningFormat(_invalidTypeWarning, property.propertyPath);
+				Debug.LogWarningFormat(INVALID_TYPE_WARNING, property.propertyPath);
 				return new FieldContainer(property.displayName);
 			}
 		}

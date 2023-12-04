@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 namespace PiRhoSoft.Utilities
@@ -7,12 +8,31 @@ namespace PiRhoSoft.Utilities
 	public class DictionarySample : MonoBehaviour
 	{
 		[Serializable] public class IntDictionary : SerializedDictionary<string, int> { }
+		[Serializable] public class ClassDictionary : SerializedDictionary<string, Test> { }
 
+        [Serializable]
+        public class Test
+        {
+            public bool Abobe;
+            public float Jabobe;
+            public string YaboBobBe;
+
+            public Test(bool abobe, float jabobe, string yaboBobBe)
+            {
+                Abobe = abobe;
+                Jabobe = jabobe;
+                YaboBobBe = yaboBobBe;
+            }
+        }
+        
 		[MessageBox("The [Dictionary] attribute is applied to fields subclassed from SeriializedDictionary<string, Value> to display it as a customizable dictioray view. Adding, removing, reordering and other callbacks can be specified.", MessageBoxType.Info, Location = TraitLocation.Above)]
 
 		[Dictionary(AddCallback = nameof(IntAdded), RemoveCallback = nameof(IntRemoved), ReorderCallback = nameof(IntsReordered), ChangeCallback = nameof(IntsChanged), AllowAdd = nameof(MaximumSize5), AllowRemove = nameof(Removable))]
 		public IntDictionary Ints = new IntDictionary { { "Can't Remove This", 0 } };
 
+        [Dictionary]
+        public ClassDictionary Classes = new ClassDictionary { { "Text", new Test(true, 228.337f, "text aaa") } };
+        
 		private void IntAdded(string key)
 		{
 			Debug.LogFormat("{0} added", key);

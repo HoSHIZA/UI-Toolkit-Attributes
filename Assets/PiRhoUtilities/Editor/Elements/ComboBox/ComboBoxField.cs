@@ -11,16 +11,16 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Class Names
 
-		public const string Stylesheet = "ComboBoxStyle.uss";
-		public const string UssClassName = "pirho-combo-box-field";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string InputUssClassName = UssClassName + "__input";
+		public const string STYLESHEET = "ComboBoxStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-combo-box-field";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string INPUT_USS_CLASS_NAME = USS_CLASS_NAME + "__input";
 
 		#endregion
 
 		#region Defaults
 
-		public const bool DefaultIsDelayed = false;
+		public const bool DEFAULT_IS_DELAYED = false;
 
 		#endregion
 
@@ -47,17 +47,17 @@ namespace PiRhoSoft.Utilities.Editor
 		public ComboBoxField(string label) : base(label, null)
 		{
 			_comboBox = new ComboBoxControl();
-			_comboBox.AddToClassList(InputUssClassName);
+			_comboBox.AddToClassList(INPUT_USS_CLASS_NAME);
 			_comboBox.RegisterCallback<ChangeEvent<string>>(evt =>
 			{
 				SetValueWithoutNotify(evt.newValue);
 			});
 
-			labelElement.AddToClassList(LabelUssClassName);
+			labelElement.AddToClassList(LABEL_USS_CLASS_NAME);
 
-			AddToClassList(UssClassName);
+			AddToClassList(USS_CLASS_NAME);
 			this.SetVisualInput(_comboBox);
-			this.AddStyleSheet(Stylesheet);
+			this.AddStyleSheet(STYLESHEET);
 		}
 
 		public ComboBoxField() : this(null, null)
@@ -85,8 +85,8 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private class ComboBoxControl : VisualElement
 		{
-			public const string InputTextUssClassName = InputUssClassName + "__text";
-			public const string InputButtonUssClassName = InputUssClassName + "__button";
+			public const string INPUT_TEXT_USS_CLASS_NAME = INPUT_USS_CLASS_NAME + "__text";
+			public const string INPUT_BUTTON_USS_CLASS_NAME = INPUT_USS_CLASS_NAME + "__button";
 
 			public TextField TextField { get; private set; }
 
@@ -104,8 +104,10 @@ namespace PiRhoSoft.Utilities.Editor
 						if (_options != null)
 						{
 							foreach (var option in _options)
-								_menu.AddItem(new GUIContent(option), false, () => SelectItem(option));
-						}
+                            {
+                                _menu.AddItem(new GUIContent(option), false, () => SelectItem(option));
+                            }
+                        }
 
 						_dropdownButton.SetEnabled(_options != null && _options.Count > 0);
 					}
@@ -118,15 +120,15 @@ namespace PiRhoSoft.Utilities.Editor
 
 			public ComboBoxControl()
 			{
-				TextField = new TextField { isDelayed = DefaultIsDelayed };
-				TextField.AddToClassList(InputTextUssClassName);
+				TextField = new TextField { isDelayed = DEFAULT_IS_DELAYED };
+				TextField.AddToClassList(INPUT_TEXT_USS_CLASS_NAME);
 
 				var arrow = new VisualElement();
 				arrow.AddToClassList(BasePopupField<string, string>.arrowUssClassName);
 
 				_dropdownButton = new VisualElement();
 				_dropdownButton.AddToClassList(BasePopupField<string, string>.inputUssClassName);
-				_dropdownButton.AddToClassList(InputButtonUssClassName);
+				_dropdownButton.AddToClassList(INPUT_BUTTON_USS_CLASS_NAME);
 				_dropdownButton.AddManipulator(new Clickable(OpenDropdown));
 				_dropdownButton.SetEnabled(false);
 				_dropdownButton.Add(arrow);
@@ -159,13 +161,13 @@ namespace PiRhoSoft.Utilities.Editor
 		public new class UxmlTraits : BaseFieldTraits<string, UxmlStringAttributeDescription>
 		{
 			private readonly UxmlStringAttributeDescription _options = new UxmlStringAttributeDescription { name = "options" };
-			private readonly UxmlBoolAttributeDescription _delayed = new UxmlBoolAttributeDescription { name = "is-delayed", defaultValue = DefaultIsDelayed };
+			private readonly UxmlBoolAttributeDescription _delayed = new UxmlBoolAttributeDescription { name = "is-delayed", defaultValue = DEFAULT_IS_DELAYED };
 
 			public override void Init(VisualElement element, IUxmlAttributes bag, CreationContext cc)
 			{
 				base.Init(element, bag, cc);
 
-				var field = element as ComboBoxField;
+				var field = (ComboBoxField)element;
 				var options = _options.GetValueFromBag(bag, cc);
 
 				field.Options = options.Split(',').ToList();

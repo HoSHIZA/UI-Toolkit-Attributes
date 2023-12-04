@@ -32,7 +32,7 @@ namespace PiRhoSoft.Utilities.Editor
 				LocalInit();
 			}
 
-			void LocalInit()
+            private void LocalInit()
 			{
 				Index = 0;
 			}
@@ -60,7 +60,7 @@ namespace PiRhoSoft.Utilities.Editor
 				LocalInit();
 			}
 
-			void LocalInit()
+            private void LocalInit()
 			{
 				Index = 0;
 			}
@@ -90,7 +90,7 @@ namespace PiRhoSoft.Utilities.Editor
 				LocalInit();
 			}
 
-			void LocalInit()
+            private void LocalInit()
 			{
 				FromIndex = 0;
 				ToIndex = 0;
@@ -105,46 +105,46 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Log Messages
 
-		private const string _invalidBindingError = "(PUELFIB) invalid binding '{0}' for ListField: property '{1}' is type '{2}' but should be an array";
-		private const string _invalidTypeError = "(PUELFIT) invalid item type '{0}' for ListField: the item type must be a default constructable class when used with allowDerived = false";
-		private const string _failedAddError = "(PUELFFA) failed to add item of type '{0}' to the ListField: the item type must be a value type or default constructable class that is compatible with the list";
-		private const string _unspecifiedType = "(unspecified)";
+		private const string INVALID_BINDING_ERROR = "(PUELFIB) invalid binding '{0}' for ListField: property '{1}' is type '{2}' but should be an array";
+		private const string INVALID_TYPE_ERROR = "(PUELFIT) invalid item type '{0}' for ListField: the item type must be a default constructable class when used with allowDerived = false";
+		private const string FAILED_ADD_ERROR = "(PUELFFA) failed to add item of type '{0}' to the ListField: the item type must be a value type or default constructable class that is compatible with the list";
+		private const string UNSPECIFIED_TYPE = "(unspecified)";
 
 		#endregion
 
 		#region Class Names
 
-		public new const string Stylesheet = "ListStyle.uss";
-		public new const string UssClassName = "pirho-list-field";
-		public const string EmptyUssClassName = UssClassName + "--empty";
-		public const string AddDisabledUssClassName = UssClassName + "--add-disabled";
-		public const string RemoveDisabledUssClassName = UssClassName + "--remove-disabled";
-		public const string ReorderDisabledUssClassName = UssClassName + "--reorder-disabled";
-		public const string EmptyLabelUssClassName = UssClassName + "__empty-label";
-		public const string ItemsUssClassName = UssClassName + "__items";
-		public const string AddButtonUssClassName = UssClassName + "__add-button";
-		public const string RemoveButtonUssClassName = UssClassName + "__remove-button";
-		public const string DragHandleUssClassName = UssClassName + "__drag-handle";
-		public const string DragPlaceholderUssClassName = UssClassName + "__drag-placeholder";
-		public const string ItemUssClassName = UssClassName + "__item";
-		public const string ItemDraggingUssClassName = ItemUssClassName + "--dragging";
-		public const string ItemEvenUssClassName = ItemUssClassName + "--even";
-		public const string ItemOddUssClassName = ItemUssClassName + "--odd";
-		public const string ItemContentUssClassName = ItemUssClassName + "__content";
+		public new const string STYLESHEET = "ListStyle.uss";
+		public new const string USS_CLASS_NAME = "pirho-list-field";
+		public const string EMPTY_USS_CLASS_NAME = USS_CLASS_NAME + "--empty";
+		public const string ADD_DISABLED_USS_CLASS_NAME = USS_CLASS_NAME + "--add-disabled";
+		public const string REMOVE_DISABLED_USS_CLASS_NAME = USS_CLASS_NAME + "--remove-disabled";
+		public const string REORDER_DISABLED_USS_CLASS_NAME = USS_CLASS_NAME + "--reorder-disabled";
+		public const string EMPTY_LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__empty-label";
+		public const string ITEMS_USS_CLASS_NAME = USS_CLASS_NAME + "__items";
+		public const string ADD_BUTTON_USS_CLASS_NAME = USS_CLASS_NAME + "__add-button";
+		public const string REMOVE_BUTTON_USS_CLASS_NAME = USS_CLASS_NAME + "__remove-button";
+		public const string DRAG_HANDLE_USS_CLASS_NAME = USS_CLASS_NAME + "__drag-handle";
+		public const string DRAG_PLACEHOLDER_USS_CLASS_NAME = USS_CLASS_NAME + "__drag-placeholder";
+		public const string ITEM_USS_CLASS_NAME = USS_CLASS_NAME + "__item";
+		public const string ITEM_DRAGGING_USS_CLASS_NAME = ITEM_USS_CLASS_NAME + "--dragging";
+		public const string ITEM_EVEN_USS_CLASS_NAME = ITEM_USS_CLASS_NAME + "--even";
+		public const string ITEM_ODD_USS_CLASS_NAME = ITEM_USS_CLASS_NAME + "--odd";
+		public const string ITEM_CONTENT_USS_CLASS_NAME = ITEM_USS_CLASS_NAME + "__content";
 
 		#endregion
 
 		#region Defaults
 
-		public const string DefaultEmptyLabel = "The list is empty";
-		public const string DefaultEmptyTooltip = "There are no items in this list";
-		public const string DefaultAddTooltip = "Add an item to this list";
-		public const string DefaultRemoveTooltip = "Remove this item from the list";
-		public const string DefaultReorderTooltip = "Move this item within the list";
+		public const string DEFAULT_EMPTY_LABEL = "The list is empty";
+		public const string DEFAULT_EMPTY_TOOLTIP = "There are no items in this list";
+		public const string DEFAULT_ADD_TOOLTIP = "Add an item to this list";
+		public const string DEFAULT_REMOVE_TOOLTIP = "Remove this item from the list";
+		public const string DEFAULT_REORDER_TOOLTIP = "Move this item within the list";
 
-		public const bool DefaultAllowAdd = true;
-		public const bool DefaultAllowRemove = true;
-		public const bool DefaultAllowReorder = true;
+		public const bool DEFAULT_ALLOW_ADD = true;
+		public const bool DEFAULT_ALLOW_REMOVE = true;
+		public const bool DEFAULT_ALLOW_REORDER = true;
 
 		#endregion
 
@@ -158,15 +158,15 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Members
 
-		private string _emptyLabel = DefaultEmptyLabel;
-		private string _emptyTooltip = DefaultEmptyTooltip;
-		private string _addTooltip = DefaultAddTooltip;
-		private string _removeTooltip = DefaultRemoveTooltip;
-		private string _reorderTooltip = DefaultReorderTooltip;
+		private string _emptyLabel = DEFAULT_EMPTY_LABEL;
+		private string _emptyTooltip = DEFAULT_EMPTY_TOOLTIP;
+		private string _addTooltip = DEFAULT_ADD_TOOLTIP;
+		private string _removeTooltip = DEFAULT_REMOVE_TOOLTIP;
+		private string _reorderTooltip = DEFAULT_REORDER_TOOLTIP;
 
-		private bool _allowAdd = DefaultAllowAdd;
-		private bool _allowRemove = DefaultAllowRemove;
-		private bool _allowReorder = DefaultAllowReorder;
+		private bool _allowAdd = DEFAULT_ALLOW_ADD;
+		private bool _allowRemove = DEFAULT_ALLOW_REMOVE;
+		private bool _allowReorder = DEFAULT_ALLOW_REORDER;
 
 		private IListProxy _proxy;
 
@@ -251,7 +251,7 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			if (itemType != null && !allowDerived && !itemType.IsCreatable())
 			{
-				Debug.LogWarningFormat(_invalidTypeError, itemType.FullName);
+				Debug.LogWarningFormat(INVALID_TYPE_ERROR, itemType.FullName);
 				return;
 			}
 
@@ -274,24 +274,24 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void BuildUi()
 		{
-			AddToClassList(UssClassName);
-			this.AddStyleSheet(Stylesheet);
+			AddToClassList(USS_CLASS_NAME);
+			this.AddStyleSheet(STYLESHEET);
 
-			_addButton = AddHeaderButton(_addIcon.Texture, _addTooltip, AddButtonUssClassName, DoAdd);
-			_removeButtons = Content.Query<IconButton>(className: RemoveButtonUssClassName).Build();
-			_reorderHandles = Content.Query<Image>(className: DragHandleUssClassName).Build();
+			_addButton = AddHeaderButton(_addIcon.Texture, _addTooltip, ADD_BUTTON_USS_CLASS_NAME, DoAdd);
+			_removeButtons = Content.Query<IconButton>(className: REMOVE_BUTTON_USS_CLASS_NAME).Build();
+			_reorderHandles = Content.Query<Image>(className: DRAG_HANDLE_USS_CLASS_NAME).Build();
 
 			_emptyText = new TextElement();
-			_emptyText.AddToClassList(EmptyLabelUssClassName);
+			_emptyText.AddToClassList(EMPTY_LABEL_USS_CLASS_NAME);
 
 			_itemsContainer = new VisualElement();
-			_itemsContainer.AddToClassList(ItemsUssClassName);
+			_itemsContainer.AddToClassList(ITEMS_USS_CLASS_NAME);
 
 			Content.Add(_emptyText);
 			Content.Add(_itemsContainer);
 
 			_dragPlaceholder = new VisualElement();
-			_dragPlaceholder.AddToClassList(DragPlaceholderUssClassName);
+			_dragPlaceholder.AddToClassList(DRAG_PLACEHOLDER_USS_CLASS_NAME);
 
 			_typeProvider = ScriptableObject.CreateInstance<TypeProvider>();
 
@@ -310,17 +310,17 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void UpdateAddState()
 		{
-			EnableInClassList(AddDisabledUssClassName, !_allowAdd);
+			EnableInClassList(ADD_DISABLED_USS_CLASS_NAME, !_allowAdd);
 		}
 
 		private void UpdateRemoveState()
 		{
-			EnableInClassList(RemoveDisabledUssClassName, !_allowRemove);
+			EnableInClassList(REMOVE_DISABLED_USS_CLASS_NAME, !_allowRemove);
 		}
 
 		private void UpdateReorderState()
 		{
-			EnableInClassList(ReorderDisabledUssClassName, !_allowReorder);
+			EnableInClassList(REORDER_DISABLED_USS_CLASS_NAME, !_allowReorder);
 
 			UnregisterCallback<MouseMoveEvent>(UpdateDrag);
 			UnregisterCallback<MouseUpEvent>(StopDrag);
@@ -334,7 +334,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void UpdateEmptyState()
 		{
-			EnableInClassList(EmptyUssClassName, _proxy.Count == 0);
+			EnableInClassList(EMPTY_USS_CLASS_NAME, _proxy.Count == 0);
 		}
 
 		private void UpdateEmptyLabel()
@@ -363,10 +363,14 @@ namespace PiRhoSoft.Utilities.Editor
 			_itemsContainer.Clear();
 
 			if (_proxy != null)
-				UpdateItemsWithoutNotify();
-			else
-				EnableInClassList(EmptyUssClassName, true);
-		}
+            {
+                UpdateItemsWithoutNotify();
+            }
+            else
+            {
+                EnableInClassList(EMPTY_USS_CLASS_NAME, true);
+            }
+        }
 
 		private void UpdateItemType()
 		{
@@ -398,10 +402,14 @@ namespace PiRhoSoft.Utilities.Editor
 			for (var i = 0; i < _proxy.Count; i++)
 			{
 				if (i < _itemsContainer.childCount)
-					CheckElement(i);
-				else
-					CreateElement(i);
-			}
+                {
+                    CheckElement(i);
+                }
+                else
+                {
+                    CreateElement(i);
+                }
+            }
 
 			_removeButtons.ForEach(button =>
 			{
@@ -420,16 +428,16 @@ namespace PiRhoSoft.Utilities.Editor
 		private void CreateElement(int index)
 		{
 			var item = new VisualElement();
-			item.AddToClassList(ItemUssClassName);
+			item.AddToClassList(ITEM_USS_CLASS_NAME);
 			_itemsContainer.Add(item);
 
-			var dragHandle = new Image { image = _dragIcon.Texture, tooltip = _reorderTooltip };
-			dragHandle.AddToClassList(DragHandleUssClassName);
+			var dragHandle = new Image { image = _dragIcon.Texture };
+			dragHandle.AddToClassList(DRAG_HANDLE_USS_CLASS_NAME);
 			dragHandle.RegisterCallback((MouseDownEvent e) => StartDrag(e, item));
 			item.Add(dragHandle);
 
-			var remove = new IconButton(() => RemoveItem(item)) { image = _removeIcon.Texture, tooltip = _removeTooltip };
-			remove.AddToClassList(RemoveButtonUssClassName);
+			var remove = new IconButton(() => RemoveItem(item)) { image = _removeIcon.Texture };
+			remove.AddToClassList(REMOVE_BUTTON_USS_CLASS_NAME);
 			item.Add(remove);
 
 			UpdateContent(item, index);
@@ -451,11 +459,11 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void UpdateContent(VisualElement item, int index)
 		{
-			item.EnableInClassList(ItemEvenUssClassName, index % 2 == 0);
-			item.EnableInClassList(ItemOddUssClassName, index % 2 != 0);
+			item.EnableInClassList(ITEM_EVEN_USS_CLASS_NAME, index % 2 == 0);
+			item.EnableInClassList(ITEM_ODD_USS_CLASS_NAME, index % 2 != 0);
 
 			var content = _proxy.CreateElement(index);
-			content.AddToClassList(ItemContentUssClassName);
+			content.AddToClassList(ITEM_CONTENT_USS_CLASS_NAME);
 			item.Insert(1, content);
 		}
 
@@ -471,10 +479,14 @@ namespace PiRhoSoft.Utilities.Editor
 		private void DoAdd()
 		{
 			if (_allowDerived)
-				SelectType();
-			else
-				AddItem(_itemType);
-		}
+            {
+                SelectType();
+            }
+            else
+            {
+                AddItem(_itemType);
+            }
+        }
 
 		private void SelectType()
 		{
@@ -507,7 +519,7 @@ namespace PiRhoSoft.Utilities.Editor
 				}
 				else
 				{
-					Debug.LogErrorFormat(_failedAddError, selected != null ? selected.FullName : _unspecifiedType);
+					Debug.LogErrorFormat(FAILED_ADD_ERROR, selected != null ? selected.FullName : UNSPECIFIED_TYPE);
 				}
 			}
 		}
@@ -557,7 +569,7 @@ namespace PiRhoSoft.Utilities.Editor
 				_dragToIndex = index;
 
 				_dragElement = _itemsContainer.ElementAt(index);
-				_dragElement.AddToClassList(ItemDraggingUssClassName);
+				_dragElement.AddToClassList(ITEM_DRAGGING_USS_CLASS_NAME);
 				_dragElement.BringToFront();
 				_dragElement.style.left = mousePosition.x;
 				_dragElement.style.top = mousePosition.y;
@@ -617,15 +629,17 @@ namespace PiRhoSoft.Utilities.Editor
 					_dragElement.style.left = 0;
 					_dragElement.style.top = 0;
 					_dragElement.PlaceBehind(_dragPlaceholder);
-					_dragElement.RemoveFromClassList(ItemDraggingUssClassName);
+					_dragElement.RemoveFromClassList(ITEM_DRAGGING_USS_CLASS_NAME);
 				}
 
 				_dragPlaceholder.RemoveFromHierarchy();
 
 				if (_dragFromIndex != _dragToIndex)
-					ReorderItem(_dragFromIndex, _dragToIndex);
+                {
+                    ReorderItem(_dragFromIndex, _dragToIndex);
+                }
 
-				_dragElement = null;
+                _dragElement = null;
 				_dragFromIndex = -1;
 				_dragToIndex = -1;
 			}
@@ -635,9 +649,15 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Binding
 
-		protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+#if UNITY_2023_2_OR_NEWER
+		protected override void HandleEventBubbleUp(EventBase evt)
 		{
-			base.ExecuteDefaultActionAtTarget(evt);
+			base.HandleEventBubbleUp(evt);
+#else
+        protected override void ExecuteDefaultActionAtTarget(EventBase evt)
+        {
+            base.ExecuteDefaultActionAtTarget(evt);
+#endif
 
 			if (this.TryGetPropertyBindEvent(evt, out var property))
 			{
@@ -652,7 +672,7 @@ namespace PiRhoSoft.Utilities.Editor
 				}
 				else
 				{
-					Debug.LogErrorFormat(_invalidBindingError, bindingPath, property.propertyPath, property.propertyType);
+					Debug.LogErrorFormat(INVALID_BINDING_ERROR, bindingPath, property.propertyPath, property.propertyType);
 				}
 			}
 		}
@@ -664,20 +684,20 @@ namespace PiRhoSoft.Utilities.Editor
 		public new class UxmlFactory : UxmlFactory<ListField, UxmlTraits> { }
 		public new class UxmlTraits : Frame.UxmlTraits
 		{
-			private readonly UxmlBoolAttributeDescription _allowAdd = new UxmlBoolAttributeDescription { name = "allow-add", defaultValue = DefaultAllowAdd };
-			private readonly UxmlBoolAttributeDescription _allowRemove = new UxmlBoolAttributeDescription { name = "allow-remove", defaultValue = DefaultAllowRemove };
-			private readonly UxmlBoolAttributeDescription _allowReorder = new UxmlBoolAttributeDescription { name = "allow-reorder", defaultValue = DefaultAllowReorder };
-			private readonly UxmlStringAttributeDescription _emptyLabel = new UxmlStringAttributeDescription { name = "empty-label", defaultValue = DefaultEmptyLabel };
-			private readonly UxmlStringAttributeDescription _emptyTooltip = new UxmlStringAttributeDescription { name = "empty-tooltip", defaultValue = DefaultEmptyTooltip };
-			private readonly UxmlStringAttributeDescription _addTooltip = new UxmlStringAttributeDescription { name = "add-tooltip", defaultValue = DefaultAddTooltip };
-			private readonly UxmlStringAttributeDescription _removeTooltip = new UxmlStringAttributeDescription { name = "remove-tooltip", defaultValue = DefaultRemoveTooltip };
-			private readonly UxmlStringAttributeDescription _reorderTooltip = new UxmlStringAttributeDescription { name = "reorder-tooltip", defaultValue = DefaultReorderTooltip };
+			private readonly UxmlBoolAttributeDescription _allowAdd = new UxmlBoolAttributeDescription { name = "allow-add", defaultValue = DEFAULT_ALLOW_ADD };
+			private readonly UxmlBoolAttributeDescription _allowRemove = new UxmlBoolAttributeDescription { name = "allow-remove", defaultValue = DEFAULT_ALLOW_REMOVE };
+			private readonly UxmlBoolAttributeDescription _allowReorder = new UxmlBoolAttributeDescription { name = "allow-reorder", defaultValue = DEFAULT_ALLOW_REORDER };
+			private readonly UxmlStringAttributeDescription _emptyLabel = new UxmlStringAttributeDescription { name = "empty-label", defaultValue = DEFAULT_EMPTY_LABEL };
+			private readonly UxmlStringAttributeDescription _emptyTooltip = new UxmlStringAttributeDescription { name = "empty-tooltip", defaultValue = DEFAULT_EMPTY_TOOLTIP };
+			private readonly UxmlStringAttributeDescription _addTooltip = new UxmlStringAttributeDescription { name = "add-tooltip", defaultValue = DEFAULT_ADD_TOOLTIP };
+			private readonly UxmlStringAttributeDescription _removeTooltip = new UxmlStringAttributeDescription { name = "remove-tooltip", defaultValue = DEFAULT_REMOVE_TOOLTIP };
+			private readonly UxmlStringAttributeDescription _reorderTooltip = new UxmlStringAttributeDescription { name = "reorder-tooltip", defaultValue = DEFAULT_REORDER_TOOLTIP };
 
 			public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
 			{
 				base.Init(ve, bag, cc);
 
-				var list = ve as ListField;
+				var list = (ListField) ve;
 
 				list.AllowAdd = _allowAdd.GetValueFromBag(bag, cc);
 				list.AllowRemove = _allowRemove.GetValueFromBag(bag, cc);

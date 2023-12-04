@@ -16,42 +16,63 @@ namespace PiRhoSoft.Utilities.Editor
 	{
 		#region Internal Lookups
 
-		private const string _changedInternalsError = "(PUPFECI) failed to setup SerializedProperty: Unity internals have changed";
+		private const string CHANGED_INTERNALS_ERROR = "(PUPFECI) failed to setup SerializedProperty: Unity internals have changed";
 
-		private const string _createFieldFromPropertyName = "CreateFieldFromProperty";
-		private static MethodInfo _createFieldFromPropertyMethod;
-		private static object[] _createFieldFromPropertyParameters = new object[1];
-		private static PropertyField _createFieldFromPropertyInstance;
+#if UNITY_2021_1_OR_NEWER
+        private const string CREATE_FIELD_FROM_PROPERTY_NAME = "CreateOrUpdateFieldFromProperty";
+		private static readonly object[] _createFieldFromPropertyParameters = new object[2];
+#else
+		private const string CREATE_FIELD_FROM_PROPERTY_NAME = "CreateFieldFromProperty";
+		private static readonly object[] _createFieldFromPropertyParameters = new object[1];
+#endif
 
-		private const string _gradientValueName = "gradientValue";
-		private static PropertyInfo _gradientValueProperty;
+		private static readonly MethodInfo _createFieldFromPropertyMethod;
+		private static readonly PropertyField _createFieldFromPropertyInstance;
 
-		private const string _hasVisibleChildFieldsName = "HasVisibleChildFields";
-		private static MethodInfo _hasVisibleChildFieldsMethod;
-		private static object[] _hasVisibleChildFieldsParameters = new object[1];
+		private const string GRADIENT_VALUE_NAME = "gradientValue";
+		private static readonly PropertyInfo _gradientValueProperty;
+
+		private const string HAS_VISIBLE_CHILD_FIELDS_NAME = "HasVisibleChildFields";
+		private static readonly MethodInfo _hasVisibleChildFieldsMethod;
+		private static readonly object[] _hasVisibleChildFieldsParameters = new object[2];
 
 		static SerializedPropertyExtensions()
 		{
-			var createFieldFromPropertyMethod = typeof(PropertyField).GetMethod(_createFieldFromPropertyName, BindingFlags.Instance | BindingFlags.NonPublic);
+            var createFieldFromPropertyMethod = typeof(PropertyField).GetMethod(CREATE_FIELD_FROM_PROPERTY_NAME, 
+                BindingFlags.Instance | BindingFlags.NonPublic);
 
-			if (createFieldFromPropertyMethod != null && createFieldFromPropertyMethod.HasSignature(typeof(VisualElement), typeof(SerializedProperty)))
-			{
-				_createFieldFromPropertyMethod = createFieldFromPropertyMethod;
-				_createFieldFromPropertyInstance = new PropertyField();
-			}
 
-			var gradientValueProperty = typeof(SerializedProperty).GetProperty(_gradientValueName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if (createFieldFromPropertyMethod != null && 
+#if UNITY_2021_1_OR_NEWER
+                createFieldFromPropertyMethod.HasSignature(typeof(VisualElement), typeof(SerializedProperty), typeof(object)))
+#else
+                createFieldFromPropertyMethod.HasSignature(typeof(VisualElement), typeof(SerializedProperty)))
+#endif
+            {
+                _createFieldFromPropertyMethod = createFieldFromPropertyMethod;
+                _createFieldFromPropertyInstance = new PropertyField();
+            }
 
-			if (gradientValueProperty != null && gradientValueProperty.PropertyType == typeof(Gradient) && gradientValueProperty.CanRead && gradientValueProperty.CanWrite)
-				_gradientValueProperty = gradientValueProperty;
+            var gradientValueProperty = typeof(SerializedProperty).GetProperty(GRADIENT_VALUE_NAME, BindingFlags.Instance | BindingFlags.NonPublic);
 
-			var hasVisibleChildFieldsMethod = typeof(EditorGUI).GetMethod(_hasVisibleChildFieldsName, BindingFlags.Static | BindingFlags.NonPublic);
+            if (gradientValueProperty != null && gradientValueProperty.PropertyType == typeof(Gradient) &&
+                gradientValueProperty.CanRead && gradientValueProperty.CanWrite)
+            {
+                _gradientValueProperty = gradientValueProperty;
+            }
 
-			if (hasVisibleChildFieldsMethod != null && hasVisibleChildFieldsMethod.HasSignature(typeof(bool), typeof(SerializedProperty)))
-				_hasVisibleChildFieldsMethod = hasVisibleChildFieldsMethod;
+            var hasVisibleChildFieldsMethod = typeof(EditorGUI).GetMethod(HAS_VISIBLE_CHILD_FIELDS_NAME, BindingFlags.Static | BindingFlags.NonPublic);
 
-			if (_createFieldFromPropertyMethod == null || _gradientValueProperty == null || _hasVisibleChildFieldsMethod == null)
-				Debug.LogError(_changedInternalsError);
+            if (hasVisibleChildFieldsMethod != null && hasVisibleChildFieldsMethod.HasSignature(typeof(bool), 
+                    typeof(SerializedProperty), typeof(bool)))
+            {
+                _hasVisibleChildFieldsMethod = hasVisibleChildFieldsMethod;
+            }
+
+            if (_createFieldFromPropertyMethod == null || _gradientValueProperty == null || _hasVisibleChildFieldsMethod == null)
+            {
+                Debug.LogError(CHANGED_INTERNALS_ERROR);
+            }
 		}
 
 		#endregion
@@ -63,6 +84,7 @@ namespace PiRhoSoft.Utilities.Editor
 			var obj = property.GetOwner<object>();
 			var type = obj?.GetType();
 			var field = type?.GetField(property.name);
+            
 			return field?.GetTooltip();
 		}
 
@@ -70,9 +92,11 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			if (property.isArray)
 			{
-				for (int i = 0; i < property.arraySize; i++)
-					yield return property.GetArrayElementAtIndex(i);
-			}
+				for (var i = 0; i < property.arraySize; i++)
+                {
+                    yield return property.GetArrayElementAtIndex(i);
+                }
+            }
 			else if (string.IsNullOrEmpty(property.propertyPath))
 			{
 				var iterator = property.Copy();
@@ -81,6 +105,7 @@ namespace PiRhoSoft.Utilities.Editor
 				while (valid)
 				{
 					yield return iterator.Copy();
+                    
 					valid = iterator.NextVisible(false);
 				}
 			}
@@ -93,6 +118,7 @@ namespace PiRhoSoft.Utilities.Editor
 				while (valid && !SerializedProperty.EqualContents(iterator, end))
 				{
 					yield return iterator.Copy();
+                    
 					valid = iterator.NextVisible(false);
 				}
 			}
@@ -101,40 +127,36 @@ namespace PiRhoSoft.Utilities.Editor
 		// this property is internal for some reason
 		public static Gradient GetGradientValue(this SerializedProperty property)
 		{
-			return _gradientValueProperty?.GetValue(property) as Gradient;
+			return _gradientValueProperty.GetValue(property) as Gradient;
 		}
 
 		public static void SetGradientValue(this SerializedProperty property, Gradient gradient)
 		{
-			_gradientValueProperty?.SetValue(property, gradient);
+			_gradientValueProperty.SetValue(property, gradient);
 		}
 
 		public static Type GetManagedReferenceFieldType(this SerializedProperty property)
-		{
-			if (property.propertyType != SerializedPropertyType.ManagedReference)
-				return null;
-
-			return ParseType(property.managedReferenceFieldTypename);
-		}
+        {
+            return property.propertyType == SerializedPropertyType.ManagedReference 
+                ? ParseType(property.managedReferenceFieldTypename) 
+                : null;
+        }
 
 		public static Type GetManagedReferenceValueType(this SerializedProperty property)
-		{
-			if (property.propertyType != SerializedPropertyType.ManagedReference)
-				return null;
-
-			return ParseType(property.managedReferenceFullTypename);
-		}
+        {
+            return property.propertyType == SerializedPropertyType.ManagedReference 
+                ? ParseType(property.managedReferenceFullTypename) 
+                : null;
+        }
 
 		public static bool HasManagedReferenceValue(this SerializedProperty property)
-		{
-			if (property.propertyType != SerializedPropertyType.ManagedReference)
-				return false;
+        {
+            return property.propertyType == SerializedPropertyType.ManagedReference && 
+                   !string.IsNullOrEmpty(property.managedReferenceFullTypename);
+        }
 
-			return !string.IsNullOrEmpty(property.managedReferenceFullTypename);
-		}
-
-		private static Regex _unityType = new Regex(@"(\S+) ([^/]+)(?:/(.+))?", RegexOptions.Compiled);
-		private static Dictionary<string, Type> _unityTypeMap = new Dictionary<string, Type>();
+		private static readonly Regex _unityType = new Regex(@"(\S+) ([^/]+)(?:/(.+))?", RegexOptions.Compiled);
+		private static readonly Dictionary<string, Type> _unityTypeMap = new Dictionary<string, Type>();
 
 		private static Type ParseType(string unityName)
 		{
@@ -154,6 +176,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 					var a = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(am => am.GetName().Name == assembly);
 					type = a.GetType(fullName);
+                    
 					_unityTypeMap.Add(unityName, type);
 				}
 			}
@@ -167,15 +190,22 @@ namespace PiRhoSoft.Utilities.Editor
 		}
 
 		public static VisualElement CreateField(this SerializedProperty property)
-		{
-			_createFieldFromPropertyParameters[0] = property;
-			return _createFieldFromPropertyMethod?.Invoke(_createFieldFromPropertyInstance, _createFieldFromPropertyParameters) as VisualElement;
-		}
+        {
+            _createFieldFromPropertyParameters[0] = property;
+
+#if UNITY_2021_1_OR_NEWER
+            _createFieldFromPropertyParameters[1] = null;
+#endif
+            
+            return _createFieldFromPropertyMethod?.Invoke(_createFieldFromPropertyInstance, _createFieldFromPropertyParameters) as VisualElement;
+        }
 
 		public static bool HasVisibleChildFields(this SerializedProperty property)
 		{
-			_hasVisibleChildFieldsParameters[0] = property;
-			return (bool)_hasVisibleChildFieldsMethod?.Invoke(null, _hasVisibleChildFieldsParameters);
+            _hasVisibleChildFieldsParameters[0] = property;
+            _hasVisibleChildFieldsParameters[1] = false;
+            
+            return (bool)_hasVisibleChildFieldsMethod.Invoke(null, _hasVisibleChildFieldsParameters);
 		}
 
 		public static void SetToDefault(this SerializedProperty property)
@@ -187,8 +217,10 @@ namespace PiRhoSoft.Utilities.Editor
 			else if (property.hasChildren && property.propertyType != SerializedPropertyType.ManagedReference)
 			{
 				foreach (var child in property.Children())
-					child.SetToDefault();
-			}
+                {
+                    child.SetToDefault();
+                }
+            }
 			else
 			{
 				switch (property.propertyType)
@@ -228,31 +260,94 @@ namespace PiRhoSoft.Utilities.Editor
 			var type = typeof(T);
 
 			// SerializedPropertyType.Generic
-			if (type == typeof(int)) return SerializedPropertyType.Integer;
-			else if (type == typeof(bool)) return SerializedPropertyType.Boolean;
-			else if (type == typeof(float)) return SerializedPropertyType.Float;
-			else if (type == typeof(string)) return SerializedPropertyType.String;
-			else if (type == typeof(Color)) return SerializedPropertyType.Color;
-			else if (typeof(Object).IsAssignableFrom(type)) return SerializedPropertyType.ObjectReference;
-			else if (type == typeof(LayerMask)) return SerializedPropertyType.LayerMask;
-			else if (type == typeof(Enum) || type.IsEnum) return SerializedPropertyType.Enum;
-			else if (type == typeof(Vector2)) return SerializedPropertyType.Vector2;
-			else if (type == typeof(Vector3)) return SerializedPropertyType.Vector3;
-			else if (type == typeof(Vector4)) return SerializedPropertyType.Vector4;
-			else if (type == typeof(Rect)) return SerializedPropertyType.Rect;
-			// SerializedPropertyType.ArraySize - stored as ints
-			else if (type == typeof(char)) return SerializedPropertyType.Character;
-			else if (type == typeof(AnimationCurve)) return SerializedPropertyType.AnimationCurve;
-			else if (type == typeof(Bounds)) return SerializedPropertyType.Bounds;
-			else if (type == typeof(Gradient)) return SerializedPropertyType.Gradient;
-			else if (type == typeof(Quaternion)) return SerializedPropertyType.Quaternion;
-			// SerializedPropertyType.ExposedReference
+			if (type == typeof(int))
+            {
+                return SerializedPropertyType.Integer;
+            }
+            else if (type == typeof(bool))
+            {
+                return SerializedPropertyType.Boolean;
+            }
+            else if (type == typeof(float))
+            {
+                return SerializedPropertyType.Float;
+            }
+            else if (type == typeof(string))
+            {
+                return SerializedPropertyType.String;
+            }
+            else if (type == typeof(Color))
+            {
+                return SerializedPropertyType.Color;
+            }
+            else if (typeof(Object).IsAssignableFrom(type))
+            {
+                return SerializedPropertyType.ObjectReference;
+            }
+            else if (type == typeof(LayerMask))
+            {
+                return SerializedPropertyType.LayerMask;
+            }
+            else if (type == typeof(Enum) || type.IsEnum)
+            {
+                return SerializedPropertyType.Enum;
+            }
+            else if (type == typeof(Vector2))
+            {
+                return SerializedPropertyType.Vector2;
+            }
+            else if (type == typeof(Vector3))
+            {
+                return SerializedPropertyType.Vector3;
+            }
+            else if (type == typeof(Vector4))
+            {
+                return SerializedPropertyType.Vector4;
+            }
+            else if (type == typeof(Rect))
+            {
+                return SerializedPropertyType.Rect;
+            }
+            // SerializedPropertyType.ArraySize - stored as ints
+			else if (type == typeof(char))
+            {
+                return SerializedPropertyType.Character;
+            }
+            else if (type == typeof(AnimationCurve))
+            {
+                return SerializedPropertyType.AnimationCurve;
+            }
+            else if (type == typeof(Bounds))
+            {
+                return SerializedPropertyType.Bounds;
+            }
+            else if (type == typeof(Gradient))
+            {
+                return SerializedPropertyType.Gradient;
+            }
+            else if (type == typeof(Quaternion))
+            {
+                return SerializedPropertyType.Quaternion;
+            }
+            // SerializedPropertyType.ExposedReference
 			// SerializedPropertyType.FixedBufferSize
-			else if (type == typeof(Vector2Int)) return SerializedPropertyType.Vector2Int;
-			else if (type == typeof(Vector3Int)) return SerializedPropertyType.Vector3Int;
-			else if (type == typeof(RectInt)) return SerializedPropertyType.RectInt;
-			else if (type == typeof(BoundsInt)) return SerializedPropertyType.BoundsInt;
-			// SerializedPropertyType.ManagedReference - no way to know
+			else if (type == typeof(Vector2Int))
+            {
+                return SerializedPropertyType.Vector2Int;
+            }
+            else if (type == typeof(Vector3Int))
+            {
+                return SerializedPropertyType.Vector3Int;
+            }
+            else if (type == typeof(RectInt))
+            {
+                return SerializedPropertyType.RectInt;
+            }
+            else if (type == typeof(BoundsInt))
+            {
+                return SerializedPropertyType.BoundsInt;
+            }
+            // SerializedPropertyType.ManagedReference - no way to know
 
 			return SerializedPropertyType.Generic;
 		}
@@ -294,6 +389,7 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 
 			value = default;
+            
 			return false;
 		}
 
@@ -307,7 +403,7 @@ namespace PiRhoSoft.Utilities.Editor
 				case SerializedPropertyType.Float: if (value is float f) { property.floatValue = f; return true; } return false;
 				case SerializedPropertyType.String: if (value is string s) { property.stringValue = s; return true; } return false;
 				case SerializedPropertyType.Color: if (value is Color color) { property.colorValue = color; return true; } return false;
-				case SerializedPropertyType.ObjectReference: if (typeof(Object).IsAssignableFrom(value.GetType())) { property.objectReferenceValue = (Object)value; return true; } return false;
+				case SerializedPropertyType.ObjectReference: if (value is Object o) { property.objectReferenceValue = o; return true; } return false;
 				case SerializedPropertyType.LayerMask: if (value is LayerMask mask) { property.intValue = mask; return true; } return false;
 				case SerializedPropertyType.Enum: if (value.GetType().IsEnum || value.GetType() == typeof(Enum)) { return property.SetEnumValue((Enum)value); } return false;
 				case SerializedPropertyType.Vector2: if (value is Vector2 v2) { property.vector2Value = v2; return true; } return false;
@@ -322,19 +418,20 @@ namespace PiRhoSoft.Utilities.Editor
 				case SerializedPropertyType.Quaternion: if (value is Quaternion q) { property.quaternionValue = q; return true; } return false;
 				case SerializedPropertyType.ExposedReference: return false;
 				case SerializedPropertyType.FixedBufferSize: return false;
-				case SerializedPropertyType.Vector2Int: if (value is Vector2Int v2i) { property.vector2IntValue = v2i; return true; } return false;
-				case SerializedPropertyType.Vector3Int: if (value is Vector3Int v3i) { property.vector3IntValue = v3i; return true; } return false;
+				case SerializedPropertyType.Vector2Int: if (value is Vector2Int v2I) { property.vector2IntValue = v2I; return true; } return false;
+				case SerializedPropertyType.Vector3Int: if (value is Vector3Int v3I) { property.vector3IntValue = v3I; return true; } return false;
 				case SerializedPropertyType.RectInt: if (value is RectInt recti) { property.rectIntValue = recti; return true; } return false;
 				case SerializedPropertyType.BoundsInt: if (value is BoundsInt boundsi) { property.boundsIntValue = boundsi; return true; } return false;
-				case SerializedPropertyType.ManagedReference: if (property.GetManagedReferenceFieldType().IsAssignableFrom(value.GetType())) { property.managedReferenceValue = value; return true; } return false;
+				case SerializedPropertyType.ManagedReference: if (property.GetManagedReferenceFieldType().IsInstanceOfType(value)) { property.managedReferenceValue = value; return true; } return false;
 			}
 
 			return false;
 		}
-
+        
 		public static Enum GetEnumValue(this SerializedProperty property)
 		{
 			var type = property.GetObject<object>().GetType();
+            
 			return (Enum)Enum.Parse(type, property.intValue.ToString());
 		}
 
@@ -358,8 +455,10 @@ namespace PiRhoSoft.Utilities.Editor
 
 			// new items will be a copy of the previous last item so this resets them to their default value
 			for (var i = size; i < newSize; i++)
-				SetToDefault(arrayProperty.GetArrayElementAtIndex(i));
-		}
+            {
+                SetToDefault(arrayProperty.GetArrayElementAtIndex(i));
+            }
+        }
 
 		public static void RemoveFromArray(this SerializedProperty arrayProperty, int index)
 		{
@@ -369,9 +468,11 @@ namespace PiRhoSoft.Utilities.Editor
 
 			// TODO: check how this behaves with managedReferenceValue
 			if (item.propertyType == SerializedPropertyType.ObjectReference && item.objectReferenceValue != null)
-				item.objectReferenceValue = null;
+            {
+                item.objectReferenceValue = null;
+            }
 
-			arrayProperty.DeleteArrayElementAtIndex(index);
+            arrayProperty.DeleteArrayElementAtIndex(index);
 		}
 
 		public static SerializedProperty GetSibling(this SerializedProperty property, string siblingName)
@@ -389,9 +490,12 @@ namespace PiRhoSoft.Utilities.Editor
 			var index = property.propertyPath.LastIndexOf('.');
 
 			if (index < 0)
-				return property.serializedObject.GetIterator();
+            {
+                return property.serializedObject.GetIterator();
+            }
 
-			var parentPath = path.Substring(0, index);
+            var parentPath = path.Substring(0, index);
+            
 			return property.serializedObject.FindProperty(parentPath);
 		}
 
@@ -399,10 +503,13 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			var index = 1;
 			var obj = property.GetAncestorObject<object>(index);
+            
 			while (obj is IList || obj is IDictionary)
-				obj = property.GetAncestorObject<object>(++index);
+            {
+                obj = property.GetAncestorObject<object>(++index);
+            }
 
-			return obj as T;
+            return obj as T;
 		}
 
 		public static T GetObject<T>(this SerializedProperty property) where T : class
@@ -449,12 +556,16 @@ namespace PiRhoSoft.Utilities.Editor
 		private static object GetIndexed(object obj, int index)
 		{
 			if (obj is Array array)
-				return array.GetValue(index);
+            {
+                return array.GetValue(index);
+            }
 
-			if (obj is IList list)
-				return list[index];
+            if (obj is IList list)
+            {
+                return list[index];
+            }
 
-			return null;
+            return null;
 		}
 
 		#endregion

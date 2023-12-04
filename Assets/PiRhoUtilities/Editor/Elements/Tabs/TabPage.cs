@@ -40,9 +40,11 @@ namespace PiRhoSoft.Utilities.Editor
 			if (current != this)
 			{
 				if (current != null)
-					current._isActive = false;
+                {
+                    current._isActive = false;
+                }
 
-				_isActive = true;
+                _isActive = true;
 				_tabs?.UpdateTabs();
 			}
 		}
@@ -53,10 +55,10 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private void BuildUi()
 		{
-			AddToClassList(Tabs.PageUssClassName);
+			AddToClassList(Tabs.PAGE_USS_CLASS_NAME);
 
 			_button = new Button(Activate);
-			_button.AddToClassList(Tabs.TabUssClassName);
+			_button.AddToClassList(Tabs.TAB_USS_CLASS_NAME);
 
 			RegisterCallback<AttachToPanelEvent>(OnAttached);
 			RegisterCallback<DetachFromPanelEvent>(OnDetached);

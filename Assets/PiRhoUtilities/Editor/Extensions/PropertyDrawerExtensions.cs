@@ -9,47 +9,59 @@ namespace PiRhoSoft.Utilities.Editor
 {
 	public static class PropertyDrawerExtensions
 	{
-		#region Internal Lookups
+        #region Internal Lookups
 
-		private const string _changedInternalsError = "(PUPDECI) failed to setup PropertyDrawer: Unity internals have changed";
+        private const string CHANGED_INTERNALS_ERROR = "(PUPDECI) failed to setup PropertyDrawer: Unity internals have changed";
 
-		private static FieldInfo m_FieldInfo;
-		private static FieldInfo m_Attribute;
+        // ReSharper disable InconsistentNaming
+        private static FieldInfo m_FieldInfo;
+        private static FieldInfo m_Attribute;
+        // ReSharper restore InconsistentNaming
 
-		private const string _scriptAttributeUtilityTypeName = "UnityEditor.ScriptAttributeUtility, UnityEditor";
-		private static MethodInfo _getDrawerTypeForTypeMethod;
-		private static object[] _getDrawerTypeForTypeParameters = new object[1];
+        private const string SCRIPT_ATTRIBUTE_UTILITY_TYPE_NAME = "UnityEditor.ScriptAttributeUtility, UnityEditor";
+        private static readonly object[] _getDrawerTypeForTypeParameters = new object[1];
+        
+        private static readonly MethodInfo _getDrawerTypeForTypeMethod;
 
-		static PropertyDrawerExtensions()
-		{
-			var propertyDrawer = typeof(PropertyDrawer);
-			var fieldInfo = propertyDrawer.GetField(nameof(m_FieldInfo), BindingFlags.Instance | BindingFlags.NonPublic);
-			var attribute = propertyDrawer.GetField(nameof(m_Attribute), BindingFlags.Instance | BindingFlags.NonPublic);
+        static PropertyDrawerExtensions()
+        {
+            var propertyDrawer = typeof(PropertyDrawer);
+            var fieldInfo = propertyDrawer.GetField(nameof(m_FieldInfo), BindingFlags.Instance | BindingFlags.NonPublic);
+            var attribute = propertyDrawer.GetField(nameof(m_Attribute), BindingFlags.Instance | BindingFlags.NonPublic);
 
-			if (fieldInfo != null && fieldInfo.FieldType == typeof(FieldInfo))
-				m_FieldInfo = fieldInfo;
+            if (fieldInfo != null && fieldInfo.FieldType == typeof(FieldInfo))
+            {
+                m_FieldInfo = fieldInfo;
+            }
 
-			if (attribute != null && attribute.FieldType == typeof(PropertyAttribute))
-				m_Attribute = attribute;
+            if (attribute != null && attribute.FieldType == typeof(PropertyAttribute))
+            {
+                m_Attribute = attribute;
+            }
 
-			var scriptAttributeUtilityType = Type.GetType(_scriptAttributeUtilityTypeName);
-			var getDrawerTypeForTypeMethod = scriptAttributeUtilityType?.GetMethod(nameof(GetDrawerTypeForType), BindingFlags.Static | BindingFlags.NonPublic);
-			var getDrawerTypeForTypeParameters = getDrawerTypeForTypeMethod?.GetParameters();
+            var scriptAttributeUtilityType = Type.GetType(SCRIPT_ATTRIBUTE_UTILITY_TYPE_NAME);
+            var getDrawerTypeForTypeMethod = scriptAttributeUtilityType?.GetMethod(nameof(GetDrawerTypeForType), 
+                BindingFlags.Static | BindingFlags.NonPublic);
 
-			if (getDrawerTypeForTypeMethod != null && getDrawerTypeForTypeMethod.HasSignature(typeof(Type), typeof(Type)))
-				_getDrawerTypeForTypeMethod = getDrawerTypeForTypeMethod;
+            if (getDrawerTypeForTypeMethod != null && getDrawerTypeForTypeMethod.HasSignature(typeof(Type), typeof(Type)))
+            {
+                _getDrawerTypeForTypeMethod = getDrawerTypeForTypeMethod;
+            }
 
-			if (_getDrawerTypeForTypeMethod == null || m_FieldInfo == null || m_Attribute == null)
-				Debug.LogError(_changedInternalsError);
-		}
+            if (_getDrawerTypeForTypeMethod == null || m_FieldInfo == null || m_Attribute == null)
+            {
+                Debug.LogError(CHANGED_INTERNALS_ERROR);
+            }
+        }
 
-		#endregion
+        #endregion
 
 		#region Helper Methods
 
 		public static Type GetDrawerTypeForType(Type type)
 		{
 			_getDrawerTypeForTypeParameters[0] = type;
+            
 			return _getDrawerTypeForTypeMethod?.Invoke(null, _getDrawerTypeForTypeParameters) as Type;
 		}
 
@@ -85,9 +97,7 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				var element = nextDrawer.CreatePropertyGUI(property);
 
-				return element != null
-					? element
-					: new ImGuiDrawer(property, nextDrawer);
+				return element ?? new ImGuiDrawer(property, nextDrawer);
 			}
 
 			return property.CreateField();
@@ -103,6 +113,7 @@ namespace PiRhoSoft.Utilities.Editor
 				var nextDrawer = drawerType.CreateInstance<PropertyDrawer>();
 				nextDrawer.SetFieldInfo(drawer.fieldInfo);
 				nextDrawer.SetAttribute(nextAttribute);
+                
 				return nextDrawer;
 			}
 

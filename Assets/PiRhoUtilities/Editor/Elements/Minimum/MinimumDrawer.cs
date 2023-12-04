@@ -6,10 +6,10 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(MinimumAttribute))]
-	class MinimumDrawer : PropertyDrawer
+    internal class MinimumDrawer : PropertyDrawer
 	{
-		private const string _invalidTypeWarning = "(PUMNDIT) invalid type for MinimumAttribute on field {0}: Minimum can only be applied to int or float fields";
-		private const string _invalidSourceError = "(PUMXDIS) invalid source for MinimumAttribute on field '{0}': a field, method, or property of type '{1}' named '{2}' could not be found";
+		private const string INVALID_TYPE_WARNING = "(PUMNDIT) invalid type for MinimumAttribute on field {0}: Minimum can only be applied to int or float fields";
+		private const string INVALID_SOURCE_ERROR = "(PUMXDIS) invalid source for MinimumAttribute on field '{0}': a field, method, or property of type '{1}' named '{2}' could not be found";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
@@ -17,13 +17,19 @@ namespace PiRhoSoft.Utilities.Editor
 			var element = this.CreateNextElement(property);
 
 			if (property.propertyType == SerializedPropertyType.Integer)
-				SetupMinimum(minimumAttribute.MinimumSource, property, element, Mathf.RoundToInt(minimumAttribute.Minimum), ClampInt);
-			else if (property.propertyType == SerializedPropertyType.Float)
-				SetupMinimum(minimumAttribute.MinimumSource, property, element, minimumAttribute.Minimum, ClampFloat);
-			else
-				Debug.LogWarningFormat(property.serializedObject.targetObject, _invalidTypeWarning, property.propertyPath);
+            {
+                SetupMinimum(minimumAttribute.MinimumSource, property, element, Mathf.RoundToInt(minimumAttribute.Minimum), ClampInt);
+            }
+            else if (property.propertyType == SerializedPropertyType.Float)
+            {
+                SetupMinimum(minimumAttribute.MinimumSource, property, element, minimumAttribute.Minimum, ClampFloat);
+            }
+            else
+            {
+                Debug.LogWarningFormat(property.serializedObject.targetObject, INVALID_TYPE_WARNING, property.propertyPath);
+            }
 
-			return element;
+            return element;
 		}
 
 		private void SetupMinimum<T>(string sourceName, SerializedProperty property, VisualElement element, T defaultValue, Action<SerializedProperty, T> clamp)
@@ -37,7 +43,7 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 			else
 			{
-				Debug.LogWarningFormat(_invalidSourceError, property.propertyPath, nameof(T), sourceName);
+				Debug.LogWarningFormat(INVALID_SOURCE_ERROR, property.propertyPath, nameof(T), sourceName);
 			}
 		}
 

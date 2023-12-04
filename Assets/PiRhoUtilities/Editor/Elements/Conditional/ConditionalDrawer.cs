@@ -7,21 +7,23 @@ using Object = UnityEngine.Object;
 namespace PiRhoSoft.Utilities.Editor
 {
 	[CustomPropertyDrawer(typeof(ConditionalAttribute))]
-	class ConditionalDrawer : PropertyDrawer
+    internal class ConditionalDrawer : PropertyDrawer
 	{
-		public const string UssClassName = "pirho-conditional";
-		private const string _invalidSourceError = "(PUCDDIS) invalid value source for ConditionalAttribute on field '{0}': a field, method, or property of type '{1}' named '{2}' could not be found";
+		public const string USS_CLASS_NAME = "pirho-conditional";
+		private const string INVALID_SOURCE_ERROR = "(PUCDDIS) invalid value source for ConditionalAttribute on field '{0}': a field, method, or property of type '{1}' named '{2}' could not be found";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{
 			var conditionalAttribute = attribute as ConditionalAttribute;
 			var element = this.CreateNextElement(property);
-			element.AddToClassList(UssClassName);
+			element.AddToClassList(USS_CLASS_NAME);
 
 			if (!SetupCondition(element, property, conditionalAttribute))
-				Debug.LogWarningFormat(_invalidSourceError, property.propertyPath, conditionalAttribute.Type.ToString(), conditionalAttribute.ValueSource);
+            {
+                Debug.LogWarningFormat(INVALID_SOURCE_ERROR, property.propertyPath, conditionalAttribute.Type.ToString(), conditionalAttribute.ValueSource);
+            }
 
-			return element;
+            return element;
 		}
 
 		private bool SetupCondition(VisualElement element, SerializedProperty property, ConditionalAttribute conditionalAttribute)

@@ -18,25 +18,25 @@ namespace PiRhoSoft.Utilities
 		public string ValuesSource { get; private set; }
 		public bool AutoUpdate { get; private set; }
 
-		public PopupAttribute(string[] values, string[] options = null) : base(ControlPhase, 0)
+		public PopupAttribute(string[] values, string[] options = null) : base(CONTROL_PHASE, 0)
 		{
 			StringValues = values.ToList();
 			Options = options?.ToList();
 		}
 
-		public PopupAttribute(int[] values, string[] options = null) : base(ControlPhase, 0)
+		public PopupAttribute(int[] values, string[] options = null) : base(CONTROL_PHASE, 0)
 		{
 			IntValues = values.ToList();
 			Options = options?.ToList();
 		}
 
-		public PopupAttribute(float[] values, string[] options = null) : base(ControlPhase, 0)
+		public PopupAttribute(float[] values, string[] options = null) : base(CONTROL_PHASE, 0)
 		{
 			FloatValues = values.ToList();
 			Options = options?.ToList();
 		}
 
-		public PopupAttribute(string valuesSource, bool autoUpdate = true) : base(ControlPhase, 0)
+		public PopupAttribute(string valuesSource, bool autoUpdate = true) : base(CONTROL_PHASE, 0)
 		{
 			ValuesSource = valuesSource;
 			AutoUpdate = autoUpdate;

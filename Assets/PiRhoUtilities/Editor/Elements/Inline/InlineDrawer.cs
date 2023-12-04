@@ -6,10 +6,10 @@ namespace PiRhoSoft.Utilities.Editor
 	[CustomPropertyDrawer(typeof(InlineAttribute))]
 	public class InlineDrawer : PropertyDrawer
 	{
-		public const string Stylesheet = "InlineStyle.uss";
-		public const string UssClassName = "pirho-inline";
-		public const string LabelUssClassName = UssClassName + "__label";
-		public const string ChildrenUssClassName = UssClassName + "__children";
+		public const string STYLESHEET = "InlineStyle.uss";
+		public const string USS_CLASS_NAME = "pirho-inline";
+		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
+		public const string CHILDREN_USS_CLASS_NAME = USS_CLASS_NAME + "__children";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
 		{

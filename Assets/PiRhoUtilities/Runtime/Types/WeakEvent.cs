@@ -4,7 +4,7 @@ namespace PiRhoSoft.Utilities
 {
 	public class WeakEvent
 	{
-		private event Action _event;
+		private event Action Event;
 
 		public void Subscribe<T>(T target, Action<T> callback) where T : class
 		{
@@ -16,41 +16,41 @@ namespace PiRhoSoft.Utilities
 				if (reference.Target is T t)
 					callback(t);
 				else
-					_event -= handler;
+					Event -= handler;
 			};
 
-			_event += handler;
+			Event += handler;
 		}
 
 		public void Trigger()
 		{
-			_event?.Invoke();
+			Event?.Invoke();
 		}
 	}
 
-	public class WeakEvent<Args>
+	public class WeakEvent<TArgs>
 	{
-		private event Action<Args> _event;
+		private event Action<TArgs> Event;
 
-		public void Subscribe<T>(T target, Action<T, Args> callback) where T : class
+		public void Subscribe<T>(T target, Action<T, TArgs> callback) where T : class
 		{
 			var reference = new WeakReference(target, false);
-			var handler = (Action<Args>)null;
+			var handler = (Action<TArgs>)null;
 
 			handler = args =>
 			{
 				if (reference.Target is T t)
 					callback(t, args);
 				else
-					_event -= handler;
+					Event -= handler;
 			};
 
-			_event += handler;
+			Event += handler;
 		}
 
-		public void Trigger(Args args)
+		public void Trigger(TArgs args)
 		{
-			_event?.Invoke(args);
+			Event?.Invoke(args);
 		}
 	}
 }

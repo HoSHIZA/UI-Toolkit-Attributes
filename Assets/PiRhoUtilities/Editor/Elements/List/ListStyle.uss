@@ -39,6 +39,7 @@
 .pirho-list-field__add-button
 {
 	display: flex;
+    --unity-image-tint-color: var(--unity-colors-button-text);
 }
 
 .pirho-list-field--add-disabled .pirho-list-field__add-button
@@ -56,6 +57,7 @@
 	max-height: 16px;
 	align-self: flex-start;
 	margin-top: 3px;
+    --unity-image-tint-color: var(--unity-colors-button-text);
 }
 
 .pirho-list-field--remove-disabled .pirho-list-field__remove-button
@@ -71,6 +73,7 @@
 	margin-right: 5px;
 	flex-shrink: 0;
 	align-self: flex-start;
+    --unity-image-tint-color: var(--unity-colors-button-text);
 }
 
 .pirho-list-field--reorder-disabled .pirho-list-field__drag-handle
@@ -102,12 +105,12 @@
 
 .pirho-list-field__item--even
 {
-	background-color: #DFDFDF;
+	background-color: var(--unity-colors-input_field-background);
 }
 
 .pirho-list-field__item--odd
 {
-	background-color: #CBCBCB;
+	background-color: var(--unity-colors-helpbox-border);
 }
 
 .pirho-list-field__item__content
