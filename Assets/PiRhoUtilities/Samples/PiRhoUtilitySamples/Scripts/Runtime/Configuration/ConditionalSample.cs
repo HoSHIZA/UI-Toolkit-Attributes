@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace PiRhoSoft.Utilities
 {
 	[AddComponentMenu("PiRho Utilities/Conditional")]
 	public class ConditionalSample : MonoBehaviour
-	{
+    {
 		public enum ConditionalEnumTest
 		{
 			Set,
@@ -129,5 +131,5 @@ namespace PiRhoSoft.Utilities
 
 		public bool ShownProperty => ControledByProperty;
 		public bool ShownMethod() => ControledByMethod;
-	}
+    }
 }

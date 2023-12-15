@@ -1,11 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+#if !UNITY_2023_2_OR_NEWER
+using System.Linq;
+#endif
+
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class PopupField<T> : BaseField<T>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("Popup")]
+#endif
+	public partial class PopupField<T> : BaseField<T>
 	{
 		#region Class Names
 
@@ -39,8 +45,30 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Public Interface
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("values")]
+        private string[] StringValues
+        {
+            get => Values.Select(val => val.ToString()).ToArray();
+            set => ParseValues(value);
+        }
+
+        public List<T> Values
+        {
+            get => _values;
+            set => SetValues(value, Options);
+        }
+
+        [UxmlAttribute("options")]
+        public List<string> Options
+        {
+            get => _options;
+            set => SetValues(Values, value);
+        }
+#else
 		public List<T> Values => _values;
 		public List<string> Options => _options;
+#endif
 
 		public PopupField() : this(null)
 		{
@@ -163,6 +191,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public class UxmlTraits<TAttributeType> : BaseFieldTraits<T, TAttributeType> where TAttributeType : TypedUxmlAttributeDescription<T>, new()
 		{
 			private readonly UxmlStringAttributeDescription _options = new UxmlStringAttributeDescription { name = "options" };
@@ -182,6 +211,7 @@ namespace PiRhoSoft.Utilities.Editor
 				field.SetValues(valuesList, optionsList);
 			}
 		}
+#endif
 
 		protected virtual List<T> ParseValues(string[] from) { return null; }
 
@@ -190,44 +220,59 @@ namespace PiRhoSoft.Utilities.Editor
 
 	#region Concrete Classes
 
-	public class PopupIntField : PopupField<int>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("PopupInt")]
+#endif
+	public partial class PopupIntField : PopupField<int>
 	{
 		public PopupIntField() { }
 		public PopupIntField(string label) : base(label) { }
 		public PopupIntField(string label, List<int> values, List<string> options = null) : base(label, values, options) { }
 		public PopupIntField(List<int> values, List<string> options = null) : base(values, options) { }
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<PopupIntField, UxmlTraits<UxmlIntAttributeDescription>> { }
-
+#endif
+        
 		protected override List<int> ParseValues(string[] from)
 		{
 			return from.Select(f => int.TryParse(f, out var result) ? result : default).ToList();
 		}
 	}
 
-	public class PopupFloatField : PopupField<float>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("PopupFloat")]
+#endif
+	public partial class PopupFloatField : PopupField<float>
 	{
 		public PopupFloatField() { }
 		public PopupFloatField(string label) : base(label) { }
 		public PopupFloatField(string label, List<float> values, List<string> options = null) : base(label, values, options) { }
 		public PopupFloatField(List<float> values, List<string> options = null) : base(values, options) { }
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<PopupFloatField, UxmlTraits<UxmlFloatAttributeDescription>> { }
-
+#endif
+        
 		protected override List<float> ParseValues(string[] from)
 		{
 			return from.Select(f => float.TryParse(f, out var result) ? result : default).ToList();
 		}
 	}
 
-	public class PopupStringField : PopupField<string>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("PopupString")]
+#endif
+	public partial class PopupStringField : PopupField<string>
 	{
 		public PopupStringField() { }
 		public PopupStringField(string label) : base(label) { }
 		public PopupStringField(string label, List<string> values, List<string> options = null) : base(label, values, options) { }
 		public PopupStringField(List<string> values, List<string> options = null) : base(values, options) { }
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<PopupStringField, UxmlTraits<UxmlStringAttributeDescription>> { }
+#endif
 
 		protected override List<string> ParseValues(string[] from)
 		{

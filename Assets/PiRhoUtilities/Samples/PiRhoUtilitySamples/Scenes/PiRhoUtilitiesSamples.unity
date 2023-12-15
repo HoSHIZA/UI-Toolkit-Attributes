@@ -43,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 12
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -98,7 +98,8 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 6470c193c326cdd4aa8699d626479421,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -118,6 +119,8 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -291,12 +294,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a5d755edd1c6e64aa912140dcabce03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Integer: 1
+  Integer: 20
   Boolean: 1
   Float: 2
   String: He
   Color: {r: 0.2830189, g: 0.06407975, b: 0.06407975, a: 0}
-  ObjectReference: {fileID: 107769644}
+  ObjectReference: {fileID: 662326013}
   LayerMask:
     serializedVersion: 2
     m_Bits: 0
@@ -322,8 +325,8 @@ MonoBehaviour:
     m_Extent: {x: 0, y: 0, z: 0}
   BoundsInt:
     m_Position: {x: 0, y: 1, z: 0}
-    m_Size: {x: 0, y: 0, z: 0}
-  Character: 97
+    m_Size: {x: 7, y: 0, z: 0}
+  Character: 98
   AnimationCurve:
     serializedVersion: 2
     m_Curve:
@@ -397,7 +400,7 @@ MonoBehaviour:
   references:
     version: 1
     00000000:
-      type: {class: ChangeTriggerSample/Dog, ns: PiRhoSoft.Utilities, asm: Assembly-CSharp}
+      type: {class: ChangeTriggerSample/Cat, ns: PiRhoSoft.Utilities, asm: Assembly-CSharp}
       data:
         Value: 0
     00000001:
@@ -647,7 +650,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09724df61ffa0494887d0d90387c8b62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HardCodedOptions: 
+  HardCodedOptions: One Fish
   FieldOptions:
   - Field Option One
   - Field Option Two
@@ -664,7 +667,7 @@ MonoBehaviour:
   - Method Option Three
   - Method Option Four
   - Method Option Five
-  FromMethod: 
+  FromMethod: Method Option One
 --- !u!1 &349649072
 GameObject:
   m_ObjectHideFlags: 0
@@ -708,7 +711,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef5df98d683316e4da1eddcc2673557f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HardCodedOptions: {x: 1, y: 5.5959597}
+  HardCodedOptions: {x: 1, y: 6.909157}
   FieldMinimum: 0
   FieldMaximum: 4
   FromField: {x: 2.8888886, y: 3.5151515}
@@ -807,9 +810,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Ints:
     _keys:
-    - Can't Remove This
     - This is removable
+    - Can't Remove This
     _values: 0000000000000000
+  Classes:
+    _keys:
+    - Text
+    _values:
+    - Abobe: 1
+      Jabobe: 228.337
+      YaboBobBe: text aaa
 --- !u!1 &662326013
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,7 +1027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2351c283fa83b2499df009e14346109, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HardCodedOptions: 0
+  HardCodedOptions: 0.25
   FieldValues:
   - 0
   - 0.25
@@ -1133,7 +1143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99c655b1e87eb5b46baf030628f2462d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NormalButtons: 0
+  NormalButtons: 1
   FlagsButton: 0
 --- !u!1 &803738740
 GameObject:
@@ -1225,7 +1235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a49eee3d6dbc94b820bc0cd2d9c663, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Picker: {fileID: 0}
+  Picker: {fileID: 112579357}
 --- !u!1 &872240352
 GameObject:
   m_ObjectHideFlags: 0
@@ -1403,7 +1413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91bfc34b89b3d7a4face42157c135719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaximumOf5Characters: 
+  MaximumOf5Characters: tjhgf
   PropertyValue: 0
   MaximumFromProperty: 
   MethodValue: 0
@@ -1912,7 +1922,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Frame:
-    Bool: 0
+    Bool: 1
     Int: 0
     Float: 0
     String: 
@@ -2092,6 +2102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30d2bee1911d68c4a929621089945c5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  euler: {x: 0.6711893, y: -0.32156348, z: 0.2307315, w: 0.6267893}
 --- !u!1 &1421276472
 GameObject:
   m_ObjectHideFlags: 0
@@ -2185,7 +2196,7 @@ MonoBehaviour:
   Int1: 0
   Float1: 0
   Float2: 0
-  Bool1: 0
+  Bool1: 1
   Bool2: 0
   Int2: 0
 --- !u!1 &1559421163
@@ -2469,7 +2480,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Integer: 3
   Boolean: 0
-  Float: 0
+  Float: 1.21
   String: 
   Color: {r: 0, g: 0, b: 0, a: 0}
   ObjectReference: {fileID: 0}
@@ -2541,7 +2552,9 @@ MonoBehaviour:
   references:
     version: 1
     00000000:
-      type: {class: , ns: , asm: }
+      type: {class: ValidateSample/Dog, ns: PiRhoSoft.Utilities, asm: Assembly-CSharp}
+      data:
+        Value: 0
 --- !u!1 &1738214926
 GameObject:
   m_ObjectHideFlags: 0
@@ -2734,7 +2747,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HardCoded: 
-  FieldPlaceholderValue: field
+  FieldPlaceholderValue: 
   FromField: 
   PropertyPlaceholderValue: property
   FromProperty: 
@@ -2834,7 +2847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HardCodedMinimumOf0: 0
-  FieldMinimumValue: 3
+  FieldMinimumValue: 202
   MinimumFromField: 0
   PropertyMinimumValue: 2
   MinimumFromProperty: 0
@@ -2986,8 +2999,8 @@ MonoBehaviour:
   Int1: 0
   Float1: 0
   Float2: 0
-  Bool1: 0
-  Bool2: 0
+  Bool1: 1
+  Bool2: 1
   Int2: 0
 --- !u!1 &1929257456
 GameObject:
@@ -3065,8 +3078,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AnimalReference:
-    id: 0
-  AnimalReference2:
     id: 0
   references:
     version: 1

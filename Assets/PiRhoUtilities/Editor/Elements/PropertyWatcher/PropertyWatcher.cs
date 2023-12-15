@@ -47,7 +47,7 @@ namespace PiRhoSoft.Utilities.Editor
 	}
 
 	public abstract class PropertyWatcher<T> : PropertyWatcher, INotifyValueChanged<T>
-	{
+    {
 		#region Log Messages
 
 		private const string INVALID_WATCHER_ERROR = "(PUEPWIW) invalid type '{0}' for PropertyWatcher: PropertyWatcher can only be used with types that have a corresponding SerializedPropertyType";
@@ -62,6 +62,16 @@ namespace PiRhoSoft.Utilities.Editor
 			get => _value;
 			set
 			{
+#if UNITY_2022_2_OR_NEWER
+                if (_value != null)
+                {
+                    if (_value.Equals(value))
+                    {
+                        return;
+                    }
+                }
+#endif
+                
 				var previous = _value;
 				SetValueWithoutNotify(value);
 				OnChanged(Property, previous, value);

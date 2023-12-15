@@ -1,10 +1,16 @@
-﻿using UnityEditor.UIElements;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UIElements;
+
+#if !UNITY_2023_2_OR_NEWER
+using UnityEditor.UIElements;
+#endif
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class EulerField : BaseField<Quaternion>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement]
+#endif
+	public partial class EulerField : BaseField<Quaternion>
 	{
 		#region Class Names
 
@@ -18,6 +24,15 @@ namespace PiRhoSoft.Utilities.Editor
 		#region Members
 
 		private readonly Vector3Field _vectorField;
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("euler-angles")]
+        private Vector3 Euler
+        {
+            get => _vectorField.value;
+            set => _vectorField.SetValueWithoutNotify(value);
+        }
+#endif
 
 		#endregion
 
@@ -54,6 +69,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<EulerField, UxmlTraits> { }
 		public new class UxmlTraits : BaseField<Quaternion>.UxmlTraits
 		{
@@ -73,6 +89,7 @@ namespace PiRhoSoft.Utilities.Editor
 				euler.SetValueWithoutNotify(Quaternion.Euler(x, y, z));
 			}
 		}
+#endif
 
 		#endregion
 	}

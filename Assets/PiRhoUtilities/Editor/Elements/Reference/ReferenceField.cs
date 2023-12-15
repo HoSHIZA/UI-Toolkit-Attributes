@@ -12,7 +12,10 @@ namespace PiRhoSoft.Utilities.Editor
 		VisualElement CreateElement(object value);
 	}
 
-	public class ReferenceField : BindableElement, INotifyValueChanged<object>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement]
+#endif
+	public partial class ReferenceField : BindableElement, INotifyValueChanged<object>
 	{
 		#region Errors
 
@@ -64,12 +67,18 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Public Interface
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("label")]
+#endif
 		public string Label
 		{
 			get => _label;
 			set => SetLabel(value);
 		}
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("type")]
+#endif
 		public Type ReferenceType
 		{
 			get => _referenceType;
@@ -281,9 +290,7 @@ namespace PiRhoSoft.Utilities.Editor
                 
 				evt.StopPropagation();
                 
-#if UNITY_2023_2_OR_NEWER
-                focusController.IgnoreEvent(evt);
-#else
+#if !UNITY_2023_2_OR_NEWER
                 evt.PreventDefault();
 #endif
 			}
@@ -309,6 +316,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<ReferenceField, UxmlTraits> { }
 		public new class UxmlTraits : BindableElement.UxmlTraits
 		{
@@ -331,6 +339,7 @@ namespace PiRhoSoft.Utilities.Editor
                 }
             }
 		}
+#endif
 
 		#endregion
 	}

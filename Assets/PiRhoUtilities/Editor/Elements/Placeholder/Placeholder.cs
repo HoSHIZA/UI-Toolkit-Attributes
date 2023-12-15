@@ -49,7 +49,11 @@ namespace PiRhoSoft.Utilities.Editor
 
 			UpdateDisplayed(textField);
 
+#if UNITY_2023_1_OR_NEWER
+			textField.RegisterCallback<InputEvent>(evt => UpdateDisplayed(textField));
+#else
 			textField.RegisterCallback<KeyDownEvent>(evt => UpdateDisplayed(textField));
+#endif
 		}
 
 		#endregion
@@ -62,9 +66,9 @@ namespace PiRhoSoft.Utilities.Editor
 			schedule.Execute(() =>
 			{
 				var textInput = _textInputProperty.GetValue(field);
-				var text = _textProperty.GetValue(textInput) as string;
+				var textString = _textProperty.GetValue(textInput) as string;
 
-				this.SetDisplayed(string.IsNullOrEmpty(text));
+				this.SetDisplayed(string.IsNullOrEmpty(textString));
 			}).StartingIn(0);
 		}
 

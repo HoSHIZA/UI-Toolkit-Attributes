@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+#if !UNITY_2023_2_OR_NEWER
+using UnityEditor.UIElements;
+using System.Linq;
+#endif
+
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class ComboBoxField : BaseField<string>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("ComboBox")]
+#endif
+	public partial class ComboBoxField : BaseField<string>
 	{
 		#region Class Names
 
@@ -32,16 +38,23 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Public Interface
 
-		public bool IsDelayed
-		{
-			get => _comboBox.TextField.isDelayed;
-			set => _comboBox.TextField.isDelayed = value;
-		}
-
+                    
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("options")]
+#endif
 		public List<string> Options
 		{
 			get => _comboBox.Options;
 			set => _comboBox.Options = value;
+		}
+
+#if UNITY_2023_2_OR_NEWER
+         [UxmlAttribute("is-delayed")]
+#endif
+		public bool IsDelayed
+		{
+			get => _comboBox.TextField.isDelayed;
+			set => _comboBox.TextField.isDelayed = value; 
 		}
 
 		public ComboBoxField(string label) : base(label, null)
@@ -157,6 +170,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<ComboBoxField, UxmlTraits> { }
 		public new class UxmlTraits : BaseFieldTraits<string, UxmlStringAttributeDescription>
 		{
@@ -174,6 +188,7 @@ namespace PiRhoSoft.Utilities.Editor
 				field.IsDelayed = _delayed.GetValueFromBag(bag, cc);
 			}
 		}
+#endif
 
 		#endregion
 	}

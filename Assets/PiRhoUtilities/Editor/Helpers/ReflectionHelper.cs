@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
 	public static class ReflectionHelper
 	{
-		private static readonly Type[] _noParamters = new Type[0];
-		private static readonly Type[] _oneParamter = new Type[1];
-		private static readonly Type[] _twoParamters = new Type[2];
+		private static readonly Type[] _noParameters = new Type[0];
+		private static readonly Type[] _oneParameter = new Type[1];
+		private static readonly Type[] _twoParameters = new Type[2];
 
 		private static readonly object[] _oneArgument = new object[1];
 		private static readonly object[] _twoArguments = new object[2];
@@ -164,7 +165,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private static Func<TFieldType> GetValueFromMethodFunction<TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _noParamters, null);
+			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _noParameters, null);
 
 			if (method != null)
 			{
@@ -180,9 +181,9 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private static Func<TParameterOne, TFieldType> GetValueFromMethodFunction<TParameterOne, TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			_oneParamter[0] = typeof(TParameterOne);
+			_oneParameter[0] = typeof(TParameterOne);
 
-			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _oneParamter, null);
+			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _oneParameter, null);
 
 			if (method != null)
 			{
@@ -202,10 +203,10 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private static Func<TParameterOne, TParameterTwo, TFieldType> GetValueFromMethodFunction<TParameterOne, TParameterTwo, TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			_twoParamters[0] = typeof(TParameterOne);
-			_twoParamters[1] = typeof(TParameterTwo);
+			_twoParameters[0] = typeof(TParameterOne);
+			_twoParameters[1] = typeof(TParameterTwo);
 
-			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _twoParamters, null);
+			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _twoParameters, null);
 
 			if (method != null)
 			{
@@ -226,7 +227,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private static Action GetCallback(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _noParamters, null);
+			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _noParameters, null);
 
 			if (method != null)
 			{
@@ -239,9 +240,9 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private static Action<TParameterOne> GetCallback<TParameterOne>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			_oneParamter[0] = typeof(TParameterOne);
+			_oneParameter[0] = typeof(TParameterOne);
 
-			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _oneParamter, null);
+			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _oneParameter, null);
 
 			if (method != null)
 			{
@@ -258,10 +259,10 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private static Action<TParameterOne, TParameterTwo> GetCallback<TParameterOne, TParameterTwo>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			_twoParamters[0] = typeof(TParameterOne);
-			_twoParamters[1] = typeof(TParameterTwo);
+			_twoParameters[0] = typeof(TParameterOne);
+			_twoParameters[1] = typeof(TParameterTwo);
 
-			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _twoParamters, null);
+			var method = declaringType.GetMethod(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, CallingConventions.Standard | CallingConventions.HasThis, _twoParameters, null);
 
 			if (method != null)
 			{
@@ -279,7 +280,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private static Func<TFieldType> GetValueFromPropertyFunction<TFieldType>(string sourceName, Type declaringType, SerializedProperty property)
 		{
-			var prop = declaringType.GetProperty(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, typeof(TFieldType), _noParamters, null);
+			var prop = declaringType.GetProperty(sourceName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy, null, typeof(TFieldType), _noParameters, null);
 
 			if (prop != null)
 			{

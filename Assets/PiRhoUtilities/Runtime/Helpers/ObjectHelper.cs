@@ -31,7 +31,13 @@ namespace PiRhoSoft.Utilities
 
 		public static T GetComponentInScene<T>(int sceneIndex, bool includeDisabled) where T : Component
 		{
-			var components = includeDisabled ? Resources.FindObjectsOfTypeAll<T>() : Object.FindObjectsOfType<T>();
+			var components = includeDisabled 
+                ? Resources.FindObjectsOfTypeAll<T>()
+#if UNITY_2023_1_OR_NEWER
+                : Object.FindObjectsByType<T>(FindObjectsSortMode.None);
+#else
+                : Object.FindObjectsOfType<T>();
+#endif
 
 			foreach (var component in components)
 			{
@@ -44,7 +50,14 @@ namespace PiRhoSoft.Utilities
 
 		public static Component GetComponentInScene(Type type, int sceneIndex, bool includeDisabled)
 		{
-			var objects = includeDisabled ? Resources.FindObjectsOfTypeAll(type) : Object.FindObjectsOfType(type);
+			var objects = includeDisabled 
+                ? Resources.FindObjectsOfTypeAll(type) 
+#if UNITY_2023_1_OR_NEWER
+                : Object.FindObjectsByType(type, FindObjectsSortMode.None);
+#else
+                : Object.FindObjectsOfType(type);
+#endif
+
 
 			foreach (var obj in objects)
 			{
@@ -59,7 +72,14 @@ namespace PiRhoSoft.Utilities
 		public static List<T> GetComponentsInScene<T>(int sceneIndex, bool includeDisabled) where T : Component
 		{
 			var components = new List<T>();
-			var objects = includeDisabled ? Resources.FindObjectsOfTypeAll<T>() : Object.FindObjectsOfType<T>();
+			var objects = includeDisabled 
+                ? Resources.FindObjectsOfTypeAll<T>() 
+#if UNITY_2023_1_OR_NEWER
+                : Object.FindObjectsByType<T>(FindObjectsSortMode.None);
+#else
+                : Object.FindObjectsOfType<T>();
+#endif
+
 
 			foreach (var obj in objects)
 			{
@@ -73,8 +93,14 @@ namespace PiRhoSoft.Utilities
 		public static List<Component> GetComponentsInScene(Type type, int sceneIndex, bool includeDisabled)
 		{
 			var components = new List<Component>();
-			var objects = includeDisabled ? Resources.FindObjectsOfTypeAll(type) : Object.FindObjectsOfType(type);
-
+			var objects = includeDisabled 
+                ? Resources.FindObjectsOfTypeAll(type) 
+#if UNITY_2023_1_OR_NEWER
+                : Object.FindObjectsByType(type, FindObjectsSortMode.None);
+#else
+                : Object.FindObjectsOfType(type);
+#endif
+            
 			foreach (var obj in objects)
 			{
 				var component = obj.GetAsComponent(type);
@@ -94,10 +120,19 @@ namespace PiRhoSoft.Utilities
 		{
 			var objectList = new ObjectList();
 
-			var objects = (includeDisabled ? Resources.FindObjectsOfTypeAll(type) : Object.FindObjectsOfType(type))
-				.Where(obj => obj.hideFlags == HideFlags.None || obj.hideFlags == HideFlags.NotEditable);
+            var objects = (includeDisabled
+                    ? Resources.FindObjectsOfTypeAll(type)
+#if UNITY_2023_1_OR_NEWER
+                    : Object.FindObjectsByType(type, FindObjectsSortMode.None)
+#else
+                    : Object.FindObjectsOfType(type)
+#endif
 
-			var paths = objects.Select(obj => GetPath(obj));
+                )
+                .Where(obj => obj.hideFlags == HideFlags.None || obj.hideFlags == HideFlags.NotEditable)
+                .ToArray();
+
+			var paths = objects.Select(GetPath);
 			var prefix = FindCommonPath(paths);
 
 			objectList.Objects = objects.ToList();

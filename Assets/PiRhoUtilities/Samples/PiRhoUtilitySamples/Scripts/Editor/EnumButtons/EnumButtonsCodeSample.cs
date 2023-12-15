@@ -57,7 +57,11 @@ namespace PiRhoSoft.Utilities.Samples
 			enumButtons.RegisterValueChangedCallback(ValueChanged);
 			root.Add(enumButtons);
 
+#if UNITY_2022_1_OR_NEWER
+			var typePopup = new UnityEngine.UIElements.PopupField<Type>("Type", _types, 0, type => type.Name, type => type.Name);
+#else
 			var typePopup = new UnityEditor.UIElements.PopupField<Type>("Type", _types, 0, type => type.Name, type => type.Name);
+#endif
 			typePopup.RegisterValueChangedCallback(e => enumButtons.Type = e.newValue);
 			root.Add(typePopup);
 

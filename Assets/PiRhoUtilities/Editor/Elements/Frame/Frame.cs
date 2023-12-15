@@ -6,7 +6,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class Frame : BindableElement, INotifyValueChanged<bool>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement]
+#endif
+	public partial class Frame : BindableElement, INotifyValueChanged<bool>
 	{
 		#region Class Names
 
@@ -69,29 +72,42 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			_addChildren = addChildren;
 		}
+        
+#if UNITY_2023_2_OR_NEWER
+        [Header("Frame")]
+        [UxmlAttribute("label")]
+#endif
+        public string Label
+        {
+            get => _label;
+            set => SetLabel(value);
+        }
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("tooltip")]
+#endif
+        public string Tooltip
+        {
+            get => _tooltip;
+            set => SetTooltip(value);
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("is-collapsable")]
+#endif
 		public bool IsCollapsable
 		{
 			get => _isCollapsable;
 			set => SetCollapsable(value);
 		}
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("is-collapsed")]
+#endif
 		public bool IsCollapsed
 		{
 			get => _isCollapsed;
 			set => SetCollapsed(value);
-		}
-
-		public string Label
-		{
-			get => _label;
-			set => SetLabel(value);
-		}
-
-		public string Tooltip
-		{
-			get => _tooltip;
-			set => SetTooltip(value);
 		}
 
 		public IconButton AddHeaderButton(Texture icon, string tooltip, string ussClassName, Action action)
@@ -276,6 +292,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<Frame, UxmlTraits> { }
 		public new class UxmlTraits : BindableElement.UxmlTraits
 		{
@@ -297,6 +314,7 @@ namespace PiRhoSoft.Utilities.Editor
 				// TODO: Figure out how to support header buttons
 			}
 		}
+#endif
 
 		#endregion
 	}

@@ -30,7 +30,7 @@ namespace PiRhoSoft.Utilities.Editor
 				_serializedPropertyBindEventType = serializedPropertyBindEventType;
 				_bindPropertyProperty = bindPropertyProperty;
 			}
-
+            
 			if (_serializedPropertyBindEventType == null || _bindPropertyProperty == null)
             {
                 Debug.LogError(CHANGED_INTERNALS_ERROR);
@@ -106,8 +106,12 @@ namespace PiRhoSoft.Utilities.Editor
 		}
 
 		public static void SetDisplayed(this VisualElement element, bool displayed)
-		{
-			element.style.display = displayed ? DisplayStyle.Flex : DisplayStyle.None;
+        {
+            element.style.display = displayed ? 
+                new StyleEnum<DisplayStyle>(DisplayStyle.Flex) : 
+                new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            
+			// element.style.display = displayed ? DisplayStyle.Flex : DisplayStyle.None;
 		}
 
 		public static void AlternateClass(this VisualElement element, string validClass, string invalidClass, bool isValid)

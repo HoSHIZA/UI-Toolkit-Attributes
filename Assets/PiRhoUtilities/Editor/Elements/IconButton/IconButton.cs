@@ -5,7 +5,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class IconButton : Image
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement]
+#endif
+	public partial class IconButton : Image
 	{
 		#region Log Messages
 
@@ -51,6 +54,15 @@ namespace PiRhoSoft.Utilities.Editor
             }
 		}
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("icon")]
+        private string IconName
+        {
+            get => image == null || string.IsNullOrEmpty(image.name) ? string.Empty : image.name;
+            set => SetIcon(value);
+        }
+#endif
+
 		public IconButton() : this(null)
 		{
 		}
@@ -65,6 +77,13 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public void SetIcon(string iconName)
 		{
+            if (string.IsNullOrEmpty(iconName))
+            {
+                image = null;
+                
+                return;
+            }
+            
 			if (_icons.TryGetValue(iconName, out var icon))
             {
                 image = icon.Texture;
@@ -102,6 +121,7 @@ namespace PiRhoSoft.Utilities.Editor
 			{ "Unlocked", Icon.Unlocked }
 		};
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<IconButton, UxmlTraits> { }
 		public new class UxmlTraits : Image.UxmlTraits
 		{
@@ -117,6 +137,7 @@ namespace PiRhoSoft.Utilities.Editor
 				button.SetIcon(name);
 			}
 		}
+#endif
 
 		#endregion
 	}

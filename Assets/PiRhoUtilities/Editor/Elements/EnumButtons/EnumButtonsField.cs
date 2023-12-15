@@ -4,7 +4,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class EnumButtonsField : BaseField<Enum>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("EnumButtons")]
+#endif
+	public partial class EnumButtonsField : BaseField<Enum>
 	{
 		#region Class Names
 
@@ -34,17 +37,47 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Public Interface
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("type")]
+#endif
+        private string TypeName
+        {
+            get => Type.FullName;
+            set
+            {
+                Type = TypeHelper.FindType(value);
+            }
+        }
+        
 		public Type Type
 		{
 			get => _control.Type;
 			set => _control.Type = value;
 		}
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("flags")]
+#endif
 		public bool UseFlags
 		{
 			get => _control.UseFlags;
 			set => _control.UseFlags = value;
 		}
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("value")]
+        public string Value
+        {
+            get => base.value.ToString();
+            set
+            {
+                if (Enum.TryParse(Type, value, out var result) && result != null)
+                {
+                    SetValueWithoutNotify(result as Enum);
+                }
+            }
+        }
+#endif
 
 		public EnumButtonsField() : this(null)
 		{
@@ -249,6 +282,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<EnumButtonsField, UxmlTraits> { }
 		public new class UxmlTraits : BaseField<Enum>.UxmlTraits
 		{
@@ -306,6 +340,7 @@ namespace PiRhoSoft.Utilities.Editor
 				}
 			}
 		}
+#endif
 
 		#endregion
 	}

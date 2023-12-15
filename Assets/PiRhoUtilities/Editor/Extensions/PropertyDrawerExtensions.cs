@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -19,7 +20,11 @@ namespace PiRhoSoft.Utilities.Editor
         // ReSharper restore InconsistentNaming
 
         private const string SCRIPT_ATTRIBUTE_UTILITY_TYPE_NAME = "UnityEditor.ScriptAttributeUtility, UnityEditor";
+#if UNITY_2023_3_OR_NEWER
+        private static readonly object[] _getDrawerTypeForTypeParameters = new object[3];
+#else
         private static readonly object[] _getDrawerTypeForTypeParameters = new object[1];
+#endif
         
         private static readonly MethodInfo _getDrawerTypeForTypeMethod;
 
@@ -43,7 +48,12 @@ namespace PiRhoSoft.Utilities.Editor
             var getDrawerTypeForTypeMethod = scriptAttributeUtilityType?.GetMethod(nameof(GetDrawerTypeForType), 
                 BindingFlags.Static | BindingFlags.NonPublic);
 
-            if (getDrawerTypeForTypeMethod != null && getDrawerTypeForTypeMethod.HasSignature(typeof(Type), typeof(Type)))
+            if (getDrawerTypeForTypeMethod != null &&
+#if UNITY_2023_3_OR_NEWER
+                getDrawerTypeForTypeMethod.HasSignature(typeof(Type), typeof(Type), null, typeof(bool)))
+#else
+                getDrawerTypeForTypeMethod.HasSignature(typeof(Type), typeof(Type)))
+#endif
             {
                 _getDrawerTypeForTypeMethod = getDrawerTypeForTypeMethod;
             }
@@ -62,8 +72,15 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			_getDrawerTypeForTypeParameters[0] = type;
             
-			return _getDrawerTypeForTypeMethod?.Invoke(null, _getDrawerTypeForTypeParameters) as Type;
-		}
+#if UNITY_2023_3_OR_NEWER
+            _getDrawerTypeForTypeParameters[1] = new Type[] { UnityEngine.Rendering.GraphicsSettings.currentRenderPipelineAssetType };
+            _getDrawerTypeForTypeParameters[2] = !type.IsValueType;
+#endif
+            
+			var result = _getDrawerTypeForTypeMethod?.Invoke(null, _getDrawerTypeForTypeParameters) as Type;
+            
+            return result;
+        }
 
 		#endregion
 
@@ -90,7 +107,7 @@ namespace PiRhoSoft.Utilities.Editor
 		}
 
 		public static VisualElement CreateNextElement(this PropertyDrawer drawer, SerializedProperty property)
-		{
+        {
 			var nextDrawer = GetNextDrawer(drawer);
 
 			if (nextDrawer != null)
@@ -121,18 +138,23 @@ namespace PiRhoSoft.Utilities.Editor
 		}
 
 		public static PropertyAttribute GetNextAttribute(this PropertyDrawer drawer)
-		{
-			return drawer.fieldInfo.GetCustomAttributes<PropertyAttribute>()
-				.OrderByDescending(attribute => attribute.order)
-				//.ThenBy(attribute => attribute.GetType().FullName) // GetCustomAttributes might return a different order so a secondary sort is needed even though it is a stable sort
-				.SkipWhile(attribute => attribute.GetType() != drawer.attribute.GetType())
-				.Where(attribute =>
-				{
-					var drawerType = GetDrawerTypeForType(attribute.GetType());
-					return drawerType != null && drawerType.IsCreatableAs<PropertyDrawer>();
-				})
-				.ElementAtOrDefault(1);
-		}
+        {
+            var attributes = drawer.fieldInfo
+                .GetCustomAttributes<PropertyAttribute>()
+#if UNITY_2021_1_OR_NEWER
+                .OrderBy(attribute => attribute.order)
+#else
+                .OrderByDescending(attribute => attribute.order)
+#endif
+                .SkipWhile(attribute => attribute.GetType() != drawer.attribute.GetType())
+                .Where(attribute =>
+                {
+                    var drawerType = GetDrawerTypeForType(attribute.GetType());
+                    return drawerType != null && drawerType.IsCreatableAs<PropertyDrawer>();
+                });
+            
+            return attributes.ElementAtOrDefault(1);
+        }
 
 		public static VisualElement CreateNextElement(FieldInfo field, Attribute attribute, SerializedProperty property)
 		{
@@ -141,6 +163,7 @@ namespace PiRhoSoft.Utilities.Editor
 			if (nextDrawer != null)
 			{
 				var element = nextDrawer.CreatePropertyGUI(property);
+                
 				return element ?? new ImGuiDrawer(property, nextDrawer);
 			}
 

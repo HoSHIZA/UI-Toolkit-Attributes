@@ -40,8 +40,7 @@ namespace PiRhoSoft.Utilities.Editor
 		{
             var createFieldFromPropertyMethod = typeof(PropertyField).GetMethod(CREATE_FIELD_FROM_PROPERTY_NAME, 
                 BindingFlags.Instance | BindingFlags.NonPublic);
-
-
+            
             if (createFieldFromPropertyMethod != null && 
 #if UNITY_2021_1_OR_NEWER
                 createFieldFromPropertyMethod.HasSignature(typeof(VisualElement), typeof(SerializedProperty), typeof(object)))
@@ -53,7 +52,13 @@ namespace PiRhoSoft.Utilities.Editor
                 _createFieldFromPropertyInstance = new PropertyField();
             }
 
-            var gradientValueProperty = typeof(SerializedProperty).GetProperty(GRADIENT_VALUE_NAME, BindingFlags.Instance | BindingFlags.NonPublic);
+            var gradientValueProperty = typeof(SerializedProperty).GetProperty(GRADIENT_VALUE_NAME, BindingFlags.Instance |
+#if UNITY_2022_1_OR_NEWER
+                BindingFlags.Public
+#else
+                BindingFlags.NonPublic
+#endif
+                );
 
             if (gradientValueProperty != null && gradientValueProperty.PropertyType == typeof(Gradient) &&
                 gradientValueProperty.CanRead && gradientValueProperty.CanWrite)
@@ -185,16 +190,16 @@ namespace PiRhoSoft.Utilities.Editor
 		}
 
 		public static object GetManagedReferenceValue(this SerializedProperty property)
-		{
-			return property.GetObject<object>(); // PENDING: slow but property.managedReferenceValue is write only
-		}
+        {
+            return property.GetObject<object>(); // PENDING: slow but property.managedReferenceValue is write only
+        }
 
 		public static VisualElement CreateField(this SerializedProperty property)
         {
             _createFieldFromPropertyParameters[0] = property;
 
 #if UNITY_2021_1_OR_NEWER
-            _createFieldFromPropertyParameters[1] = null;
+            _createFieldFromPropertyParameters[1] = property.GetManagedReferenceValue();
 #endif
             
             return _createFieldFromPropertyMethod?.Invoke(_createFieldFromPropertyInstance, _createFieldFromPropertyParameters) as VisualElement;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -7,7 +6,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class DictionaryField : Frame
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("Dictionary")]
+#endif
+	public partial class DictionaryField : Frame
 	{
 		#region Events
 
@@ -163,15 +165,52 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Members
 
+#if UNITY_2023_2_OR_NEWER
+        [Header("Dictionary")]
+        [UxmlAttribute("empty-label")]
+#endif
 		private string _emptyLabel = DEFAULT_EMPTY_LABEL;
+        
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("add-placeholder")]
+#endif
+        private string _addPlaceholder = DEFAULT_ADD_PLACEHOLDER;
+        
+#if UNITY_2023_2_OR_NEWER
+        [Header("Tooltips")]
+        [UxmlAttribute("empty-tooltip")]
+#endif
 		private string _emptyTooltip = DEFAULT_EMPTY_TOOLTIP;
+        
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("add-tooltip")]
+#endif
 		private string _addTooltip = DEFAULT_ADD_TOOLTIP;
-		private string _addPlaceholder = DEFAULT_ADD_PLACEHOLDER;
-		private string _removeTooltip = DEFAULT_REMOVE_TOOLTIP;
-		private string _reorderTooltip = DEFAULT_REORDER_TOOLTIP;
+        
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("remove-tooltip")]
+#endif
+        private string _removeTooltip = DEFAULT_REMOVE_TOOLTIP;
+        
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("reorder-tooltip")]
+#endif
+        private string _reorderTooltip = DEFAULT_REORDER_TOOLTIP;
 
+#if UNITY_2023_2_OR_NEWER
+        [Header("Controls")]
+        [UxmlAttribute("allow-add")]
+#endif
 		private bool _allowAdd = DEFAULT_ALLOW_ADD;
+        
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("allow-remove")]
+#endif
 		private bool _allowRemove = DEFAULT_ALLOW_REMOVE;
+        
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("allow-reorder")]
+#endif
 		private bool _allowReorder = DEFAULT_ALLOW_REORDER;
 
 		private IDictionaryProxy _proxy;
@@ -202,7 +241,7 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			BuildUi();
 		}
-
+        
 		public bool AllowAdd
 		{
 			get => _allowAdd;
@@ -428,6 +467,7 @@ namespace PiRhoSoft.Utilities.Editor
 			using (var e = ItemsChangedEvent.GetPooled())
 			{
 				e.target = this;
+                Debug.Log("aboba");
 				SendEvent(e);
 			}
 		}
@@ -737,7 +777,6 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Binding
         
-
 #if UNITY_2023_2_OR_NEWER
 		protected override void HandleEventBubbleUp(EventBase evt)
 		{
@@ -754,7 +793,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 				if (arrayProperty != null)
 				{
-					var sizeBinding = new ChangeTrigger<int>(null, (_, oldSize, newSize) => UpdateItems());
+                    var sizeBinding = new ChangeTrigger<int>(null, (_, oldSize, newSize) => UpdateItems());
 					sizeBinding.Watch(arrayProperty);
 
 					Add(sizeBinding);
@@ -770,6 +809,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<DictionaryField, UxmlTraits> { }
 		public new class UxmlTraits : Frame.UxmlTraits
 		{
@@ -800,6 +840,7 @@ namespace PiRhoSoft.Utilities.Editor
 				dictionary.ReorderTooltip = _reorderTooltip.GetValueFromBag(bag, cc);
 			}
 		}
+#endif
 
 		#endregion
 	}

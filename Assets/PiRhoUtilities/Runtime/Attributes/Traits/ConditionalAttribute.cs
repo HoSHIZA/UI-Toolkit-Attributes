@@ -90,8 +90,7 @@
 			BoolTest = test;
 			Type = TestType.Bool;
 		}
-
-
+        
 		public ConditionalAttribute(string valueSource, int valueAsInt, EnumTest test) : base(TEST_PHASE, 0)
 		{
 			ValueSource = valueSource;
@@ -99,8 +98,7 @@
 			EnumTest = test;
 			Type = TestType.Enum;
 		}
-
-
+        
 		public ConditionalAttribute(string valueSource, ObjectTest test) : base(TEST_PHASE, 0)
 		{
 			ValueSource = valueSource;

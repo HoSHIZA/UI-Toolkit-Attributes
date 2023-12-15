@@ -25,9 +25,10 @@ namespace PiRhoSoft.Utilities
             }
         }
         
-		[MessageBox("The [Dictionary] attribute is applied to fields subclassed from SeriializedDictionary<string, Value> to display it as a customizable dictioray view. Adding, removing, reordering and other callbacks can be specified.", MessageBoxType.Info, Location = TraitLocation.Above)]
+		[MessageBox("The [Dictionary] attribute is applied to fields subclassed from SerializedDictionary<string, Value> to display it as a customizable dictioray view. Adding, removing, reordering and other callbacks can be specified.", MessageBoxType.Info, Location = TraitLocation.Above)]
 
 		[Dictionary(AddCallback = nameof(IntAdded), RemoveCallback = nameof(IntRemoved), ReorderCallback = nameof(IntsReordered), ChangeCallback = nameof(IntsChanged), AllowAdd = nameof(MaximumSize5), AllowRemove = nameof(Removable))]
+        [ReadOnly]
 		public IntDictionary Ints = new IntDictionary { { "Can't Remove This", 0 } };
 
         [Dictionary]

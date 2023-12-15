@@ -13,7 +13,7 @@ namespace PiRhoSoft.Utilities.Editor
 		private const string INVALID_SOURCE_ERROR = "(PUCDDIS) invalid value source for ConditionalAttribute on field '{0}': a field, method, or property of type '{1}' named '{2}' could not be found";
 
 		public override VisualElement CreatePropertyGUI(SerializedProperty property)
-		{
+        {
 			var conditionalAttribute = attribute as ConditionalAttribute;
 			var element = this.CreateNextElement(property);
 			element.AddToClassList(USS_CLASS_NAME);

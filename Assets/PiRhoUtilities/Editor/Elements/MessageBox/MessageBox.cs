@@ -38,6 +38,9 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Public Interface
 
+#if UNITY_2023_1_OR_NEWER
+        [UxmlAttribute("message-type")]
+#endif
 		public MessageBoxType Type
 		{
 			get
@@ -51,6 +54,9 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 		}
 
+#if UNITY_2023_1_OR_NEWER
+        [UxmlAttribute("message")]
+#endif
 		public string Message
 		{
 			get	{ return _label.text; }
@@ -98,6 +104,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_1_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<MessageBox, UxmlTraits> { }
 		public new class UxmlTraits : VisualElement.UxmlTraits
 		{
@@ -133,6 +140,7 @@ namespace PiRhoSoft.Utilities.Editor
 				}
 			}
 		}
+#endif
 
 		#endregion
 	}

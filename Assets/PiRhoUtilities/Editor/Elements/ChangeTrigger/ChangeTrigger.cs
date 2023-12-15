@@ -106,29 +106,55 @@ namespace PiRhoSoft.Utilities.Editor
 
 	// While these can be used from code as well they are only necessary for uxml.
 
-	public class ChangeTriggerInt : ChangeTrigger<int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerInt, UxmlTraits> { } }
-	public class ChangeTriggerBool : ChangeTrigger<bool> { public new class UxmlFactory : UxmlFactory<ChangeTriggerBool, UxmlTraits> { } }
-	public class ChangeTriggerFloat : ChangeTrigger<float> { public new class UxmlFactory : UxmlFactory<ChangeTriggerFloat, UxmlTraits> { } }
-	public class ChangeTriggerString : ChangeTrigger<string> { public new class UxmlFactory : UxmlFactory<ChangeTriggerString, UxmlTraits> { } }
-	public class ChangeTriggerColor : ChangeTrigger<Color> { public new class UxmlFactory : UxmlFactory<ChangeTriggerColor, UxmlTraits> { } }
-	public class ChangeTriggerObject : ChangeTrigger<Object> { public new class UxmlFactory : UxmlFactory<ChangeTriggerObject, UxmlTraits> { } }
-	public class ChangeTriggerLayerMask : ChangeTrigger<int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerLayerMask, UxmlTraits> { } }
-	public class ChangeTriggerEnum : ChangeTrigger<Enum> { public new class UxmlFactory : UxmlFactory<ChangeTriggerEnum, UxmlTraits> { } }
-	public class ChangeTriggerVector2 : ChangeTrigger<Vector2> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector2, UxmlTraits> { } }
-	public class ChangeTriggerVector3 : ChangeTrigger<Vector3> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector3, UxmlTraits> { } }
-	public class ChangeTriggerVector4 : ChangeTrigger<Vector4> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector4, UxmlTraits> { } }
-	public class ChangeTriggerRect : ChangeTrigger<Rect> { public new class UxmlFactory : UxmlFactory<ChangeTriggerRect, UxmlTraits> { } }
-	public class ChangeTriggerArraySize : ChangeTrigger<int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerArraySize, UxmlTraits> { } }
-	public class ChangeTriggerCharacter : ChangeTrigger<char> { public new class UxmlFactory : UxmlFactory<ChangeTriggerCharacter, UxmlTraits> { } }
-	public class ChangeTriggerAnimationCurve : ChangeTrigger<AnimationCurve> { public new class UxmlFactory : UxmlFactory<ChangeTriggerAnimationCurve, UxmlTraits> { } }
-	public class ChangeTriggerBounds : ChangeTrigger<Bounds> { public new class UxmlFactory : UxmlFactory<ChangeTriggerBounds, UxmlTraits> { } }
-	public class ChangeTriggerGradient : ChangeTrigger<Gradient> { public new class UxmlFactory : UxmlFactory<ChangeTriggerGradient, UxmlTraits> { } }
-	public class ChangeTriggerQuaternion : ChangeTrigger<Quaternion> { public new class UxmlFactory : UxmlFactory<ChangeTriggerQuaternion, UxmlTraits> { } }
-	public class ChangeTriggerVector2Int : ChangeTrigger<Vector2Int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector2Int, UxmlTraits> { } }
-	public class ChangeTriggerVector3Int : ChangeTrigger<Vector3Int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector3Int, UxmlTraits> { } }
-	public class ChangeTriggerRectInt : ChangeTrigger<RectInt> { public new class UxmlFactory : UxmlFactory<ChangeTriggerRectInt, UxmlTraits> { } }
-	public class ChangeTriggerBoundsInt : ChangeTrigger<BoundsInt> { public new class UxmlFactory : UxmlFactory<ChangeTriggerBoundsInt, UxmlTraits> { } }
-	public class ChangeTriggerReference : ChangeTrigger<object> { public new class UxmlFactory : UxmlFactory<ChangeTriggerReference, UxmlTraits> { } }
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement] public partial class ChangeTriggerInt : ChangeTrigger<int> {  }
+    [UxmlElement] public partial class ChangeTriggerBool : ChangeTrigger<bool> {  }
+    [UxmlElement] public partial class ChangeTriggerFloat : ChangeTrigger<float> {  }
+    [UxmlElement] public partial class ChangeTriggerString : ChangeTrigger<string> {  }
+    [UxmlElement] public partial class ChangeTriggerColor : ChangeTrigger<Color> {  }
+    [UxmlElement] public partial class ChangeTriggerObject : ChangeTrigger<Object> {  }
+    [UxmlElement] public partial class ChangeTriggerLayerMask : ChangeTrigger<int> {  }
+    [UxmlElement] public partial class ChangeTriggerEnum : ChangeTrigger<Enum> {  }
+    [UxmlElement] public partial class ChangeTriggerVector2 : ChangeTrigger<Vector2> {  }
+    [UxmlElement] public partial class ChangeTriggerVector3 : ChangeTrigger<Vector3> {  }
+    [UxmlElement] public partial class ChangeTriggerVector4 : ChangeTrigger<Vector4> {  }
+    [UxmlElement] public partial class ChangeTriggerRect : ChangeTrigger<Rect> {  }
+    [UxmlElement] public partial class ChangeTriggerArraySize : ChangeTrigger<int> {  }
+    [UxmlElement] public partial class ChangeTriggerCharacter : ChangeTrigger<char> {  }
+    [UxmlElement] public partial class ChangeTriggerAnimationCurve : ChangeTrigger<AnimationCurve> {  }
+    [UxmlElement] public partial class ChangeTriggerBounds : ChangeTrigger<Bounds> {  }
+    [UxmlElement] public partial class ChangeTriggerGradient : ChangeTrigger<Gradient> {  }
+    [UxmlElement] public partial class ChangeTriggerQuaternion : ChangeTrigger<Quaternion> {  }
+    [UxmlElement] public partial class ChangeTriggerVector2Int : ChangeTrigger<Vector2Int> {  }
+    [UxmlElement] public partial class ChangeTriggerVector3Int : ChangeTrigger<Vector3Int> {  }
+    [UxmlElement] public partial class ChangeTriggerRectInt : ChangeTrigger<RectInt> {  }
+    [UxmlElement] public partial class ChangeTriggerBoundsInt : ChangeTrigger<BoundsInt> {  }
+    [UxmlElement] public partial class ChangeTriggerReference : ChangeTrigger<object> {  }
+#else
+    public class ChangeTriggerInt : ChangeTrigger<int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerInt, UxmlTraits> { } }
+    public class ChangeTriggerBool : ChangeTrigger<bool> { public new class UxmlFactory : UxmlFactory<ChangeTriggerBool, UxmlTraits> { } }
+    public class ChangeTriggerFloat : ChangeTrigger<float> { public new class UxmlFactory : UxmlFactory<ChangeTriggerFloat, UxmlTraits> { } }
+    public class ChangeTriggerString : ChangeTrigger<string> { public new class UxmlFactory : UxmlFactory<ChangeTriggerString, UxmlTraits> { } }
+    public class ChangeTriggerColor : ChangeTrigger<Color> { public new class UxmlFactory : UxmlFactory<ChangeTriggerColor, UxmlTraits> { } }
+    public class ChangeTriggerObject : ChangeTrigger<Object> { public new class UxmlFactory : UxmlFactory<ChangeTriggerObject, UxmlTraits> { } }
+    public class ChangeTriggerLayerMask : ChangeTrigger<int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerLayerMask, UxmlTraits> { } }
+    public class ChangeTriggerEnum : ChangeTrigger<Enum> { public new class UxmlFactory : UxmlFactory<ChangeTriggerEnum, UxmlTraits> { } }
+    public class ChangeTriggerVector2 : ChangeTrigger<Vector2> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector2, UxmlTraits> { } }
+    public class ChangeTriggerVector3 : ChangeTrigger<Vector3> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector3, UxmlTraits> { } }
+    public class ChangeTriggerVector4 : ChangeTrigger<Vector4> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector4, UxmlTraits> { } }
+    public class ChangeTriggerRect : ChangeTrigger<Rect> { public new class UxmlFactory : UxmlFactory<ChangeTriggerRect, UxmlTraits> { } }
+    public class ChangeTriggerArraySize : ChangeTrigger<int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerArraySize, UxmlTraits> { } }
+    public class ChangeTriggerCharacter : ChangeTrigger<char> { public new class UxmlFactory : UxmlFactory<ChangeTriggerCharacter, UxmlTraits> { } }
+    public class ChangeTriggerAnimationCurve : ChangeTrigger<AnimationCurve> { public new class UxmlFactory : UxmlFactory<ChangeTriggerAnimationCurve, UxmlTraits> { } }
+    public class ChangeTriggerBounds : ChangeTrigger<Bounds> { public new class UxmlFactory : UxmlFactory<ChangeTriggerBounds, UxmlTraits> { } }
+    public class ChangeTriggerGradient : ChangeTrigger<Gradient> { public new class UxmlFactory : UxmlFactory<ChangeTriggerGradient, UxmlTraits> { } }
+    public class ChangeTriggerQuaternion : ChangeTrigger<Quaternion> { public new class UxmlFactory : UxmlFactory<ChangeTriggerQuaternion, UxmlTraits> { } }
+    public class ChangeTriggerVector2Int : ChangeTrigger<Vector2Int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector2Int, UxmlTraits> { } }
+    public class ChangeTriggerVector3Int : ChangeTrigger<Vector3Int> { public new class UxmlFactory : UxmlFactory<ChangeTriggerVector3Int, UxmlTraits> { } }
+    public class ChangeTriggerRectInt : ChangeTrigger<RectInt> { public new class UxmlFactory : UxmlFactory<ChangeTriggerRectInt, UxmlTraits> { } }
+    public class ChangeTriggerBoundsInt : ChangeTrigger<BoundsInt> { public new class UxmlFactory : UxmlFactory<ChangeTriggerBoundsInt, UxmlTraits> { } }
+    public class ChangeTriggerReference : ChangeTrigger<object> { public new class UxmlFactory : UxmlFactory<ChangeTriggerReference, UxmlTraits> { } }
+#endif
 
 	#endregion
 }
