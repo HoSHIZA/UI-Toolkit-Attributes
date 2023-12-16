@@ -2,7 +2,10 @@
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public abstract class SliderField<TValueType> : BaseField<TValueType>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("Slider")]
+#endif
+	public abstract partial class SliderField<TValueType> : BaseField<TValueType>
 	{
 		#region Class Names
 
@@ -20,13 +23,19 @@ namespace PiRhoSoft.Utilities.Editor
 		#endregion
 
 		#region Public Interface
-
+        
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("min")]
+#endif
 		public TValueType Minimum
 		{
 			get => Control.Minimum;
 			set => Control.Minimum = value;
 		}
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("max")]
+#endif
 		public TValueType Maximum
 		{
 			get => Control.Maximum;

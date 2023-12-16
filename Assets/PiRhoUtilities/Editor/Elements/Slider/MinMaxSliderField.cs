@@ -4,7 +4,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class MinMaxSliderField : SliderField<Vector2>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("MinMaxSlider")]
+#endif
+	public partial class MinMaxSliderField : SliderField<Vector2>
 	{
 		#region Defaults
 
@@ -16,12 +19,18 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#endregion
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("min-limit")]
+#endif
 		public float MinimumLimit
 		{
 			get => Minimum.x;
 			set => Minimum = new Vector2(value, rawValue.x);
 		}
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("max-limit")]
+#endif
 		public float MaximumLimit
 		{
 			get => Maximum.y;
@@ -83,8 +92,8 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<MinMaxSliderField, UxmlTraits> { }
-
 		public new class UxmlTraits : BaseField<Vector2>.UxmlTraits
 		{
 			private readonly UxmlFloatAttributeDescription _maxValue = new UxmlFloatAttributeDescription { name = "minimum-value", defaultValue = DEFAULT_MINIMUM_VALUE };
@@ -105,6 +114,7 @@ namespace PiRhoSoft.Utilities.Editor
 				field.SetValueWithoutNotify(new Vector2(minValue, maxValue));
 			}
 		}
+#endif
 
 		#endregion
 	}

@@ -3,7 +3,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class SliderIntField : SliderField<int>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("SliderInt")]
+#endif
+	public partial class SliderIntField : SliderField<int>
 	{
 		#region Defaults
 
@@ -67,7 +70,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
-
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<SliderIntField, UxmlTraits> { }
 		public new class UxmlTraits : UxmlTraits<UxmlIntAttributeDescription>
 		{
@@ -77,6 +80,7 @@ namespace PiRhoSoft.Utilities.Editor
 				Maximum.defaultValue = DEFAULT_MAXIMUM;
 			}
 		}
+#endif
 
 		#endregion
 	}

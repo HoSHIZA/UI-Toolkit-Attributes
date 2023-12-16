@@ -40,15 +40,6 @@ namespace PiRhoSoft.Utilities.Editor
 #if UNITY_2023_2_OR_NEWER
         [UxmlAttribute("type")]
 #endif
-        private string TypeName
-        {
-            get => Type.FullName;
-            set
-            {
-                Type = TypeHelper.FindType(value);
-            }
-        }
-        
 		public Type Type
 		{
 			get => _control.Type;
@@ -60,20 +51,22 @@ namespace PiRhoSoft.Utilities.Editor
 #endif
 		public bool UseFlags
 		{
-			get => _control.UseFlags;
+			get => Type != null && _control.UseFlags;
 			set => _control.UseFlags = value;
 		}
 
 #if UNITY_2023_2_OR_NEWER
         [UxmlAttribute("value")]
-        public string Value
+        private string Value
         {
-            get => base.value.ToString();
+            get => value != null ? value.ToString() : string.Empty;
             set
             {
-                if (Enum.TryParse(Type, value, out var result) && result != null)
+                if (Type == null || string.IsNullOrEmpty(value)) return;
+                
+                if (Enum.TryParse(Type, value, out var result))
                 {
-                    SetValueWithoutNotify(result as Enum);
+                    SetValueWithoutNotify((Enum)result);
                 }
             }
         }
@@ -165,28 +158,28 @@ namespace PiRhoSoft.Utilities.Editor
 					Debug.LogWarningFormat(INVALID_VALUE_WARNING, value, Type);
 				}
 				else if (!Equals(_value, value))
-				{
-					_value = value;
-					_buttons.ForEach(button =>
-					{
-						var index = IndexOf(button);
+                {
+                    _value = value;
+                    foreach (var button in _buttons)
+                    {
+                        var index = IndexOf(button);
 
-						button.EnableInClassList(FIRST_BUTTON_USS_CLASS_NAME, index == 0);
-						button.EnableInClassList(LAST_BUTTON_USS_CLASS_NAME, index == _names.Length - 1);
+                        button.EnableInClassList(FIRST_BUTTON_USS_CLASS_NAME, index == 0);
+                        button.EnableInClassList(LAST_BUTTON_USS_CLASS_NAME, index == _names.Length - 1);
 
-						if (UseFlags)
-						{
-							var current = GetIntFromEnum(Type, _value);
-							var buttonValue = GetIntFromEnum(Type, button.userData as Enum);
+                        if (UseFlags)
+                        {
+                            var current = GetIntFromEnum(Type, _value);
+                            var buttonValue = GetIntFromEnum(Type, button.userData as Enum);
 
-							button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, (buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0));
-						}
-						else
-						{
-							button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, _value.Equals(button.userData as Enum));
-						}
-					});
-				}
+                            button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, (buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0));
+                        }
+                        else
+                        {
+                            button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, _value.Equals(button.userData as Enum));
+                        }
+                    }
+                }
 			}
 
 			private void SetType(Type type)

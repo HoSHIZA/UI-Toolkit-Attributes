@@ -2,7 +2,10 @@
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class TabPage : VisualElement
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("TabPage")]
+#endif
+	public partial class TabPage : VisualElement
 	{
 		#region Members
 
@@ -16,11 +19,34 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Public Interface
 
-		public string Label { get => _label; set => SetLabel(value); }
-		public string Tooltip { get => _tooltip; set => SetTooltip(value); }
-		public bool IsActive { get => _isActive; internal set => _isActive = value; }
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("label")]
+#endif
+        public string Label
+        {
+            get => _label;
+            set => SetLabel(value);
+        }
 
-		public Tabs Tabs => _tabs;
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("tooltip")]
+#endif
+        public string Tooltip
+        {
+            get => _tooltip;
+            set => SetTooltip(value);
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("is-active")]
+#endif
+        public bool IsActive
+        {
+            get => _isActive;
+            internal set => _isActive = value;
+        }
+
+        public Tabs Tabs => _tabs;
 		public Button Button => _button;
 
 		public TabPage() : this(null)
@@ -92,6 +118,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Uxml
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<TabPage, UxmlTraits> { }
 		public new class UxmlTraits : VisualElement.UxmlTraits
 		{
@@ -103,12 +130,14 @@ namespace PiRhoSoft.Utilities.Editor
 			{
 				base.Init(ve, bag, cc);
 
-				var page = ve as TabPage;
+				var page = (TabPage)ve;
+                
 				page.Label = _label.GetValueFromBag(bag, cc);
 				page.Tooltip = _tooltip.GetValueFromBag(bag, cc);
 				page.IsActive = _isActive.GetValueFromBag(bag, cc);
 			}
 		}
+#endif
 
 		#endregion
 	}

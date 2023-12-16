@@ -165,52 +165,15 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Members
 
-#if UNITY_2023_2_OR_NEWER
-        [Header("Dictionary")]
-        [UxmlAttribute("empty-label")]
-#endif
 		private string _emptyLabel = DEFAULT_EMPTY_LABEL;
-        
-#if UNITY_2023_2_OR_NEWER
-        [UxmlAttribute("add-placeholder")]
-#endif
         private string _addPlaceholder = DEFAULT_ADD_PLACEHOLDER;
-        
-#if UNITY_2023_2_OR_NEWER
-        [Header("Tooltips")]
-        [UxmlAttribute("empty-tooltip")]
-#endif
 		private string _emptyTooltip = DEFAULT_EMPTY_TOOLTIP;
-        
-#if UNITY_2023_2_OR_NEWER
-        [UxmlAttribute("add-tooltip")]
-#endif
 		private string _addTooltip = DEFAULT_ADD_TOOLTIP;
-        
-#if UNITY_2023_2_OR_NEWER
-        [UxmlAttribute("remove-tooltip")]
-#endif
         private string _removeTooltip = DEFAULT_REMOVE_TOOLTIP;
-        
-#if UNITY_2023_2_OR_NEWER
-        [UxmlAttribute("reorder-tooltip")]
-#endif
         private string _reorderTooltip = DEFAULT_REORDER_TOOLTIP;
-
-#if UNITY_2023_2_OR_NEWER
-        [Header("Controls")]
-        [UxmlAttribute("allow-add")]
-#endif
+        
 		private bool _allowAdd = DEFAULT_ALLOW_ADD;
-        
-#if UNITY_2023_2_OR_NEWER
-        [UxmlAttribute("allow-remove")]
-#endif
 		private bool _allowRemove = DEFAULT_ALLOW_REMOVE;
-        
-#if UNITY_2023_2_OR_NEWER
-        [UxmlAttribute("allow-reorder")]
-#endif
 		private bool _allowReorder = DEFAULT_ALLOW_REORDER;
 
 		private IDictionaryProxy _proxy;
@@ -237,66 +200,96 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Public Interface
 
-		public DictionaryField() : base(false)
+        public DictionaryField() : base(false)
 		{
 			BuildUi();
 		}
-        
-		public bool AllowAdd
+
+#if UNITY_2023_2_OR_NEWER
+        [Header("Dictionary")]
+        [UxmlAttribute("empty-label")]
+#endif
+        public string EmptyLabel
+        {
+            get => _emptyLabel;
+            set { _emptyLabel = value; UpdateEmptyLabel(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("add-placeholder")]
+#endif
+        public string AddPlaceholder
+        {
+            get => _addPlaceholder;
+            set { _addPlaceholder = value; UpdateAddPlaceholder(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [Header("Tooltips")]
+        [UxmlAttribute("empty-tooltip")]
+#endif
+        public string EmptyTooltip
+        {
+            get => _emptyTooltip;
+            set { _emptyTooltip = value; UpdateEmptyLabel(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("add-tooltip")]
+#endif
+        public string AddTooltip
+        {
+            get => _addTooltip;
+            set { _addTooltip = value; UpdateAddLabel(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("remove-tooltip")]
+#endif
+        public string RemoveTooltip
+        {
+            get => _removeTooltip;
+            set { _removeTooltip = value; UpdateRemoveLabels(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("reorder-tooltip")]
+#endif
+        public string ReorderTooltip
+        {
+            get => _reorderTooltip;
+            set { _reorderTooltip = value; UpdateReorderLabels(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [Header("Controls")]
+        [UxmlAttribute("allow-add")]
+#endif
+        public bool AllowAdd
 		{
 			get => _allowAdd;
 			set { _allowAdd = value; UpdateAddState(); }
 		}
 
-		public bool AllowRemove
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("allow-remove")]
+#endif
+        public bool AllowRemove
 		{
 			get => _allowRemove;
 			set { _allowRemove = value; UpdateRemoveState(); }
 		}
 
-		public bool AllowReorder
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("allow-reorder")]
+#endif
+        public bool AllowReorder
 		{
 			get => _allowReorder;
 			set { _allowReorder = value; UpdateReorderState(); }
 		}
 
-		public string EmptyLabel
-		{
-			get => _emptyLabel;
-			set { _emptyLabel = value; UpdateEmptyLabel(); }
-		}
-
-		public string EmptyTooltip
-		{
-			get => _emptyTooltip;
-			set { _emptyTooltip = value; UpdateEmptyLabel(); }
-		}
-
-		public string AddTooltip
-		{
-			get => _addTooltip;
-			set { _addTooltip = value; UpdateAddLabel(); }
-		}
-
-		public string AddPlaceholder
-		{
-			get => _addPlaceholder;
-			set { _addPlaceholder = value; UpdateAddPlaceholder(); }
-		}
-
-		public string RemoveTooltip
-		{
-			get => _removeTooltip;
-			set { _removeTooltip = value; UpdateRemoveLabels(); }
-		}
-
-		public string ReorderTooltip
-		{
-			get => _reorderTooltip;
-			set { _reorderTooltip = value; UpdateReorderLabels(); }
-		}
-
-		public IDictionaryProxy Proxy => _proxy;
+        public IDictionaryProxy Proxy => _proxy;
 		public Type ItemType => _itemType;
 		public bool AllowDerived => _allowDerived;
 

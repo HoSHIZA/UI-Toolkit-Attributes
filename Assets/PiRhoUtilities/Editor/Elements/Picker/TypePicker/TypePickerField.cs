@@ -7,7 +7,10 @@ using Object = UnityEngine.Object;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class TypePickerField : PickerField<string>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("TypePicker")]
+#endif
+	public partial class TypePickerField : PickerField<string>
 	{
 		#region Class Names
 
@@ -37,12 +40,18 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region Public Interface
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("type")]
+#endif
 		public Type Type
 		{
 			get => Picker.Type;
 			set => Picker.SetType(value, ShowAbstract);
 		}
 
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("show-abstract")]
+#endif
 		public bool ShowAbstract
 		{
 			get => Picker.ShowAbstract;
@@ -219,6 +228,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<TypePickerField, UxmlTraits> { }
 		public new class UxmlTraits : BaseFieldTraits<string, UxmlStringAttributeDescription>
 		{
@@ -240,6 +250,7 @@ namespace PiRhoSoft.Utilities.Editor
 				base.Init(element, bag, cc);
 			}
 		}
+#endif
 
 		#endregion
 	}

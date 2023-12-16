@@ -1,7 +1,7 @@
 ﻿.pirho-euler-field
 {
 	flex-direction: row;
-	flex-grow: 1;
+	flex-grow: 0;
 }
 
 .pirho-euler-field__input

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,14 +15,14 @@ namespace PiRhoSoft.Utilities.Editor
 	public partial class PopupField<T> : BaseField<T>
 	{
 		#region Class Names
-
+        
 		public const string STYLESHEET = "Popup/PopupStyle.uss";
 		public const string USS_CLASS_NAME = "pirho-popup-field";
 		public const string LABEL_USS_CLASS_NAME = USS_CLASS_NAME + "__label";
 		public const string INPUT_USS_CLASS_NAME = USS_CLASS_NAME + "__input";
 
 		#endregion
-
+        
 		#region Log Messages
 
 		private const string INVALID_VALUES_ERROR = "(PUPFIV) invalid values for PopupField: Values must not be null and must have a Count > 0";

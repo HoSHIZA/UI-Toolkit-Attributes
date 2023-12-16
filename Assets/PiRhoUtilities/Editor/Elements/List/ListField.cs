@@ -6,7 +6,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class ListField : Frame
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("List")]
+#endif
+	public partial class ListField : Frame
 	{
 		#region Events
 
@@ -195,52 +198,79 @@ namespace PiRhoSoft.Utilities.Editor
 			BuildUi();
 		}
 
-		public bool AllowAdd
+#if UNITY_2023_2_OR_NEWER
+        [Header("List")]
+        [UxmlAttribute("empty-label")]
+#endif
+        public string EmptyLabel
+        {
+            get => _emptyLabel;
+            set { _emptyLabel = value; UpdateEmptyLabel(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [Header("Tooltips")]
+        [UxmlAttribute("empty-tooltip")]
+#endif
+        public string EmptyTooltip
+        {
+            get => _emptyTooltip;
+            set { _emptyTooltip = value; UpdateEmptyLabel(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("add-tooltip")]
+#endif
+        public string AddTooltip
+        {
+            get => _addTooltip;
+            set { _addTooltip = value; UpdateAddLabel(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("remove-tooltip")]
+#endif
+        public string RemoveTooltip
+        {
+            get => _removeTooltip;
+            set { _removeTooltip = value; UpdateRemoveLabels(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("reorder-tooltip")]
+#endif
+        public string ReorderTooltip
+        {
+            get => _reorderTooltip;
+            set { _reorderTooltip = value; UpdateReorderLabels(); }
+        }
+
+#if UNITY_2023_2_OR_NEWER
+        [Header("Controls")]
+        [UxmlAttribute("allow-add")]
+#endif
+        public bool AllowAdd
 		{
 			get => _allowAdd;
 			set { _allowAdd = value; UpdateAddState(); }
 		}
 
-		public bool AllowRemove
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("allow-remove")]
+#endif
+        public bool AllowRemove
 		{
 			get => _allowRemove;
 			set { _allowRemove = value; UpdateRemoveState(); }
 		}
 
-		public bool AllowReorder
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("allow-reorder")]
+#endif
+        public bool AllowReorder
 		{
 			get => _allowReorder;
 			set { _allowReorder = value; UpdateReorderState(); }
-		}
-
-		public string EmptyLabel
-		{
-			get => _emptyLabel;
-			set { _emptyLabel = value; UpdateEmptyLabel(); }
-		}
-
-		public string EmptyTooltip
-		{
-			get => _emptyTooltip;
-			set { _emptyTooltip = value; UpdateEmptyLabel(); }
-		}
-
-		public string AddTooltip
-		{
-			get => _addTooltip;
-			set { _addTooltip = value; UpdateAddLabel(); }
-		}
-
-		public string RemoveTooltip
-		{
-			get => _removeTooltip;
-			set { _removeTooltip = value; UpdateRemoveLabels(); }
-		}
-
-		public string ReorderTooltip
-		{
-			get => _reorderTooltip;
-			set { _reorderTooltip = value; UpdateReorderLabels(); }
 		}
 
 		public IListProxy Proxy => _proxy;
@@ -681,6 +711,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<ListField, UxmlTraits> { }
 		public new class UxmlTraits : Frame.UxmlTraits
 		{
@@ -709,6 +740,7 @@ namespace PiRhoSoft.Utilities.Editor
 				list.ReorderTooltip = _reorderTooltip.GetValueFromBag(bag, cc);
 			}
 		}
+#endif
 
 		#endregion
 	}

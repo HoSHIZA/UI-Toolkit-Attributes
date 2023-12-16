@@ -3,7 +3,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class Tabs : VisualElement
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("Tabs")]
+#endif
+	public partial class Tabs : VisualElement
 	{
 		#region Class Names
 
@@ -105,8 +108,8 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<Tabs, UxmlTraits> { }
-
 		public new class UxmlTraits : VisualElement.UxmlTraits
 		{
 			public override IEnumerable<UxmlChildElementDescription> uxmlChildElementsDescription
@@ -117,6 +120,7 @@ namespace PiRhoSoft.Utilities.Editor
 				}
 			}
 		}
+#endif
 
 		#endregion
 	}

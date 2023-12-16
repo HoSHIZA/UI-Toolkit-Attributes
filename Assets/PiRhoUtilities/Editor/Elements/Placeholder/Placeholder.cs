@@ -3,7 +3,10 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class Placeholder : Label
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement]
+#endif
+	public partial class Placeholder : Label
 	{
 		#region Class Names
 
@@ -118,7 +121,9 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<Placeholder, UxmlTraits> { }
+#endif
 
 		#endregion
 	}

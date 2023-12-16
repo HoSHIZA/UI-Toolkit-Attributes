@@ -103,26 +103,28 @@ namespace PiRhoSoft.Utilities.Editor
 		#region Utility
 
 		public static Type FindType(string name)
-		{
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+            
 			// search with normal rules
-			var type = Type.GetType(name);
+			var type = Type.GetType(name, false);
 
 			// search in default runtime assembly
 			if (type == null)
             {
-                type = Type.GetType($"{name}, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+                type = Type.GetType($"{name}, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false);
             }
 
             // search in default editor assembly
 			if (type == null)
             {
-                type = Type.GetType($"{name}, Assembly-CSharp-Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+                type = Type.GetType($"{name}, Assembly-CSharp-Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false);
             }
 
             // search in Unity
 			if (type == null)
             {
-                type = typeof(Object).Assembly.GetType(name);
+                type = typeof(Object).Assembly.GetType(name, false);
             }
 
             return type;

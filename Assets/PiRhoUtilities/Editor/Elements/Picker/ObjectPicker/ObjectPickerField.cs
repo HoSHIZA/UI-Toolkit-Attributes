@@ -7,7 +7,10 @@ using Object = UnityEngine.Object;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class ObjectPickerField : PickerField<Object>
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement("ObjectPicker")]
+#endif
+	public partial class ObjectPickerField : PickerField<Object>
 	{
 		#region Class Names
 
@@ -31,14 +34,26 @@ namespace PiRhoSoft.Utilities.Editor
 		#endregion
 
 		#region Public Interface
+        
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("type")]
+#endif
+        public Type Type
+        {
+            get => Picker.Type;
+            set => Picker.Type = value;
+        }
 
-		public Type Type
-		{
-			get => Picker.Type;
-			set => Picker.Type = value;
-		}
-
-		public ObjectPickerField() : this(null, null)
+#if UNITY_2023_2_OR_NEWER
+        [UxmlAttribute("value")]
+        private string Value
+        {
+            get => AssetDatabase.GetAssetPath(value);
+            set => SetValueWithoutNotify(AssetDatabase.LoadAssetAtPath(value, Type));
+        }
+#endif
+        
+        public ObjectPickerField() : this(null, null)
 		{
 		}
 
@@ -213,6 +228,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public new class UxmlFactory : UxmlFactory<ObjectPickerField, UxmlTraits> { }
 		public new class UxmlTraits : BaseField<Object>.UxmlTraits
 		{
@@ -238,6 +254,7 @@ namespace PiRhoSoft.Utilities.Editor
                 }
             }
 		}
+#endif
 
 		#endregion
 	}
