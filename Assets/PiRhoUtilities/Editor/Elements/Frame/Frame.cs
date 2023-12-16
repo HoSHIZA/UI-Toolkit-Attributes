@@ -29,6 +29,9 @@ namespace PiRhoSoft.Utilities.Editor
 		#endregion
 
 		#region Defaults
+        
+        public const string COLLAPSE_TOOLTIP = "Collapse this view";
+        public const string EXPAND_TOOLTIP = "Expand this view";
 
 		public const bool DEFAULT_IS_COLLAPSABLE = true;
 		public const bool DEFAULT_IS_COLLAPSED = false;
@@ -187,7 +190,7 @@ namespace PiRhoSoft.Utilities.Editor
 			Header.AddToClassList(HEADER_USS_CLASS_NAME);
 			hierarchy.Add(Header);
 
-            _collapseButton = new IconButton(() => IsCollapsed = !IsCollapsed) { image = CollapseIcon.Texture };
+            _collapseButton = new IconButton(() => IsCollapsed = !IsCollapsed) { image = CollapseIcon.Texture, tooltip = COLLAPSE_TOOLTIP };
 			_collapseButton.AddToClassList(COLLAPSE_BUTTON_USS_CLASS_NAME);
 			Header.Add(_collapseButton);
 
@@ -213,7 +216,8 @@ namespace PiRhoSoft.Utilities.Editor
 			EnableInClassList(EXPANDED_USS_CLASS_NAME, !_isCollapsed);
 			EnableInClassList(COLLAPSED_USS_CLASS_NAME, _isCollapsed);
 
-			_collapseButton.image = _isCollapsed ? ExpandIcon.Texture : CollapseIcon.Texture;
+            _collapseButton.image = _isCollapsed ? ExpandIcon.Texture : CollapseIcon.Texture;
+			_collapseButton.tooltip = _isCollapsed ? EXPAND_TOOLTIP : COLLAPSE_TOOLTIP;
 		}
 
 		private void UpdateLabel()

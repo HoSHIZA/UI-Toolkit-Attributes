@@ -461,12 +461,12 @@ namespace PiRhoSoft.Utilities.Editor
 			item.AddToClassList(ITEM_USS_CLASS_NAME);
 			_itemsContainer.Add(item);
 
-			var dragHandle = new Image { image = _dragIcon.Texture };
+			var dragHandle = new Image { image = _dragIcon.Texture, tooltip = _reorderTooltip };
 			dragHandle.AddToClassList(DRAG_HANDLE_USS_CLASS_NAME);
 			dragHandle.RegisterCallback((MouseDownEvent e) => StartDrag(e, item));
 			item.Add(dragHandle);
 
-			var remove = new IconButton(() => RemoveItem(item)) { image = _removeIcon.Texture };
+			var remove = new IconButton(() => RemoveItem(item)) { image = _removeIcon.Texture, tooltip = _removeTooltip };
 			remove.AddToClassList(REMOVE_BUTTON_USS_CLASS_NAME);
 			item.Add(remove);
 
