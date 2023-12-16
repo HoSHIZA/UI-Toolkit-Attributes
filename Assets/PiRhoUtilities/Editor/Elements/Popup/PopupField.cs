@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-#if !UNITY_2023_2_OR_NEWER
+#if UNITY_2023_2_OR_NEWER
 using System.Linq;
 #endif
 
