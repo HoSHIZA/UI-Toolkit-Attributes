@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-
-#if UNITY_2023_2_OR_NEWER
 using System.Linq;
-#endif
 
 namespace PiRhoSoft.Utilities.Editor
 {

@@ -160,7 +160,7 @@ namespace PiRhoSoft.Utilities.Editor
 				else if (!Equals(_value, value))
                 {
                     _value = value;
-                    foreach (var button in _buttons)
+                    _buttons.ForEach(button =>
                     {
                         var index = IndexOf(button);
 
@@ -172,13 +172,14 @@ namespace PiRhoSoft.Utilities.Editor
                             var current = GetIntFromEnum(Type, _value);
                             var buttonValue = GetIntFromEnum(Type, button.userData as Enum);
 
-                            button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, (buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0));
+                            button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME,
+                                (buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0));
                         }
                         else
                         {
                             button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, _value.Equals(button.userData as Enum));
                         }
-                    }
+                    });
                 }
 			}
 
