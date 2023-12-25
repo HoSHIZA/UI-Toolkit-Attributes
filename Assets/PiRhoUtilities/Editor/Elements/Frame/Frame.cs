@@ -48,7 +48,6 @@ namespace PiRhoSoft.Utilities.Editor
 		#region Private Members
 
 		private Label _labelElement;
-		private IconButton _collapseButton;
 
 		private readonly bool _addChildren = true;
 
@@ -64,8 +63,10 @@ namespace PiRhoSoft.Utilities.Editor
 		public VisualElement Header { get; private set; }
 		public VisualElement Content { get; private set; }
 
-		public VisualElement HeaderButtons { get; private set; }
+        public IconButton CollapseButton { get; private set; }
 
+		public VisualElement HeaderButtons { get; private set; }
+        
 		public Frame()
 		{
 			BuildUi();
@@ -179,21 +180,15 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			AddToClassList(USS_CLASS_NAME);
 			this.AddStyleSheet(STYLESHEET);
-            
-#if UNITY_2021_1_OR_NEWER
-            this.style.marginRight = -2;
-#else
-            this.style.marginRight = 3;
-#endif
 
 			Header = new VisualElement();
 			Header.AddToClassList(HEADER_USS_CLASS_NAME);
 			hierarchy.Add(Header);
 
-            _collapseButton = new IconButton(() => IsCollapsed = !IsCollapsed) { image = CollapseIcon.Texture, tooltip = COLLAPSE_TOOLTIP };
-			_collapseButton.AddToClassList(COLLAPSE_BUTTON_USS_CLASS_NAME);
-			Header.Add(_collapseButton);
-
+            CollapseButton = new IconButton(() => IsCollapsed = !IsCollapsed) { image = CollapseIcon.Texture, tooltip = COLLAPSE_TOOLTIP };
+			CollapseButton.AddToClassList(COLLAPSE_BUTTON_USS_CLASS_NAME);
+			Header.Add(CollapseButton);
+            
 			_labelElement = new Label();
 			_labelElement.AddToClassList(LABEL_USS_CLASS_NAME);
 			Header.Add(_labelElement);
@@ -204,10 +199,45 @@ namespace PiRhoSoft.Utilities.Editor
 
 			Content = new VisualElement();
 			Content.AddToClassList(CONTENT_USS_CLASS_NAME);
+            Content.name = "content";
 			hierarchy.Add(Content);
 
 			UpdateCollapse();
 			UpdateLabel();
+            
+#if UNITY_2021_1_OR_NEWER
+            style.marginRight = -2;
+#else
+            style.marginRight = 3;
+#endif
+            
+#if !UNITY_2020_1_OR_NEWER
+            {
+                style.backgroundColor = StyleConst.UnityColors.Window.Background;
+
+                var border = StyleConst.UnityColors.Window.Border;
+                style.borderLeftColor = border;
+                style.borderTopColor = border;
+                style.borderRightColor = border;
+                style.borderBottomColor = border;
+            }
+
+            {
+                Header.style.backgroundColor = StyleConst.UnityColors.Default.Background;
+                
+                _labelElement.style.color = StyleConst.UnityColors.Default.Text;
+                _collapseButton.tintColor = StyleConst.UnityColors.Button.Text.value;
+            }
+
+            {
+                var buttons = HeaderButtons.Query(className: HEADER_BUTTON_USS_CLASS_NAME);
+
+                foreach (var button in buttons.Build())
+                {
+                    button.style.color = StyleConst.UnityColors.Button.Background;
+                }
+            }
+#endif
 		}
 
 		private void UpdateCollapse()
@@ -216,8 +246,8 @@ namespace PiRhoSoft.Utilities.Editor
 			EnableInClassList(EXPANDED_USS_CLASS_NAME, !_isCollapsed);
 			EnableInClassList(COLLAPSED_USS_CLASS_NAME, _isCollapsed);
 
-            _collapseButton.image = _isCollapsed ? ExpandIcon.Texture : CollapseIcon.Texture;
-			_collapseButton.tooltip = _isCollapsed ? EXPAND_TOOLTIP : COLLAPSE_TOOLTIP;
+            CollapseButton.image = _isCollapsed ? ExpandIcon.Texture : CollapseIcon.Texture;
+			CollapseButton.tooltip = _isCollapsed ? EXPAND_TOOLTIP : COLLAPSE_TOOLTIP;
 		}
 
 		private void UpdateLabel()
@@ -260,7 +290,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 				Label =_label ?? property.displayName;
 				Tooltip = _tooltip ?? property.GetTooltip();
-
+                
 				if (_addChildren && property.HasVisibleChildFields())
 				{
 					Content.Clear();

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -333,7 +334,7 @@ namespace PiRhoSoft.Utilities.Editor
 			_addField = new TextField();
 			_addField.AddToClassList(HEADER_KEY_TEXT_USS_CLASS_NAME);
 			_addField.RegisterValueChangedCallback(evt => AddKeyChanged(evt.newValue));
-			_addField.Q(TextField.textInputUssName).RegisterCallback<KeyDownEvent>(evt => AddKeyPressed(evt));
+			_addField.Q(TextField.textInputUssName).RegisterCallback<KeyDownEvent>(AddKeyPressed);
 
 			_addPlaceholderText = new Placeholder(_addPlaceholder);
 			_addPlaceholderText.AddToField(_addField);
@@ -349,6 +350,7 @@ namespace PiRhoSoft.Utilities.Editor
 			_emptyText.AddToClassList(EMPTY_LABEL_USS_CLASS_NAME);
 
 			_itemsContainer = new VisualElement();
+            _itemsContainer.name = "items-container";
 			_itemsContainer.AddToClassList(ITEMS_USS_CLASS_NAME);
 
 			Content.Add(_emptyText);
@@ -460,11 +462,10 @@ namespace PiRhoSoft.Utilities.Editor
 			using (var e = ItemsChangedEvent.GetPooled())
 			{
 				e.target = this;
-                Debug.Log("aboba");
 				SendEvent(e);
 			}
 		}
-
+        
 		private void UpdateItemsWithoutNotify()
 		{
 			UpdateEmptyState();
@@ -473,23 +474,25 @@ namespace PiRhoSoft.Utilities.Editor
             {
                 _itemsContainer.RemoveAt(_itemsContainer.childCount - 1);
             }
-
+            
 			for (var i = 0; i < _proxy.Count; i++)
 			{
 				var key = _proxy.GetKey(i);
-
+                
 				if (i < _itemsContainer.childCount)
                 {
-                    CheckElement(i, key);
+                    CheckElement(_itemsContainer[i], i, key);
                 }
                 else
                 {
-                    CreateElement(i, key);
+                    var item = CreateElement(i, key);
+                    
+                    _itemsContainer.Add(item);
                 }
             }
-
-			AddKeyChanged(_addField.text);
-
+            
+            AddKeyChanged(_addField.text);
+            
 			_removeButtons.ForEach(button =>
 			{
 				var key = GetKey(button.parent);
@@ -500,12 +503,10 @@ namespace PiRhoSoft.Utilities.Editor
 			});
 		}
 
-		private void CreateElement(int index, string key)
+		private VisualElement CreateElement(int index, string key)
 		{
 			var item = new VisualElement();
 			item.AddToClassList(ITEM_USS_CLASS_NAME);
-			_itemsContainer.Add(item);
-
             item.name = key;
 
 			var dragHandle = new Image { image = _dragIcon.Texture, tooltip = _reorderTooltip };
@@ -517,36 +518,53 @@ namespace PiRhoSoft.Utilities.Editor
 			remove.AddToClassList(REMOVE_BUTTON_USS_CLASS_NAME);
 			item.Add(remove);
 
-			UpdateContent(item, index, key);
+            UpdateElementColor(item, index);
+            
+			return UpdateContent(item, index, key);
 		}
 
-		private void CheckElement(int index, string key)
+		private void CheckElement(VisualElement item, int index, string key)
 		{
 			//  All items needs to be rebuilt because any bindings will sometimes become invalid
-
-			var item = _itemsContainer[index];
-			var current = GetKey(item);
             
-			if (key != current)
+			// var current = GetKey(item);
+
+            UpdateElementColor(item, index);
+            
+			// if (key != current)
 			{
 				item.RemoveAt(1);
 				UpdateContent(item, index, key);
 			}
 		}
 
-		private void UpdateContent(VisualElement item, int index, string key)
-		{
-			SetKey(item, key);
-			item.EnableInClassList(ITEM_EVEN_USS_CLASS_NAME, index % 2 == 0);
-			item.EnableInClassList(ITEM_ODD_USS_CLASS_NAME, index % 2 != 0);
+        private void UpdateElementColor(VisualElement item, int index)
+        {
+            item.EnableInClassList(ITEM_EVEN_USS_CLASS_NAME, index % 2 == 0);
+            item.EnableInClassList(ITEM_ODD_USS_CLASS_NAME, index % 2 != 0);
+            
+#if !UNITY_2020_1_OR_NEWER
+            {
+                item.style.backgroundColor = index % 2 == 0
+                    ? StyleConst.UnityColors.InputField.Background
+                    : StyleConst.UnityColors.HelpBox.Border;
+            }
+#endif
+        }
 
+        private VisualElement UpdateContent(VisualElement item, int index, string key)
+        {
+			SetKey(item, key);
+            
 			var content = _proxy.CreateElement(index, key);
             
 			content.AddToClassList(ITEM_CONTENT_USS_CLASS_NAME);
-			item.Insert(1, content);
+            item.Insert(1, content);
+
+            return item;
 		}
 
-		#endregion
+        #endregion
 
 		#region Item Management
 

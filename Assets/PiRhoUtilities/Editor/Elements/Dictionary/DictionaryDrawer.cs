@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,7 +21,7 @@ namespace PiRhoSoft.Utilities.Editor
 			var keys = property.FindPropertyRelative(SerializedDictionary<string, int>.KEY_PROPERTY);
 			var values = property.FindPropertyRelative(SerializedDictionary<string, int>.VALUE_PROPERTY);
 
-			if (keys is { isArray: true } && values is { isArray: true } && keys.arrayElementType == "string")
+			if (keys != null && keys.isArray && values != null && values.isArray && keys.arrayElementType == "string")
             {
                 var isReference = fieldInfo.FieldType.BaseType.GetGenericTypeDefinition() == typeof(ReferenceDictionary<,>);
 				var referenceType = isReference ? fieldInfo.GetFieldType() : null;
@@ -34,7 +34,7 @@ namespace PiRhoSoft.Utilities.Editor
 				{
 					IsCollapsable = dictionaryAttribute.IsCollapsable,
 					bindingPath = keys.propertyPath,
-					Label = property.displayName
+					Label = property.displayName,
 				};
 
 				// TODO: other stuff from ConfigureField
@@ -59,7 +59,7 @@ namespace PiRhoSoft.Utilities.Editor
 				SetupChange(dictionaryAttribute, field, property, declaringType);
 
 				field.SetProxy(proxy, referenceType, true);
-
+                
 				return field;
 			}
 			else

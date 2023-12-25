@@ -28,6 +28,11 @@ namespace PiRhoSoft.Utilities
 			public int Blubber;
 		}
 
+		[Serializable]
+		public class Empty : IAnimal
+		{
+		}
+
 		[MessageBox("The [Reference] attribute is applied in addition to Unity's [SerializeReference] attribute to enable creating and editing of any valid subtype for the field.", MessageBoxType.Info, Location = TraitLocation.Above)]
 
 		[SerializeReference]

@@ -34,7 +34,19 @@ namespace PiRhoSoft.Utilities.Editor
 
 		private const string HAS_VISIBLE_CHILD_FIELDS_NAME = "HasVisibleChildFields";
 		private static readonly MethodInfo _hasVisibleChildFieldsMethod;
+        
+#if UNITY_2020_1_OR_NEWER
 		private static readonly object[] _hasVisibleChildFieldsParameters = new object[2];
+#else
+		private static readonly object[] _hasVisibleChildFieldsParameters = new object[1];
+#endif
+
+#if UNITY_2020_1_OR_NEWER
+        private static readonly MethodInfo _setPropertyMethod;
+        
+        // ReSharper disable once InconsistentNaming
+        private static readonly FieldInfo m_ParentPropertyField;
+#endif
 
 		static SerializedPropertyExtensions()
 		{
@@ -68,12 +80,24 @@ namespace PiRhoSoft.Utilities.Editor
 
             var hasVisibleChildFieldsMethod = typeof(EditorGUI).GetMethod(HAS_VISIBLE_CHILD_FIELDS_NAME, BindingFlags.Static | BindingFlags.NonPublic);
 
-            if (hasVisibleChildFieldsMethod != null && hasVisibleChildFieldsMethod.HasSignature(typeof(bool), 
+            if (hasVisibleChildFieldsMethod != null && hasVisibleChildFieldsMethod.HasSignature(typeof(bool),
+#if UNITY_2020_1_OR_NEWER
                     typeof(SerializedProperty), typeof(bool)))
+#else 
+                    typeof(SerializedProperty)))
+#endif
             {
                 _hasVisibleChildFieldsMethod = hasVisibleChildFieldsMethod;
             }
 
+#if UNITY_2020_1_OR_NEWER
+            _setPropertyMethod = typeof(VisualElement)
+                .GetMethod("SetProperty", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            m_ParentPropertyField = typeof(PropertyField)
+                .GetField("m_ParentPropertyField", BindingFlags.Instance | BindingFlags.NonPublic);
+#endif
+                
             if (_createFieldFromPropertyMethod == null || _gradientValueProperty == null || _hasVisibleChildFieldsMethod == null)
             {
                 Debug.LogError(CHANGED_INTERNALS_ERROR);
@@ -197,18 +221,71 @@ namespace PiRhoSoft.Utilities.Editor
 		public static VisualElement CreateField(this SerializedProperty property)
         {
             _createFieldFromPropertyParameters[0] = property;
-
+            
 #if UNITY_2021_1_OR_NEWER
             _createFieldFromPropertyParameters[1] = property.GetManagedReferenceValue();
 #endif
+
+            var element = _createFieldFromPropertyMethod?
+                .Invoke(_createFieldFromPropertyInstance, _createFieldFromPropertyParameters) as VisualElement;
             
-            return _createFieldFromPropertyMethod?.Invoke(_createFieldFromPropertyInstance, _createFieldFromPropertyParameters) as VisualElement;
+            return element;
         }
+
+#if UNITY_2020_1_OR_NEWER
+        public static VisualElement CreateFoldout(this SerializedProperty property)
+        {
+            property = property.Copy();
+            
+            var foldout = new Foldout
+            {
+                text = property.displayName,
+                value = property.isExpanded,
+                bindingPath = property.propertyPath,
+                name = "unity-foldout-" + property.propertyPath
+            };
+
+            // Get Foldout label.
+            var foldoutToggle = foldout.Q<Toggle>(className: Foldout.toggleUssClassName);
+            var foldoutLabel = foldoutToggle.Q<Label>(className: Toggle.textUssClassName);
+            foldoutLabel.bindingPath = property.propertyPath;
+            
+            _setPropertyMethod?.Invoke(foldoutLabel, new object[]{ new PropertyName("unity-foldout-bound-title"), true });
+            
+            var endProperty = property.GetEndProperty();
+            property.NextVisible(true);
+            do
+            {
+                if (SerializedProperty.EqualContents(property, endProperty))
+                    break;
+
+                var field = new PropertyField(property);
+
+                m_ParentPropertyField?.SetValue(field, _createFieldFromPropertyInstance);
+                
+                field.name = "unity-property-field-" + property.propertyPath;
+                
+                foldout.Add(field);
+            } while (property.NextVisible(false));
+
+            return foldout;
+        }
+        
+        public static void RefreshChildrenProperties(this SerializedProperty property)
+        {
+            typeof(PropertyField)
+                .GetMethod("RefreshChildrenProperties", BindingFlags.Instance | BindingFlags.NonPublic)?
+                .Invoke(_createFieldFromPropertyInstance, new object[] { property, true });
+        }
+#endif
 
 		public static bool HasVisibleChildFields(this SerializedProperty property)
 		{
             _hasVisibleChildFieldsParameters[0] = property;
-            _hasVisibleChildFieldsParameters[1] = false;
+
+#if UNITY_2020_1_OR_NEWER
+            _hasVisibleChildFieldsParameters[1] = property.hasVisibleChildren;
+#endif
             
             return (bool)_hasVisibleChildFieldsMethod.Invoke(null, _hasVisibleChildFieldsParameters);
 		}

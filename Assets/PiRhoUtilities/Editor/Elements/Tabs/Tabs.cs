@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
-using UnityEngine.UIElements;
+﻿using UnityEngine.UIElements;
+
+#if !UNITY_2023_2_OR_NEWER
+using System.Collections.Generic;
+#endif
 
 namespace PiRhoSoft.Utilities.Editor
 {
 #if UNITY_2023_2_OR_NEWER
-    [UxmlElement("Tabs")]
+    [UxmlElement]
 #endif
 	public partial class Tabs : VisualElement
 	{
@@ -57,15 +60,27 @@ namespace PiRhoSoft.Utilities.Editor
 #else
             this.style.marginRight = 3;
 #endif
+            
+#if !UNITY_2020_1_OR_NEWER
+            {
+                Content.style.backgroundColor = StyleConst.UnityColors.Window.Background;
+
+                var border = StyleConst.UnityColors.Window.Border;
+                Content.style.borderLeftColor = border;
+                Content.style.borderTopColor = border;
+                Content.style.borderRightColor = border;
+                Content.style.borderBottomColor = border;
+            }
+#endif
 		}
 
-		public TabPage GetPage(string name)
+		public TabPage GetPage(string pageName)
 		{
 			TabPage found = null;
 
 			Pages.ForEach(page =>
 			{
-				if (page.Label == name)
+				if (page.Label == pageName)
                 {
                     found = page;
                 }
@@ -76,8 +91,6 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public void UpdateTabs()
 		{
-			var pages = Pages;
-
 			_activePage = null;
 			Header.Clear();
 
@@ -101,6 +114,14 @@ namespace PiRhoSoft.Utilities.Editor
 				page.IsActive = page == _activePage;
 				page.EnableInClassList(PAGE_SELECTED_USS_CLASS_NAME, page.IsActive);
 				page.Button.EnableInClassList(TAB_SELECTED_USS_CLASS_NAME, page.IsActive);
+                
+#if !UNITY_2020_1_OR_NEWER
+                {
+                    page.Button.style.backgroundColor = page.IsActive 
+                        ? StyleConst.UnityColors.Window.Background 
+                        : StyleConst.UnityColors.Default.Background;
+                }
+#endif
 			});
 		}
 

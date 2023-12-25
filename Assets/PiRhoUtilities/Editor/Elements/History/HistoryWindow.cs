@@ -106,8 +106,16 @@ namespace PiRhoSoft.Utilities.Editor
 			_listView = new ListView(HistoryList.History, 21, MakeItem, BindItem);
 			_listView.AddToClassList(LIST_USS_CLASS_NAME);
 			_listView.selectionType = SelectionType.Single;
+#if UNITY_2022_3_OR_NEWER
+			_listView.itemsChosen += item => Select();
+			_listView.selectionChanged += selection => Highlight();
+#elif UNITY_2020_1_OR_NEWER
 			_listView.onItemsChosen += item => Select();
 			_listView.onSelectionChange += selection => Highlight();
+#else
+            _listView.onItemChosen += item => Select();
+            _listView.onSelectionChanged += selection => Highlight();
+#endif
 
 			header.Add(_back);
 			header.Add(_forward);

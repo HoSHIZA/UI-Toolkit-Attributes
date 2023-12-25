@@ -52,10 +52,11 @@ namespace PiRhoSoft.Utilities.Editor
 
 		public static void SendChangeEvent<T>(this VisualElement element, T previous, T current)
         {
-            using var changeEvent = ChangeEvent<T>.GetPooled(previous, current);
-            
-            changeEvent.target = element;
-            element.SendEvent(changeEvent);
+            using (var changeEvent = ChangeEvent<T>.GetPooled(previous, current))
+            {
+                changeEvent.target = element;
+                element.SendEvent(changeEvent);
+            }
         }
 
 		#endregion
@@ -110,8 +111,6 @@ namespace PiRhoSoft.Utilities.Editor
             element.style.display = displayed ? 
                 new StyleEnum<DisplayStyle>(DisplayStyle.Flex) : 
                 new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            
-			// element.style.display = displayed ? DisplayStyle.Flex : DisplayStyle.None;
 		}
 
 		public static void AlternateClass(this VisualElement element, string validClass, string invalidClass, bool isValid)

@@ -124,7 +124,21 @@ namespace PiRhoSoft.Utilities.Editor
 		public VisualElement CreateElement(int index)
 		{
 			var property = _property.GetArrayElementAtIndex(index);
-			var field = _drawer?.CreatePropertyGUI(property) ?? property.CreateField();
+            
+#if UNITY_2020_1_OR_NEWER
+            VisualElement field;
+            if (property.HasVisibleChildFields())
+            {
+                field = _drawer?.CreatePropertyGUI(property) ?? property.CreateFoldout();
+            }
+            else
+            {
+                field = _drawer?.CreatePropertyGUI(property) ?? property.CreateField();
+            }
+#else
+            var field = _drawer?.CreatePropertyGUI(property) ?? property.CreateField();
+#endif
+            
 			field.Bind(_property.serializedObject);
 
 			if (!(field is Foldout))

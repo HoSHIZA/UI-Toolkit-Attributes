@@ -20,9 +20,9 @@ namespace PiRhoSoft.Utilities.Samples
 
 	public class SamplesWindow : EditorWindow
 	{
-		private static string RootPath;
-		private const string Stylesheet = "SamplesWindow.uss";
-		private const string Uxml = "SamplesWindow.uxml";
+		private static string _rootPath;
+		private const string STYLESHEET = "SamplesWindow.uss";
+		private const string UXML = "SamplesWindow.uxml";
 
 		private class SampleData
 		{
@@ -74,16 +74,22 @@ namespace PiRhoSoft.Utilities.Samples
 
 		private void OnEnable()
 		{
-			if (string.IsNullOrEmpty(RootPath))
-				RootPath = AssetHelper.GetScriptPath();
+			if (string.IsNullOrEmpty(_rootPath))
+				_rootPath = AssetHelper.GetScriptPath();
 
-			rootVisualElement.AddUxml(Uxml);
-			rootVisualElement.AddStyleSheet(Stylesheet);
+			rootVisualElement.AddUxml(UXML);
+			rootVisualElement.AddStyleSheet(STYLESHEET);
 
 			_sampleList = rootVisualElement.Query<ListView>("sample-list");
 			_sampleList.makeItem = () => new Label();
 			_sampleList.bindItem = (element, index) => (element as Label).text = _items[index].Name;
+#if UNITY_2022_3_OR_NEWER
+			_sampleList.selectionChanged += list => SelectionChanged(list.ToList());
+#elif UNITY_2020_2_OR_NEWER
 			_sampleList.onSelectionChange += list => SelectionChanged(list.ToList());
+#else
+			_sampleList.onSelectionChanged += list => SelectionChanged(list.ToList());
+#endif
 			_sampleList.itemsSource = _items;
 			_sampleList.selectionType = SelectionType.Single;
 
@@ -121,17 +127,17 @@ namespace PiRhoSoft.Utilities.Samples
 
 		private string GetCodeText(string name)
 		{
-			return File.ReadAllText($"{RootPath}{name}/{name}CodeSample.cs");
+			return File.ReadAllText($"{_rootPath}{name}/{name}CodeSample.cs");
 		}
 
 		private string GetUxmlText(string name)
 		{
-			return File.ReadAllText($"{RootPath}{name}/{name}UxmlSample.uxml");
+			return File.ReadAllText($"{_rootPath}{name}/{name}UxmlSample.uxml");
 		}
 
 		private string GetUxmlCodeText(string name)
 		{
-			return File.ReadAllText($"{RootPath}{name}/{name}UxmlSample.cs");
+			return File.ReadAllText($"{_rootPath}{name}/{name}UxmlSample.cs");
 		}
 	}
 }

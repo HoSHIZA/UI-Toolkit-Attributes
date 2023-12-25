@@ -124,3 +124,8 @@
 	margin-left: 15px;
 	margin-top: 2px;
 }
+
+.pirho-list-field__item > * > #unity-content
+{
+    margin-left: -2px;
+}

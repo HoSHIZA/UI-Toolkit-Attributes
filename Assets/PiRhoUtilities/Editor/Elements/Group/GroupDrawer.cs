@@ -16,9 +16,9 @@ namespace PiRhoSoft.Utilities.Editor
 			
 			foreach (var sibling in parent.Children())
 			{
-				var field = fieldInfo.DeclaringType.GetField(sibling.name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				var field = fieldInfo.DeclaringType?.GetField(sibling.name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-				if (field != null && field.TryGetAttribute<GroupAttribute>(out var groupAttribute) && groupAttribute.Name == group.Name)
+				if (field != null && field.TryGetAttribute<GroupAttribute>(out var groupAttribute) && groupAttribute.Name == group?.Name)
 				{
 					if (frame != null)
 					{
@@ -30,7 +30,7 @@ namespace PiRhoSoft.Utilities.Editor
 						// this property is first and is responsible for drawing
 						frame = new Frame
                         {
-                            Label = group.Name
+                            Label = group?.Name
                         };
 
                         var element = this.CreateNextElement(sibling);

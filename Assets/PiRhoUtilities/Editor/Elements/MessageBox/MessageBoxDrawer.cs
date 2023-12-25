@@ -20,7 +20,7 @@ namespace PiRhoSoft.Utilities.Editor
 			var messageAttribute = attribute as MessageBoxAttribute;
 			var element = this.CreateNextElement(property);
 			var container = new VisualElement();
-
+            
 			container.AddStyleSheet(STYLESHEET);
 			container.AddToClassList(USS_CLASS_NAME);
 			container.Add(element);

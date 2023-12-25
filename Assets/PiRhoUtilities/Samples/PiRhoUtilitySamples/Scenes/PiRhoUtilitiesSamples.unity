@@ -402,7 +402,7 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 0
-      type: {class: ChangeTriggerSample/Cat, ns: PiRhoSoft.Utilities, asm: Assembly-CSharp}
+      type: {class: ChangeTriggerSample/Dog, ns: PiRhoSoft.Utilities, asm: Assembly-CSharp}
       data:
         Value: 0
     - rid: 1
@@ -825,11 +825,42 @@ MonoBehaviour:
     _values: 0000000000000000
   Classes:
     _keys:
-    - Text
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
     _values:
-    - Abobe: 1
-      Jabobe: 228.337
-      YaboBobBe: text aaa
+    - Name: 
+      Abobe: 1
+      Jabobe: 0
+      YaboBobBe: 
+    - Name: 
+      Abobe: 0
+      Jabobe: 1
+      YaboBobBe: 
+    - Name: 
+      Abobe: 0
+      Jabobe: 2
+      YaboBobBe: 
+    - Name: 
+      Abobe: 0
+      Jabobe: 3
+      YaboBobBe: 
+    - Name: 
+      Abobe: 0
+      Jabobe: 4
+      YaboBobBe: 
+    - Name: 
+      Abobe: 0
+      Jabobe: 5
+      YaboBobBe: 
+    - Name: 
+      Abobe: 0
+      Jabobe: 0
+      YaboBobBe: 
 --- !u!1 &662326013
 GameObject:
   m_ObjectHideFlags: 0
@@ -2234,8 +2265,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Int1: 0
   Float1: 0
-  Float2: 0
   Bool1: 1
+  Float2: 0
   Bool2: 0
   Int2: 0
 --- !u!1 &1559421163
@@ -3007,6 +3038,20 @@ MonoBehaviour:
     - Morning!
   Ints:
     _items: 0100000005000000050000000000000000000000
+  Classes:
+    _items:
+    - Name: 
+      Abobe: 0
+      Jabobe: 0
+      YaboBobBe: 
+    - Name: text
+      Abobe: 0
+      Jabobe: 0
+      YaboBobBe: 
+    - Name: 
+      Abobe: 0
+      Jabobe: 0
+      YaboBobBe: 
 --- !u!1 &1929119039
 GameObject:
   m_ObjectHideFlags: 0

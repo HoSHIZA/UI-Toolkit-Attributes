@@ -83,6 +83,7 @@ namespace PiRhoSoft.Utilities.Editor
 
 		#region UXML Support
 
+#if !UNITY_2023_2_OR_NEWER
 		public abstract class UxmlTraits<TAttributeType> : BaseFieldTraits<TValueType, TAttributeType> where TAttributeType : TypedUxmlAttributeDescription<TValueType>, new()
 		{
 			protected readonly TAttributeType Minimum = new TAttributeType { name = "minimum" };
@@ -97,6 +98,7 @@ namespace PiRhoSoft.Utilities.Editor
 				base.Init(element, bag, cc);
 			}
 		}
+#endif
 
 		#endregion
 	}

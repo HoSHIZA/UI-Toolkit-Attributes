@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 namespace PiRhoSoft.Utilities.Editor
 {
 #if UNITY_2023_2_OR_NEWER
-    [UxmlElement("EnumButtons")]
+    [UxmlElement]
 #endif
 	public partial class EnumButtonsField : BaseField<Enum>
 	{
@@ -56,18 +56,52 @@ namespace PiRhoSoft.Utilities.Editor
 		}
 
 #if UNITY_2023_2_OR_NEWER
+        private string _value;
+        
         [UxmlAttribute("value")]
         private string Value
         {
-            get => value != null ? value.ToString() : string.Empty;
+            get => _value;
             set
             {
-                if (Type == null || string.IsNullOrEmpty(value)) return;
-                
-                if (Enum.TryParse(Type, value, out var result))
+                if (Type != null && value != string.Empty && Enum.TryParse(Type, value, out var result) && result is Enum @enum)
                 {
-                    SetValueWithoutNotify((Enum)result);
+                    SetValueWithoutNotify(@enum);
+
+                    _value = this.value.ToString();
+                    
+                    return;
                 }
+
+                _value = value;
+                
+                // if (Type == null)
+                // {
+                //     _value = string.Empty;
+                //
+                //     return;
+                // }
+                //
+                // _value = value;
+                //
+                // if (string.IsNullOrEmpty(value))
+                // {
+                //     Debug.Log(value);
+                //     SetValueWithoutNotify(default);
+                //     _value = this.value.ToString();
+                //     
+                //     return;
+                // }
+                //
+                // if (Enum.TryParse(Type, value, out var result) && result is Enum @enum)
+                // {
+                //     SetValueWithoutNotify(@enum);
+                //     _value = this.value.ToString();
+                //     
+                //     return;
+                // }
+                //
+                // _value = value;
             }
         }
 #endif
@@ -171,13 +205,27 @@ namespace PiRhoSoft.Utilities.Editor
                         {
                             var current = GetIntFromEnum(Type, _value);
                             var buttonValue = GetIntFromEnum(Type, button.userData as Enum);
+                            var enable = (buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0);
 
-                            button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME,
-                                (buttonValue != 0 && (current & buttonValue) == buttonValue) || (current == 0 && buttonValue == 0));
+                            button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, enable);
+
+#if !UNITY_2020_1_OR_NEWER
+                            button.style.backgroundColor = enable
+                                ? StyleConst.UnityColors.Button.BackgroundPressed
+                                : StyleConst.UnityColors.Button.Background;
+#endif
                         }
                         else
                         {
-                            button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, _value.Equals(button.userData as Enum));
+                            var enable = _value.Equals(button.userData as Enum);
+                            
+                            button.EnableInClassList(ACTIVE_BUTTON_USS_CLASS_NAME, enable);
+                            
+#if !UNITY_2020_1_OR_NEWER
+                            button.style.backgroundColor = enable
+                                ? StyleConst.UnityColors.Button.BackgroundPressed
+                                : StyleConst.UnityColors.Button.Background;
+#endif
                         }
                     });
                 }

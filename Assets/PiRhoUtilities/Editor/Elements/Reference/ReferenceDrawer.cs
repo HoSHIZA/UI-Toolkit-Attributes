@@ -14,7 +14,7 @@ namespace PiRhoSoft.Utilities.Editor
             var drawer = new PropertyReferenceDrawer(property, next);
             var field = new ReferenceField(type, drawer)
             {
-                IsCollapsable = referenceAttribute!.IsCollapsable,
+                IsCollapsable = referenceAttribute.IsCollapsable,
                 bindingPath = property.propertyPath // TODO: other stuff from ConfigureField
             };
 

@@ -4,11 +4,16 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public class MessageBox : VisualElement
+#if UNITY_2023_2_OR_NEWER
+    [UxmlElement]
+#endif
+	public partial class MessageBox : VisualElement
 	{
 		#region Log Messages
 
+#if !UNITY_2023_1_OR_NEWER
 		private const string INVALID_TYPE_WARNING = "(PUEMBIT) invalid message type '{0}' for MessageBox: message-type must be one of 'Info', 'Warning', or 'Error'";
+#endif
 
 		#endregion
 
@@ -83,6 +88,18 @@ namespace PiRhoSoft.Utilities.Editor
 
 			this.AddStyleSheet(STYLESHEET);
 			AddToClassList(USS_CLASS_NAME);
+
+#if !UNITY_2020_1_OR_NEWER
+            {
+                style.backgroundColor = StyleConst.UnityColors.HelpBox.Background;
+
+                var border = StyleConst.UnityColors.HelpBox.Border;
+                style.borderLeftColor = border;
+                style.borderTopColor = border;
+                style.borderRightColor = border;
+                style.borderBottomColor = border;
+            }
+#endif
 		}
 
 		#endregion

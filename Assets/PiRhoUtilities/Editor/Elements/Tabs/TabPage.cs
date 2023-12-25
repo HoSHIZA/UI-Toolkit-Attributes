@@ -3,7 +3,7 @@
 namespace PiRhoSoft.Utilities.Editor
 {
 #if UNITY_2023_2_OR_NEWER
-    [UxmlElement("TabPage")]
+    [UxmlElement]
 #endif
 	public partial class TabPage : VisualElement
 	{
@@ -88,7 +88,17 @@ namespace PiRhoSoft.Utilities.Editor
 
 			RegisterCallback<AttachToPanelEvent>(OnAttached);
 			RegisterCallback<DetachFromPanelEvent>(OnDetached);
-		}
+
+#if !UNITY_2020_1_OR_NEWER
+            {
+                var border = StyleConst.UnityColors.Window.Border;
+                _button.style.borderLeftColor = border;
+                _button.style.borderTopColor = border;
+                _button.style.borderRightColor = border;
+                _button.style.borderBottomColor = border;
+            }
+#endif
+        }
 
 		private void SetLabel(string value)
 		{

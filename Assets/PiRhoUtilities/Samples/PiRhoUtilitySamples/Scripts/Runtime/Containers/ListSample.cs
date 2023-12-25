@@ -7,6 +7,7 @@ namespace PiRhoSoft.Utilities
 	public class ListSample : MonoBehaviour
 	{
 		[Serializable] public class StringList : SerializedList<string> { }
+		[Serializable] public class TestList : SerializedList<DictionarySample.Test> { }
 		[Serializable] public class IntArray : SerializedArray<int> { public IntArray() : base(5) { } }
 
 		[MessageBox("The [List] attribute is applied to fields subclassed from SeriializedList<T> or SerializedArray<T> to display it as a customizable list view. Adding, removing, reordering and other callbacks can be specified.", MessageBoxType.Info, Location = TraitLocation.Above)]
@@ -16,6 +17,9 @@ namespace PiRhoSoft.Utilities
 
 		[List(AllowAdd = nameof(MaximumArray5), AllowRemove = nameof(MinimumArray2), AllowReorder = false)]
 		public IntArray Ints = new IntArray();
+
+		[List(AllowReorder = true)]
+        public TestList Classes = new TestList();
 
 		private void StringAdded()
 		{

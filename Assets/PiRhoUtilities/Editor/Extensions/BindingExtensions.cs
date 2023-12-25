@@ -12,24 +12,29 @@ namespace PiRhoSoft.Utilities.Editor
         #region Internal Lookups
 
         private const string CHANGED_INTERNALS_ERROR = "(PUBFECI) failed to setup BindingExtensions: Unity internals have changed";
-        
-        private const string BINDING_NAMESPACE = "UnityEditor.UIElements.Bindings";
-
-        private const string SERIALIZED_OBJECT_BINDING_CONTEXT_TYPE_NAME = BINDING_NAMESPACE + ".SerializedObjectBindingContext, UnityEditor";
-
-        private static readonly Type _serializedObjectBindingContextType;
-
-        private const string DEFAULT_BIND_NAME = "DefaultBind";
-        private static readonly MethodInfo _defaultBindEnumMethod;
-
-        private const string SERIALIZED_OBJECT_BINDING_TYPE_NAME = BINDING_NAMESPACE + ".SerializedObjectBinding`1, UnityEditor";
-        private static readonly Type _serializedObjectBindingType;
 
         private const string CREATE_BIND_NAME = "CreateBind";
+        private const string DEFAULT_BIND_NAME = "DefaultBind";
+        
+#if UNITY_2020_1_OR_NEWER
+        private const string BINDING_NAMESPACE = "UnityEditor.UIElements.Bindings";
+        private const string SERIALIZED_OBJECT_BINDING_CONTEXT_TYPE_NAME = BINDING_NAMESPACE + ".SerializedObjectBindingContext, UnityEditor";
+        private const string SERIALIZED_OBJECT_BINDING_TYPE_NAME = BINDING_NAMESPACE + ".SerializedObjectBinding`1, UnityEditor";
+#else
+        private const string TYPE_NAME = "UnityEditor.UIElements.BindingExtensions, UnityEditor";
+        private const string SERIALIZED_OBJECT_UPDATE_WRAPPER_TYPE_NAME = "SerializedObjectUpdateWrapper";
+        private const string SERIALIZED_OBJECT_BINDING_TYPE_NAME = "SerializedObjectBinding`1";
+#endif
+        
+        private static readonly MethodInfo _defaultBindEnumMethod;
+        private static readonly Type _serializedObjectBindingContextType;
+        private static readonly Type _serializedObjectBindingType;
+        
         private static readonly Dictionary<Type, MethodInfo> _createBindMethods = new Dictionary<Type, MethodInfo>();
 
         static BindingExtensions()
         {
+#if UNITY_2020_1_OR_NEWER
             var serializedObjectBindingContextType = Type.GetType(SERIALIZED_OBJECT_BINDING_CONTEXT_TYPE_NAME);
             var serializedObjectBindingContextConstructor = serializedObjectBindingContextType?.GetConstructor(new Type[]
             {
@@ -41,7 +46,7 @@ namespace PiRhoSoft.Utilities.Editor
                 _serializedObjectBindingContextType = serializedObjectBindingContextType;
             }
 
-            var defaultBindMethod = serializedObjectBindingContextType?.GetMethod(DEFAULT_BIND_NAME, 
+            var defaultBindMethod = serializedObjectBindingContextType?.GetMethod(DEFAULT_BIND_NAME,
                 BindingFlags.Instance | BindingFlags.NonPublic);
             var defaultBindEnumMethod = defaultBindMethod?.MakeGenericMethod(typeof(Enum));
 
@@ -56,6 +61,36 @@ namespace PiRhoSoft.Utilities.Editor
             }
 
             _serializedObjectBindingType = Type.GetType(SERIALIZED_OBJECT_BINDING_TYPE_NAME);
+#else
+            var type = Type.GetType(TYPE_NAME);
+
+            var serializedObjectUpdateWrapperType = type?.GetNestedType(SERIALIZED_OBJECT_UPDATE_WRAPPER_TYPE_NAME, BindingFlags.NonPublic);
+            var serializedObjectUpdateWrapperConstructor = serializedObjectUpdateWrapperType?.GetConstructor(new Type[]
+            {
+                typeof(SerializedObject)
+            });
+
+            if (serializedObjectUpdateWrapperConstructor != null)
+            {
+                _serializedObjectBindingContextType = serializedObjectUpdateWrapperType;
+            }
+
+            var defaultBindMethod = type?.GetMethod(DEFAULT_BIND_NAME, BindingFlags.Static | BindingFlags.NonPublic);
+            var defaultBindEnumMethod = defaultBindMethod?.MakeGenericMethod(typeof(Enum));
+
+            if (defaultBindEnumMethod != null && defaultBindEnumMethod.IsStatic && defaultBindEnumMethod.HasSignature(null,
+                    typeof(VisualElement),
+                    serializedObjectUpdateWrapperType,
+                    typeof(SerializedProperty),
+                    typeof(Func<SerializedProperty, Enum>),
+                    typeof(Action<SerializedProperty, Enum>),
+                    typeof(Func<Enum, SerializedProperty, Func<SerializedProperty, Enum>, bool>)))
+            {
+                _defaultBindEnumMethod = defaultBindEnumMethod;
+            }
+            
+            _serializedObjectBindingType = type?.GetNestedType(SERIALIZED_OBJECT_BINDING_TYPE_NAME, BindingFlags.NonPublic);
+#endif
 
             if (_serializedObjectBindingContextType == null || _defaultBindEnumMethod == null || _serializedObjectBindingType == null)
             {
@@ -93,12 +128,21 @@ namespace PiRhoSoft.Utilities.Editor
             var type = field.value.GetType();
             var wrapper = Activator.CreateInstance(_serializedObjectBindingContextType, property.serializedObject);
 
+#if UNITY_2020_1_OR_NEWER
             _defaultBindEnumMethod.Invoke(wrapper, new object[]
             {
                 field, property, (Func<SerializedProperty, Enum>)Getter,
                 (Action<SerializedProperty, Enum>)Setter,
                 (Func<Enum, SerializedProperty, Func<SerializedProperty, Enum>, bool>)Comparer
             });
+#else
+            _defaultBindEnumMethod.Invoke(null, new object[]
+            {
+                field, wrapper, property, (Func<SerializedProperty, Enum>)Getter,
+                (Action<SerializedProperty, Enum>)Setter,
+                (Func<Enum, SerializedProperty, Func<SerializedProperty, Enum>, bool>)Comparer
+            });
+#endif
 
             return;
 

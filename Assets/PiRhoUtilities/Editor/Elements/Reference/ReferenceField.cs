@@ -189,6 +189,8 @@ namespace PiRhoSoft.Utilities.Editor
 			_setButton = _frame.AddHeaderButton(_setIcon.Texture, SET_BUTTON_LABEL, SET_BUTTON_USS_CLASS_NAME, SelectType);
 			_clearButton = _frame.AddHeaderButton(_clearIcon.Texture, CLEAR_BUTTON_LABEL, CLEAR_BUTTON_USS_CLASS_NAME, SetNull);
 
+            UpdateCollapse();
+            
 			Add(_frame);
 
 			AddToClassList(USS_CLASS_NAME);
@@ -204,9 +206,28 @@ namespace PiRhoSoft.Utilities.Editor
 			if (_drawer != null)
 			{
 				var content = _drawer.CreateElement(_value);
+                content.name = "reference-content";
+
+                if (!_frame.IsCollapsable)
+                {
+                    return;
+                }
+                
 				_frame.Content.Add(content);
 			}
+            
+            UpdateCollapse();
 		}
+
+        private void UpdateCollapse()
+        {
+            var referenceContent = _frame.Q("reference-content");
+            
+            if (referenceContent == null) return;
+            
+            _frame.IsCollapsed = referenceContent.childCount == 0;
+            _frame.CollapseButton.SetEnabled(referenceContent.childCount != 0);
+        }
 
 		private void UpdateLabel()
 		{

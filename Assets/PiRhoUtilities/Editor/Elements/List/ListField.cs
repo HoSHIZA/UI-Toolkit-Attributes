@@ -426,18 +426,22 @@ namespace PiRhoSoft.Utilities.Editor
 		{
 			UpdateEmptyState();
 
-			while (_itemsContainer.childCount > _proxy.Count)
-				_itemsContainer.RemoveAt(_itemsContainer.childCount - 1);
+            while (_itemsContainer.childCount > _proxy.Count)
+            {
+                _itemsContainer.RemoveAt(_itemsContainer.childCount - 1);
+            }
 
 			for (var i = 0; i < _proxy.Count; i++)
 			{
 				if (i < _itemsContainer.childCount)
                 {
-                    CheckElement(i);
+                    CheckElement(_itemsContainer[i], i);
                 }
                 else
                 {
-                    CreateElement(i);
+                    var item = CreateElement(i);
+                    
+                    _itemsContainer.Add(item);
                 }
             }
 
@@ -455,11 +459,11 @@ namespace PiRhoSoft.Utilities.Editor
 			_addButton.SetEnabled(validAdd && validType);
 		}
 
-		private void CreateElement(int index)
+		private VisualElement CreateElement(int index)
 		{
 			var item = new VisualElement();
 			item.AddToClassList(ITEM_USS_CLASS_NAME);
-			_itemsContainer.Add(item);
+            item.name = $"Element {index}";
 
 			var dragHandle = new Image { image = _dragIcon.Texture, tooltip = _reorderTooltip };
 			dragHandle.AddToClassList(DRAG_HANDLE_USS_CLASS_NAME);
@@ -469,16 +473,19 @@ namespace PiRhoSoft.Utilities.Editor
 			var remove = new IconButton(() => RemoveItem(item)) { image = _removeIcon.Texture, tooltip = _removeTooltip };
 			remove.AddToClassList(REMOVE_BUTTON_USS_CLASS_NAME);
 			item.Add(remove);
+            
+            UpdateItemColor(item, index);
 
-			UpdateContent(item, index);
+			return UpdateContent(item, index);
 		}
 
-		private void CheckElement(int index)
+		private void CheckElement(VisualElement item, int index)
 		{
 			// TODO: tracking by index doesn't work since indices change (unlike keys in a dictionary) - need some other way to associate elements with items
 
-			var item = _itemsContainer[index];
-			//var current = GetKey(item);
+			// var current = GetKey(item);
+
+            UpdateItemColor(item, index);
 
 			//if (index != current)
 			{
@@ -487,17 +494,31 @@ namespace PiRhoSoft.Utilities.Editor
 			}
 		}
 
-		private void UpdateContent(VisualElement item, int index)
-		{
-			item.EnableInClassList(ITEM_EVEN_USS_CLASS_NAME, index % 2 == 0);
-			item.EnableInClassList(ITEM_ODD_USS_CLASS_NAME, index % 2 != 0);
+        private void UpdateItemColor(VisualElement item, int index)
+        {
+            item.EnableInClassList(ITEM_EVEN_USS_CLASS_NAME, index % 2 == 0);
+            item.EnableInClassList(ITEM_ODD_USS_CLASS_NAME, index % 2 != 0);
+            
+#if !UNITY_2020_1_OR_NEWER
+            {
+                item.style.backgroundColor = index % 2 == 0
+                    ? StyleConst.UnityColors.InputField.Background
+                    : StyleConst.UnityColors.HelpBox.Border;
+            }
+#endif
+        }
 
-			var content = _proxy.CreateElement(index);
-			content.AddToClassList(ITEM_CONTENT_USS_CLASS_NAME);
-			item.Insert(1, content);
-		}
+        private VisualElement UpdateContent(VisualElement item, int index)
+        {
+            var content = _proxy.CreateElement(index);
+            
+            content.AddToClassList(ITEM_CONTENT_USS_CLASS_NAME);
+            item.Insert(1, content);
 
-		#endregion
+            return item;
+        }
+
+        #endregion
 
 		#region Item Management
 

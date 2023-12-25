@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -9,221 +10,256 @@ using UnityEngine.UIElements;
 
 namespace PiRhoSoft.Utilities.Editor
 {
-	public interface IDictionaryProxy
-	{
-		VisualElement CreateElement(int index, string key);
+    public interface IDictionaryProxy
+    {
+        VisualElement CreateElement(int index, string key);
 
-		int Count { get; }
-		string GetKey(int index);
+        int Count { get; }
+        string GetKey(int index);
 
-		bool CanAdd(string key);
-		bool CanAdd(Type type);
-		bool AddItem(string key, Type type);
+        bool CanAdd(string key);
+        bool CanAdd(Type type);
+        bool AddItem(string key, Type type);
 
-		bool CanRemove(int index, string key);
-		void RemoveItem(int index, string key);
+        bool CanRemove(int index, string key);
+        void RemoveItem(int index, string key);
 
-		bool IsReorderable { get; }
-		void ReorderItem(int from, int to);
-	}
+        bool IsReorderable { get; }
+        void ReorderItem(int from, int to);
 
-	public class DictionaryProxy : IDictionaryProxy
-	{
-		public IDictionary Items { get; private set; }
-		public Func<IDictionary, string, VisualElement> Creator { get; private set; }
+        void RefreshChildrenProperties();
+    }
 
-		public DictionaryProxy(IDictionary items, Func<IDictionary, string, VisualElement> creator)
-		{
-			Items = items;
-			Creator = creator;
-		}
+    public class DictionaryProxy : IDictionaryProxy
+    {
+        public IDictionary Items { get; private set; }
+        public Func<IDictionary, string, VisualElement> Creator { get; private set; }
 
-		public VisualElement CreateElement(int index, string key) => Creator.Invoke(Items, key);
+        public DictionaryProxy(IDictionary items, Func<IDictionary, string, VisualElement> creator)
+        {
+            Items = items;
+            Creator = creator;
+        }
 
-		public int Count => Items.Count;
-		public string GetKey(int index) => Items.Keys.Cast<string>().ElementAt(index);
+        public VisualElement CreateElement(int index, string key) => Creator.Invoke(Items, key);
 
-		public bool CanAdd(string key) => !Items.Contains(key);
-		public bool CanAdd(Type type) => type != null;
+        public int Count => Items.Count;
+        public string GetKey(int index) => Items.Keys.Cast<string>().ElementAt(index);
 
-		public bool AddItem(string key, Type type)
-		{
-			try
-			{
-				var item = Activator.CreateInstance(type);
-				Items.Add(key, item);
-			}
-			catch
-			{
-				return false;
-			}
+        public bool CanAdd(string key) => !Items.Contains(key);
+        public bool CanAdd(Type type) => type != null;
 
-			return true;
-		}
+        public bool AddItem(string key, Type type)
+        {
+            try
+            {
+                var item = Activator.CreateInstance(type);
+                Items.Add(key, item);
+            }
+            catch
+            {
+                return false;
+            }
 
-		public bool CanRemove(int index, string key) => true;
-		public void RemoveItem(int index, string key) => Items.Remove(key);
+            return true;
+        }
 
-		public bool IsReorderable => false;
-		public void ReorderItem(int from, int to) { }
-	}
+        public bool CanRemove(int index, string key) => true;
+        public void RemoveItem(int index, string key) => Items.Remove(key);
 
-	public class DictionaryProxy<T> : IDictionaryProxy
-	{
-		public IDictionary<string, T> Items { get; private set; }
-		public Func<IDictionary<string, T>, string, VisualElement> Creator { get; private set; }
+        public bool IsReorderable => false;
 
-		public DictionaryProxy(Dictionary<string, T> items, Func<IDictionary<string, T>, string, VisualElement> creator)
-		{
-			Items = items;
-			Creator = creator;
-		}
+        public void ReorderItem(int from, int to)
+        {
+        }
 
-		public VisualElement CreateElement(int index, string key) => Creator.Invoke(Items, key);
+        public void RefreshChildrenProperties()
+        {
+        }
+    }
 
-		public int Count => Items.Count;
-		public string GetKey(int index) => Items.Keys.ElementAt(index);
+    public class DictionaryProxy<T> : IDictionaryProxy
+    {
+        public IDictionary<string, T> Items { get; private set; }
+        public Func<IDictionary<string, T>, string, VisualElement> Creator { get; private set; }
 
-		public bool CanAdd(string key) => !Items.ContainsKey(key);
-		public bool CanAdd(Type type) => type == null || (type == typeof(T) && type.IsValueType) || type.IsCreatableAs<T>();
+        public DictionaryProxy(Dictionary<string, T> items, Func<IDictionary<string, T>, string, VisualElement> creator)
+        {
+            Items = items;
+            Creator = creator;
+        }
 
-		public bool AddItem(string key, Type type)
-		{
-			var item = type == null || type.IsValueType
-				? default
-				: (T)Activator.CreateInstance(type);
+        public VisualElement CreateElement(int index, string key) => Creator.Invoke(Items, key);
 
-			Items.Add(key, item);
-			return true;
-		}
+        public int Count => Items.Count;
+        public string GetKey(int index) => Items.Keys.ElementAt(index);
 
-		public bool CanRemove(int index, string key) => true;
-		public void RemoveItem(int index, string key) => Items.Remove(key);
+        public bool CanAdd(string key) => !Items.ContainsKey(key);
+        public bool CanAdd(Type type) => type == null || (type == typeof(T) && type.IsValueType) || type.IsCreatableAs<T>();
 
-		public bool IsReorderable => false;
-		public void ReorderItem(int from, int to) { }
-	}
+        public bool AddItem(string key, Type type)
+        {
+            var item = type == null || type.IsValueType
+                ? default
+                : (T)Activator.CreateInstance(type);
 
-	public class PropertyDictionaryProxy : IDictionaryProxy
-	{
-		public Func<string, bool> CanAddKeyCallback;
-		public Func<Type, bool> CanAddTypeCallback;
-		public Func<string, bool> CanRemoveCallback;
+            Items.Add(key, item);
+            return true;
+        }
 
-		private readonly SerializedProperty _property;
-		private readonly SerializedProperty _keysProperty;
-		private readonly SerializedProperty _valuesProperty;
-		private readonly PropertyDrawer _drawer;
+        public bool CanRemove(int index, string key) => true;
+        public void RemoveItem(int index, string key) => Items.Remove(key);
 
-		public PropertyDictionaryProxy(SerializedProperty property, SerializedProperty keys, SerializedProperty values, PropertyDrawer drawer)
-		{
-			_property = property;
-			_keysProperty = keys;
-			_valuesProperty = values;
-			_drawer = drawer;
-		}
+        public bool IsReorderable => false;
 
-		public VisualElement CreateElement(int index, string key)
-		{
-			var value = _valuesProperty.GetArrayElementAtIndex(index);
-			var field = _drawer?.CreatePropertyGUI(value) ?? value.CreateField();
+        public void ReorderItem(int from, int to)
+        {
+        }
 
-			field.Bind(_property.serializedObject);
+        public void RefreshChildrenProperties()
+        {
+        }
+    }
 
-			if (string.IsNullOrEmpty(key))
+    public class PropertyDictionaryProxy : IDictionaryProxy
+    {
+        public Func<string, bool> CanAddKeyCallback;
+        public Func<Type, bool> CanAddTypeCallback;
+        public Func<string, bool> CanRemoveCallback;
+
+        private readonly SerializedProperty _property;
+        private readonly SerializedProperty _keysProperty;
+        private readonly SerializedProperty _valuesProperty;
+        private readonly PropertyDrawer _drawer;
+
+        public PropertyDictionaryProxy(SerializedProperty property, SerializedProperty keys, SerializedProperty values,
+            PropertyDrawer drawer)
+        {
+            _property = property;
+            _keysProperty = keys;
+            _valuesProperty = values;
+            _drawer = drawer;
+        }
+        
+        public VisualElement CreateElement(int index, string key)
+        {
+            var value = _valuesProperty.GetArrayElementAtIndex(index);
+
+#if UNITY_2020_1_OR_NEWER
+            VisualElement field;
+            if (value.HasVisibleChildFields())
+            {
+                field = _drawer?.CreatePropertyGUI(value) ?? value.CreateFoldout();
+            }
+            else
+            {
+                field = _drawer?.CreatePropertyGUI(value) ?? value.CreateField();
+            }
+#else
+            var field = field = _drawer?.CreatePropertyGUI(value) ?? value.CreateField();
+#endif
+            
+            field.Bind(_property.serializedObject);
+
+            if (string.IsNullOrEmpty(key))
             {
                 key = " "; // An empty label will cause the label to be removed
             }
 
             if (field.SetFieldLabel(key)) // TODO: for references this should include the type name
-			{
-				return field;
-			}
-			else
-			{
-				var container = new FieldContainer(key);
-				container.Add(field);
-				return container;
-			}
-		}
+            {
+                return field;
+            }
+            else
+            {
+                var container = new FieldContainer(key);
+                container.Add(field);
+                return container;
+            }
+        }
 
-		public int Count => _keysProperty.arraySize;
-		public string GetKey(int index) => _keysProperty.GetArrayElementAtIndex(index).stringValue;
+        public int Count => _keysProperty.arraySize;
+        public string GetKey(int index) => _keysProperty.GetArrayElementAtIndex(index).stringValue;
 
-		public bool CanAdd(string key)
-		{
-			for (var i = 0; i < _keysProperty.arraySize; i++)
-			{
-				var property = _keysProperty.GetArrayElementAtIndex(i);
-				if (property.stringValue == key)
+        public bool CanAdd(string key)
+        {
+            for (var i = 0; i < _keysProperty.arraySize; i++)
+            {
+                var property = _keysProperty.GetArrayElementAtIndex(i);
+                if (property.stringValue == key)
                 {
                     return false;
                 }
             }
 
-			return CanAddKeyCallback == null || CanAddKeyCallback.Invoke(key);
-		}
+            return CanAddKeyCallback == null || CanAddKeyCallback.Invoke(key);
+        }
 
-		public bool CanAdd(Type type)
-		{
-			return type == null || CanAddTypeCallback == null || CanAddTypeCallback.Invoke(type);
-		}
+        public bool CanAdd(Type type)
+        {
+            return type == null || CanAddTypeCallback == null || CanAddTypeCallback.Invoke(type);
+        }
 
-		public bool AddItem(string key, Type type)
-		{
-			try
-			{
-				var newSize = _keysProperty.arraySize + 1;
-				_valuesProperty.ResizeArray(newSize);
+        public bool AddItem(string key, Type type)
+        {
+            try
+            {
+                var newSize = _keysProperty.arraySize + 1;
+                _valuesProperty.ResizeArray(newSize);
 
-				if (type != null)
-				{
-					var newValue = Activator.CreateInstance(type);
-					var valueProperty = _valuesProperty.GetArrayElementAtIndex(newSize - 1);
+                if (type != null)
+                {
+                    var newValue = Activator.CreateInstance(type);
+                    var valueProperty = _valuesProperty.GetArrayElementAtIndex(newSize - 1);
 
-					if (!valueProperty.TrySetValue(newValue))
-					{
-						_valuesProperty.arraySize = newSize - 1;
-						return false;
-					}
-				}
+                    if (!valueProperty.TrySetValue(newValue))
+                    {
+                        _valuesProperty.arraySize = newSize - 1;
+                        return false;
+                    }
+                }
 
-				_keysProperty.arraySize = newSize;
-				var newItem = _keysProperty.GetArrayElementAtIndex(newSize - 1);
-				newItem.stringValue = key;
+                _keysProperty.arraySize = newSize;
+                var newItem = _keysProperty.GetArrayElementAtIndex(newSize - 1);
+                newItem.stringValue = key;
 
-				_property.serializedObject.ApplyModifiedProperties(); // TODO: not applying new reference values for some reason
-				return true;
-			}
-			catch
-			{
-				// Technically a user could do something really wierd like set the item type on the DictionaryField
-				// to Float when the property is actually a string
+                _property.serializedObject.ApplyModifiedProperties(); // TODO: not applying new reference values for some reason
+                return true;
+            }
+            catch
+            {
+                // Technically a user could do something really wierd like set the item type on the DictionaryField
+                // to Float when the property is actually a string
 
-				// TODO: this also happens if the type is not Serializable (_valuesProperty will be null)
-				return false;
-			}
-		}
+                // TODO: this also happens if the type is not Serializable (_valuesProperty will be null)
+                return false;
+            }
+        }
 
-		public bool CanRemove(int index, string key)
-		{
-			return CanRemoveCallback == null || CanRemoveCallback.Invoke(key);
-		}
+        public bool CanRemove(int index, string key)
+        {
+            return CanRemoveCallback == null || CanRemoveCallback.Invoke(key);
+        }
 
-		public void RemoveItem(int index, string key)
-		{
-			_keysProperty.RemoveFromArray(index);
-			_valuesProperty.RemoveFromArray(index);
-			_property.serializedObject.ApplyModifiedProperties();
-		}
+        public void RemoveItem(int index, string key)
+        {
+            _keysProperty.RemoveFromArray(index);
+            _valuesProperty.RemoveFromArray(index);
+            _property.serializedObject.ApplyModifiedProperties();
+        }
 
-		public bool IsReorderable => true;
+        public bool IsReorderable => true;
 
         public void ReorderItem(int from, int to)
-		{
-			_keysProperty.MoveArrayElement(from, to);
-			_valuesProperty.MoveArrayElement(from, to);
-			_property.serializedObject.ApplyModifiedProperties();
-		}
-	}
+        {
+            _keysProperty.MoveArrayElement(from, to);
+            _valuesProperty.MoveArrayElement(from, to);
+            _property.serializedObject.ApplyModifiedProperties();
+        }
+
+        public void RefreshChildrenProperties()
+        {
+            // _property.RefreshChildrenProperties();
+        }
+    }
 }
